@@ -1,0 +1,80 @@
+.recent-terms {
+  width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #efefef;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.recent-terms__header {
+  padding: 12px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #222;
+}
+
+.recent-terms__list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd transparent;
+}
+
+.recent-terms__item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  background: #f8f8f8;
+  border: 1px solid #efefef;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s;
+}
+
+.recent-terms__item:hover {
+  box-shadow: 0 2px 8px rgba(210, 0, 110, 0.12);
+}
+
+.recent-terms__item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.recent-terms__nombre {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--magenta);
+}
+
+.recent-terms__fecha {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  color: #bbb;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.recent-terms__badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: #888;
+  background: var(--grey-sidebar);
+  border-radius: 4px;
+  padding: 1px 5px;
+  align-self: flex-start;
+  letter-spacing: 0.5px;
+}
