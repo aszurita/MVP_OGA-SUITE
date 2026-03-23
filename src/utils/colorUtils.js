@@ -22,6 +22,16 @@ export function getContrastColor(hexColor) {
  * @returns {Array<{text: string, isLink: boolean}>}
  */
 export function parseTextWithLinks(texto, palabrasHipervinculo = []) {
+  /*
+  Entrada:  "El {cliente} tiene un {producto} activo"
+  Salida:   [
+    { text: "El ",       isLink: false },
+    { text: "cliente",   isLink: true  },
+    { text: " tiene un ", isLink: false },
+    { text: "producto",  isLink: true  },
+    { text: " activo",   isLink: false }
+  ] 
+  */
   if (!palabrasHipervinculo.length) return [{ text: texto, isLink: false }];
 
   const regex = /\{([^}]+)\}/g;

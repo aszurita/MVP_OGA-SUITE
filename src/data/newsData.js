@@ -5,7 +5,7 @@ export const newsItems = [
     descripcion: "El martes 20 de junio, con la finalidad de potenciar los conocimientos de la comunidad, el equipo de OGA organizó una sesión práctica.",
     autor: "JUAN FRANCISCO CHONA ZÁRATE",
     fecha: "2025-03-10",
-    imagen: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300&h=120&fit=crop",
+    imagen: "/noticias/image.png",
     tag: "Capacitación",
   },
   {
@@ -14,7 +14,7 @@ export const newsItems = [
     descripcion: "El martes 20 de junio, con la finalidad de potenciar los conocimientos de la comunidad, el equipo de OGA compartió técnicas avanzadas.",
     autor: "OGA LONG LONG",
     fecha: "2025-02-28",
-    imagen: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=300&h=120&fit=crop",
+    imagen: "/noticias/image.png",
     tag: "Power BI",
   },
   {
@@ -23,7 +23,7 @@ export const newsItems = [
     descripcion: "Banco Guayaquil fue reconocido como el mejor proyecto tecnológico del año por su iniciativa de gobierno de datos.",
     autor: "DOMINGO FRANCO",
     fecha: "2025-03-05",
-    imagen: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=300&h=120&fit=crop",
+    imagen: "/noticias/image.png",
     tag: "Reconocimiento",
   },
   {
@@ -32,7 +32,7 @@ export const newsItems = [
     descripcion: "El equipo de OGA Suite implementó un nuevo framework de gobernanza que mejora la calidad y trazabilidad de los datos.",
     autor: "MARIA JOSE TORRES",
     fecha: "2025-03-12",
-    imagen: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=300&h=120&fit=crop",
+    imagen: "/noticias/image.png",
     tag: "Gobernanza",
   },
 ];

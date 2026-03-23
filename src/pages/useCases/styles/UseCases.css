@@ -201,9 +201,8 @@
 /* Floating comments button — only shown alongside the case modal */
 .usecases__comments-fab {
   position: fixed;
-  top: 50%;
-  left: calc(50vw + 330px + 10px);
-  transform: translateY(-50%);
+  bottom: 24px;
+  right: 24px;
   width: 48px;
   height: 48px;
   border-radius: 14px;

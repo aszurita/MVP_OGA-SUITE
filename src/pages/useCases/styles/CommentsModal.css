@@ -1,8 +1,7 @@
 .cm-panel {
   position: fixed;
-  top: 50%;
-  left: calc(50vw + 330px + 68px);
-  transform: translateY(-50%);
+  bottom: 84px;
+  right: 24px;
   width: 300px;
   max-height: 460px;
   background: #fff;
@@ -16,7 +15,7 @@
 }
 
 @keyframes cmIn {
-  from { transform: translateY(20px) scale(0.97); opacity: 0; }
+  from { transform: translateY(10px) scale(0.97); opacity: 0; }
   to   { transform: translateY(0) scale(1); opacity: 1; }
 }
 

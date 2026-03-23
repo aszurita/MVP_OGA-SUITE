@@ -127,14 +127,17 @@ export default function UseCases() {
         {/* Modal de caso de uso + botón de comentarios */}
         {openModal && (
           <>
-            <UseCaseModal caso={openModal} onClose={() => setOpenModal(null)} />
-            <button className="usecases__comments-fab" onClick={() => setCommentsOpen(true)}>
+            <UseCaseModal
+              caso={openModal}
+              onClose={() => { setOpenModal(null); setCommentsOpen(false); }}
+            />
+            <button className="usecases__comments-fab" onClick={() => setCommentsOpen((v) => !v)}>
               <MessageSquare size={20} />
             </button>
           </>
         )}
 
-        {/* Modal de comentarios */}
+        {/* Panel de comentarios */}
         {commentsOpen && (
           <CommentsModal onClose={() => setCommentsOpen(false)} />
         )}
