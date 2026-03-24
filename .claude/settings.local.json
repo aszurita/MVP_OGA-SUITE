@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tasklist)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(git -C \"c:/Users/azurita2/Documents/Repositorios/MVP_OGA-SUITE\" ls-files --others --exclude-standard --ignored --directory)",
+      "Bash(git -C \"c:/Users/azurita2/Documents/Repositorios/MVP_OGA-SUITE\" rev-parse --show-toplevel)",
+      "Bash(git -C \"c:/Users/azurita2/Documents/Repositorios/MVP_OGA-SUITE\" ls-files --others --directory)",
+      "Bash(git -C \"c:/Users/azurita2/Documents/Repositorios/MVP_OGA-SUITE\" ls-files)"
+    ]
+  }
+}

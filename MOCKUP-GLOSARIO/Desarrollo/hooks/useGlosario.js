@@ -195,6 +195,11 @@ export default function useGlosario() {
       else if (activeSegmento === 'Golden Record') base = glosario.golden;
       else if (activeSegmento === '(CDE) Elemento clave de datos') base = glosario.elemento_clave;
       else if (activeSegmento === '(AR) Atributo de Referencia')  base = glosario.atributo_referencia;
+      else if (activeSegmento.startsWith('pdp:')) {
+        // El sufijo es la clave del bucket pre-clasificado en terminosService (dato_personal → pdp_*)
+        const pdpKey = activeSegmento.slice(4);
+        base = glosario[pdpKey] || [];
+      }
       else if (glosario[activeSegmento])  base = glosario[activeSegmento];
     }
 

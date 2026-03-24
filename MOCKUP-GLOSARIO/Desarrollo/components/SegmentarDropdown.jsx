@@ -9,24 +9,27 @@ const OPCIONES_PRINCIPALES = [
   { label: 'Término',                             value: 'termino' },
   { label: 'Atributos',                           value: 'atributo' },
   { label: 'Protección Datos Personales',         value: '__submenu__', hasSubmenu: true },
-  { divider: true },
   { label: 'Golden Record',                       value: 'Golden Record' },
   { label: '(AR) Atributo de Referencia',         value: '(AR) Atributo de Referencia' },
   { label: '(CDE) Elemento clave de datos',       value: '(CDE) Elemento clave de datos' },
   { label: 'Todos',                               value: 'todos' },
 ];
 
+// Valores con prefijo "pdp:" para que useGlosario los identifique como filtros de subcategoría.
+// "pdp:" sin sufijo = todos los datos personales (dato_personal > 0).
+// "pdp:<texto>" = filtra por txt_desc_subcategoria (case-insensitive).
+// Valores con prefijo "pdp:" — el sufijo es el valor exacto de txt_desc_subcategoria en BD.
 const SUBMENU_PDP = [
-  { label: 'Datos Personales',                         value: 'datos personales' },
-  { label: 'Datos Identificativos',                    value: 'pdp_datos_identificativos' },
-  { label: 'Datos de características personales',     value: 'pdp_datos_caracteristicas' },
-  { label: 'Datos de circunstancias sociales',         value: 'pdp_datos_circunstancias' },
-  { label: 'Datos académicos y profesionales',         value: 'pdp_datos_academicos' },
-  { label: 'Datos de empleo',                          value: 'pdp_datos_empleo' },
-  { label: 'Datos de información comercial',           value: 'pdp_datos_informacion' },
-  { label: 'Categorías especiales de datos personales',value: 'pdp_categorias_especiales' },
-  { label: 'Datos económicos, financieros y de seguros',value: 'pdp_datos_economicos' },
-  { label: 'Datos de carácter digital',               value: 'pdp_datos_caracter' },
+  { label: 'Datos Personales',                          value: 'pdp:datos_personales' },
+  { label: 'Datos Identificativos',                     value: 'pdp:pdp_datos_identificativos' },
+  { label: 'Datos de características personales',      value: 'pdp:pdp_datos_caracteristicas' },
+  { label: 'Datos de circunstancias sociales',          value: 'pdp:pdp_datos_circunstancias' },
+  { label: 'Datos académicos y profesionales',          value: 'pdp:pdp_datos_academicos' },
+  { label: 'Datos de empleo',                           value: 'pdp:pdp_datos_empleo' },
+  { label: 'Datos de información comercial',            value: 'pdp:pdp_datos_informacion' },
+  { label: 'Categorías especiales de datos personales', value: 'pdp:pdp_categorias_especiales' },
+  { label: 'Datos económicos, financieros y de seguros',value: 'pdp:pdp_datos_economicos' },
+  { label: 'Datos de carácter digital',                value: 'pdp:pdp_datos_caracter' },
 ];
 
 export default function SegmentarDropdown({ activeSegmento, onSegmentar }) {
@@ -74,32 +77,54 @@ export default function SegmentarDropdown({ activeSegmento, onSegmentar }) {
       {open && (
         <div className="dropdown-menu show dropdown-menu-right" style={{ width: 260, display: 'block', position: 'absolute', top: '100%', zIndex: 1000 }}>
           {OPCIONES_PRINCIPALES.map((op, i) => {
-            if (op.divider) return <div key={i} className="dropdown-divider" />;
 
             if (op.hasSubmenu) {
+              const pdpActivo = activeSegmento.startsWith('pdp:');
               return (
-                <div key={i} style={{ position: 'relative' }}>
+                <div key={i}>
                   <a
                     className="dropdown-item d-flex align-items-center justify-content-between"
                     href="#"
                     onClick={(e) => { e.preventDefault(); setSubmenuOpen((v) => !v); }}
+                    style={{
+                      borderBottom: 'none',
+                      fontWeight: pdpActivo ? 700 : undefined,
+                      color: pdpActivo ? '#D2006E' : undefined,
+                    }}
                   >
-                    {op.label}
-                    <i className="simple-icon-arrow-down" style={{ fontSize: '0.7rem' }} />
+                    <span style={{ whiteSpace: 'normal', lineHeight: 1.3 }}>{op.label}</span>
+                    <i
+                      className={submenuOpen ? 'simple-icon-arrow-up' : 'simple-icon-arrow-down'}
+                      style={{ fontSize: '0.65rem', marginLeft: 6, flexShrink: 0 }}
+                    />
                   </a>
                   {submenuOpen && (
-                    <div className="bg-light" style={{ paddingLeft: 8 }}>
-                      {SUBMENU_PDP.map((sub) => (
-                        <a
-                          key={sub.value}
-                          className="dropdown-item pl-4 py-1"
-                          href="#"
-                          style={{ fontSize: '0.85rem' }}
-                          onClick={(e) => { e.preventDefault(); handleSelect(sub.value); }}
-                        >
-                          {sub.label}
-                        </a>
-                      ))}
+                    <div>
+                      {SUBMENU_PDP.map((sub) => {
+                        const isActive = activeSegmento === sub.value;
+                        return (
+                          <a
+                            key={sub.value}
+                            className="dropdown-item"
+                            href="#"
+                            onClick={(e) => { e.preventDefault(); handleSelect(sub.value); }}
+                            style={{
+                              paddingLeft: '1.8rem',
+                              paddingTop: '0.35rem',
+                              paddingBottom: '0.35rem',
+                              fontSize: '0.82rem',
+                              whiteSpace: 'normal',
+                              lineHeight: 1.3,
+                              fontWeight: isActive ? 700 : undefined,
+                              color: isActive ? '#D2006E' : undefined,
+                            }}
+                            onMouseEnter={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = '#f2f2f2'; }}
+                            onMouseLeave={(e) => { if (!isActive) e.currentTarget.style.backgroundColor = ''; }}
+                          >
+                            {sub.label}
+                          </a>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

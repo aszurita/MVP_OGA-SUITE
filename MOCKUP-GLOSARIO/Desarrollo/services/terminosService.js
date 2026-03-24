@@ -18,6 +18,22 @@ function upperKeys(obj) {
   }, {});
 }
 
+// ─── MAPA PDP ─────────────────────────────────────────────────────────────────
+// Réplica del catálogo Z_CATALOGO_OGASUITE (trans_id=9, segmento=3).
+// dato_personal (número entero) → clave usada como bucket y como valor del segmentador.
+const PDP_SUBSEGMENTOS = {
+  1:  'datos_personales',
+  2:  'pdp_datos_identificativos',
+  3:  'pdp_datos_caracteristicas',
+  4:  'pdp_datos_circunstancias',
+  5:  'pdp_datos_academicos',
+  6:  'pdp_datos_empleo',
+  7:  'pdp_datos_informacion',
+  8:  'pdp_categorias_especiales',
+  9:  'pdp_datos_economicos',
+  10: 'pdp_datos_caracter',
+};
+
 // ─── CLASIFICADOR ──────────────────────────────────────────────────────────────
 function clasificarDiccionario(items) {
   const data = {
@@ -30,9 +46,12 @@ function clasificarDiccionario(items) {
     dominios: new Map(),
   };
 
+  // Inicializar buckets PDP
+  Object.values(PDP_SUBSEGMENTOS).forEach((key) => { data[key] = []; });
+
   items.forEach((item) => {
-    const tipo           = (item.tipo || '').toUpperCase();
-    const golden         = item.golden_record;
+    const tipo            = (item.tipo || '').toUpperCase();
+    const golden          = item.golden_record;
     const caracteristicas = (item.caracteristicas || '').toLowerCase();
 
     if (tipo === 'TERMINO') data.terminos.push(item);
@@ -42,6 +61,12 @@ function clasificarDiccionario(items) {
       data.elemento_clave.push(item);
     if (caracteristicas.includes('ar') || caracteristicas.includes('atributo de referencia'))
       data.atributo_referencia.push(item);
+
+    // Clasificar por dato_personal (número → bucket pdp_*)
+    const datoPersonal = parseInt(item.dato_personal);
+    if (datoPersonal && PDP_SUBSEGMENTOS[datoPersonal]) {
+      data[PDP_SUBSEGMENTOS[datoPersonal]].push(item);
+    }
 
     const dominiosRaw = item.dominios || '';
     dominiosRaw.trim().split(';').forEach((dom) => {
@@ -64,7 +89,9 @@ export async function getTerminosAll() {
     return clasificarDiccionario(items);
   } catch (err) {
     console.error('[TerminosService] getTerminosAll:', err);
-    return { todos: [], terminos: [], atributos: [], golden: [], elemento_clave: [], atributo_referencia: [], dominios: new Map() };
+    const empty = { todos: [], terminos: [], atributos: [], golden: [], elemento_clave: [], atributo_referencia: [], dominios: new Map() };
+    Object.values(PDP_SUBSEGMENTOS).forEach((key) => { empty[key] = []; });
+    return empty;
   }
 }
 

@@ -219,6 +219,11 @@ export default function GlosarioCard({
     }
   }
 
+  const toTitleCase = (str) => {
+  return str
+    ?.toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+  };
   return (
     <div
       className="card glosario-item shadow-sm"
@@ -331,8 +336,8 @@ export default function GlosarioCard({
         {/* ── Cuerpo de la tarjeta ── */}
         {!editando && (
           <div>
-            <p className="mb-1" style={{ fontWeight: 600, fontSize: '0.8rem', color: '#245794' }}>
-              {tipoRaw}
+            <p className="mb-1" style={{ fontWeight: 600, fontSize: '0.8rem', color: '#245794', textTransform: 'capitalize' }}>
+              {tipoRaw.toLowerCase()}
             </p>
             <p className="mb-2" style={{ fontWeight: 500, fontSize: '0.8rem', color: '#333' }}>
               <i className="simple-icon-folder-alt mr-1" />
