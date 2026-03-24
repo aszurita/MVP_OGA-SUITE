@@ -24,9 +24,9 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 2px;
+  gap: 5px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
+  font-size: 12.8px;
   color: #bbb;
 }
 
@@ -198,11 +198,12 @@
   border: 1px dashed #e0e0e0;
 }
 
-/* Floating comments button — only shown alongside the case modal */
+/* Floating comments button — centrado en el borde derecho del modal (660px centrado) */
 .usecases__comments-fab {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  top: 50%;
+  left: calc(50% + 330px - 16px);
+  transform: translateY(-50%);
   width: 48px;
   height: 48px;
   border-radius: 14px;
@@ -215,7 +216,7 @@
   justify-content: center;
   cursor: pointer;
   transition: box-shadow 0.15s;
-  z-index: 1001;
+  z-index: 1002;
 }
 .usecases__comments-fab:hover {
   box-shadow: 0 6px 24px rgba(210,0,110,0.25);
