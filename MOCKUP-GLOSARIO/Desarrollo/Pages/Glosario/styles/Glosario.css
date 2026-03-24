@@ -1,0 +1,447 @@
+/**
+ * Glosario.css
+ * Estilos propios de la página Glosario — extraídos y organizados desde los
+ * bloques <style> inline del Glosario.aspx original, más los complementos de
+ * DominiosSidebar, RecientesSidebar y tarjetas en React.
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT PRINCIPAL
+═══════════════════════════════════════════════════════════ */
+#glosario-layout-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  #glosario-layout-container {
+    flex-direction: row;
+    gap: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRID DE TARJETAS
+═══════════════════════════════════════════════════════════ */
+.glosario-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .glosario-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TARJETA GLOSARIO
+═══════════════════════════════════════════════════════════ */
+.glosario-item {
+  position: relative;
+}
+
+.glosario-item-actions-react {
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.card.glosario-item:hover .glosario-item-actions-react,
+.glosario-item:hover .glosario-item-actions-react {
+  opacity: 1;
+}
+
+/* Badges de atributo */
+.badge.badge-pill.atributo {
+  margin: 0px 6px 0px 0px;
+  font-size: 11px;
+  background: #fff !important;
+  color: #D2006E;
+  border: 1px solid #D2006E;
+  padding: 0.3em 0.75em;
+}
+
+.badge.badge-pill.atributo.caracteristica {
+  font-size: 11px;
+  color: #fff !important;
+  background: #D2006E !important;
+  border: 1px solid #D2006E;
+  padding: 0.3em 0.75em;
+}
+
+/* Cross-link entre términos */
+.glosario-crosslink {
+  background-color: #e9ecef;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.1em 0.2em;
+  border: 1px dashed #2563eb;
+  color: #2563eb;
+  border-radius: 3px;
+  transition: background 0.15s;
+}
+
+.glosario-crosslink:hover {
+  background-color: #d0e2ff;
+}
+
+/* Link subrayado (nombre del atributo) */
+.link_subrrayado {
+  cursor: pointer;
+}
+
+.link_subrrayado:hover {
+  text-decoration: underline;
+  color: #D2006E !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOTONES REVEAL (del ASPX original)
+═══════════════════════════════════════════════════════════ */
+.btn-reveal {
+  --accent: #D2006E;
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  border-radius: 999px;
+  max-width: 42px;
+  overflow: hidden;
+  white-space: nowrap;
+  gap: 0;
+  transition: max-width .25s ease, background-color .2s ease, color .2s ease, box-shadow .2s ease, padding .25s ease, gap .25s ease;
+}
+
+.btn-reveal svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  flex: 0 0 auto;
+}
+
+.btn-reveal .label {
+  font-weight: 600;
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: opacity .18s ease, max-width .25s ease;
+}
+
+.btn-reveal:hover,
+.btn-reveal:focus-visible {
+  max-width: 180px;
+  padding: 8px 12px;
+  gap: 10px;
+  justify-content: flex-start;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(210, 0, 110, .25);
+}
+
+.btn-reveal:hover .label,
+.btn-reveal:focus-visible .label {
+  opacity: 1;
+  max-width: 160px;
+}
+
+.btn-outline {
+  border: 1px solid #D2006E;
+}
+
+.btn-outline:hover {
+  border: 1px solid #D2006E;
+}
+
+.btn-reveal-colors {
+  color: #D2006E;
+  background: transparent;
+  border: 1px solid #D2006E;
+}
+
+.btn-reveal-colors:hover,
+.btn-reveal-colors:focus-visible {
+  color: #fff;
+  background: #D2006E;
+  box-shadow: 0 6px 16px rgba(210, 0, 110, .25);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR DOMINIOS
+═══════════════════════════════════════════════════════════ */
+.sidebar-dominios {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #f3f3f3;
+  border-radius: 8px;
+  height: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: none;
+}
+
+.sidebar-dominios.open {
+  display: block;
+  animation: aparecer 0.3s ease-in-out;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .sidebar-dominios {
+    width: 280px;
+    flex-shrink: 0;
+    max-height: calc(100vh - 150px);
+  }
+
+  .sidebar-dominios.open {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+}
+
+.dominio-item {
+  border: none;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.dominio-item:hover {
+  background-color: #f8f9fa;
+  color: #d1007e;
+}
+
+.dominio-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #4a4a4a;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.dominio-badge {
+  background-color: #160F41;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.75rem;
+  min-width: 30px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR RECIENTES
+═══════════════════════════════════════════════════════════ */
+.sidebar-recientes {
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  height: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: none;
+}
+
+.sidebar-recientes.open {
+  display: block;
+  animation: aparecer 0.3s ease-in-out;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .sidebar-recientes {
+    width: auto;
+    min-width: 220px;
+    flex-shrink: 0;
+    max-height: calc(100vh - 150px);
+  }
+
+  .sidebar-recientes.open {
+    margin-bottom: 0;
+  }
+}
+
+.reciente-item {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  padding: 10px;
+  transition: box-shadow 0.2s;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.reciente-item:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+}
+
+.reciente-titulo {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #d1007e;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reciente-meta {
+  font-size: 0.75rem;
+  color: #6c757d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reciente-tipo {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   EDICIÓN INLINE
+═══════════════════════════════════════════════════════════ */
+.glosario-item-edit {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #fafafa;
+  margin-bottom: 0.75rem;
+  margin-top: 0.5rem;
+  gap: 0.6rem;
+}
+
+.glosario-item-edit label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL ATRIBUTO (réplica del ASPX)
+═══════════════════════════════════════════════════════════ */
+.attr-form {
+  padding: 4px 8px;
+}
+
+.attr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.attr-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px 12px 8px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.attr-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGINACIÓN CUSTOM
+═══════════════════════════════════════════════════════════ */
+.glosario-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 0;
+  flex-wrap: wrap;
+}
+
+.glosario-pagination button {
+  min-width: 34px;
+  height: 34px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.glosario-pagination button:hover {
+  border-color: #D2006E;
+  color: #D2006E;
+}
+
+.glosario-pagination button.active {
+  background: #D2006E;
+  border-color: #D2006E;
+  color: #fff;
+  font-weight: 700;
+}
+
+.glosario-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BARRA DE HERRAMIENTAS
+═══════════════════════════════════════════════════════════ */
+#glosario-count.badge {
+  font-size: 0.8rem;
+  border-radius: 12px;
+}
+
+/* Tooltip nativo del ASPX */
+.tooltip-inner {
+  max-width: 350px;
+  font-size: 12px;
+  background-color: #e9ecef;
+  border: 1px solid #160F41;
+  text-align: left;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMACIÓN
+═══════════════════════════════════════════════════════════ */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEPARADORES
+═══════════════════════════════════════════════════════════ */
+.separator {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 0;
+}
