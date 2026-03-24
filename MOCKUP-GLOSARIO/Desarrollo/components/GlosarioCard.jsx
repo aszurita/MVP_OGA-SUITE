@@ -4,7 +4,7 @@
  * Replica la plantilla card del template() en glosario.js original.
  * Incluye: badges, cross-links, edición inline, acciones (copiar, compartir, editar, eliminar).
  */
-import React, { useState, useRef } from 'react';
+import { useState } from 'react';
 import { linkifyDescription } from '../hooks/useGlosario.js';
 
 // ─── Tooltip caso de uso ───────────────────────────────────────────────────────
@@ -127,14 +127,6 @@ function FormEdicionInline({ item, dominiosMapa, dicCasosUso, mapaTermCU, onSave
   const allDominios = Array.from(dominiosMapa.keys());
   const allCasosUso = Object.entries(dicCasosUso);
 
-  function toggleDominio(d) {
-    setDominios((prev) => prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]);
-  }
-
-  function toggleCasoUso(id) {
-    setCasosUso((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
-  }
-
   function handleSave() {
     onSave({
       id:          item.id,
@@ -206,7 +198,6 @@ export default function GlosarioCard({
   isOgaUser,
   onEdit,
   onDelete,
-  onRegisterReciente,
   onCrossLink,
 }) {
   const [editando, setEditando] = useState(false);
@@ -283,11 +274,6 @@ export default function GlosarioCard({
     }
   }
 
-  const toTitleCase = (str) => {
-  return str
-    ?.toLowerCase()
-    .replace(/\b\w/g, c => c.toUpperCase());
-  };
   return (
     <div
       className="card glosario-item shadow-sm"

@@ -11,7 +11,7 @@ import {
   getRelacionesTerminoCasoUso,
 } from '../services/terminosService.js';
 
-const STORAGE_KEY_RECIENTES = 'glosario_recientes';
+const N_RECIENTES = 10;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -103,11 +103,23 @@ export default function useGlosario() {
   const [currentPage,    setCurrentPage]    = useState(1);
   const PAGE_SIZE = 10;
 
-  // Recientes (localStorage)
-  const [recientes, setRecientes] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY_RECIENTES) || '[]'); }
-    catch { return []; }
-  });
+  // Recientes — los N más recientemente modificados en BD (igual que el ASPX original)
+  const recientes = [...(glosario.todos)]
+    .sort((a, b) => {
+      const da = new Date(a.fecha_modificacion || a.fecha_creacion || 0);
+      const db = new Date(b.fecha_modificacion || b.fecha_creacion || 0);
+      return db - da;
+    })
+    .slice(0, N_RECIENTES)
+    .map((item) => {
+      const rawFecha = item.fecha_modificacion || item.fecha_creacion || '';
+      return {
+        id:     item.id,
+        nombre: (item.nombre || '').replace(/<br>/g, ''),
+        tipo:   (item.tipo || '').toUpperCase(),
+        fecha:  rawFecha ? rawFecha.split('T')[0].split(' ')[0] : '',
+      };
+    });
 
   // Modal states
   const [modalNuevo,   setModalNuevo]   = useState(false);
@@ -232,15 +244,6 @@ export default function useGlosario() {
   // Reset página al cambiar filtros
   useEffect(() => { setCurrentPage(1); }, [searchQuery, activeDominio, activeSegmento]);
 
-  // ─── Recientes ───────────────────────────────────────────────────────────────
-  const registrarReciente = useCallback((item) => {
-    setRecientes((prev) => {
-      const sinDuplicado = prev.filter((r) => r.id !== item.id);
-      const nuevo = [{ id: item.id, nombre: item.nombre, tipo: item.tipo, fecha: new Date().toLocaleDateString('es-EC') }, ...sinDuplicado].slice(0, 10);
-      localStorage.setItem(STORAGE_KEY_RECIENTES, JSON.stringify(nuevo));
-      return nuevo;
-    });
-  }, []);
 
   // ─── Cross-link click ────────────────────────────────────────────────────────
   const handleCrossLink = useCallback((termino) => {
@@ -296,8 +299,8 @@ export default function useGlosario() {
     showDominios, toggleDominios,
     showRecientes, toggleRecientes,
 
-    // Recientes
-    recientes, registrarReciente,
+    // Recientes (5 más recientemente modificados en BD)
+    recientes,
 
     // Modales
     modalNuevo,  setModalNuevo,

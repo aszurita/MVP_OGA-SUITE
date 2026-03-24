@@ -101,7 +101,7 @@ export default function Glosario() {
     allFiltered, paginated, totalPages, currentPage, setCurrentPage, PAGE_SIZE,
     showDominios,   toggleDominios,
     showRecientes,  toggleRecientes,
-    recientes,      registrarReciente,
+    recientes,
     modalNuevo,     setModalNuevo,
     modalElim,      setModalElim,
     handleCrossLink,
@@ -344,7 +344,6 @@ export default function Glosario() {
                       isOgaUser={isOgaUser}
                       onEdit={handleEdit}
                       onDelete={handleDelete}
-                      onRegisterReciente={registrarReciente}
                       onCrossLink={onCrossLink}
                     />
                   ))}
@@ -366,7 +365,6 @@ export default function Glosario() {
                       isOgaUser={isOgaUser}
                       onEdit={handleEdit}
                       onDelete={handleDelete}
-                      onRegisterReciente={registrarReciente}
                       onCrossLink={onCrossLink}
                       showSeparator={idx < itemsRender.length - 1}
                     />
