@@ -94,7 +94,9 @@ export default function useGlosario() {
   const dictRef = useRef({ dictCache: {}, regexSeguro: null });
 
   // UI state
-  const [searchQuery,    setSearchQuery]    = useState('');
+  const [searchQuery,    setSearchQuery]    = useState(
+    () => new URLSearchParams(window.location.search).get('buscar') || ''
+  );
   const [viewMode,       setViewMode]       = useState('card');
   const [showDominios,   setShowDominios]   = useState(false);
   const [showRecientes,  setShowRecientes]  = useState(false);

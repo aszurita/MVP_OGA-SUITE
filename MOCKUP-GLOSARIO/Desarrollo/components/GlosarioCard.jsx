@@ -4,7 +4,49 @@
  * Replica la plantilla card del template() en glosario.js original.
  * Incluye: badges, cross-links, edición inline, acciones (copiar, compartir, editar, eliminar).
  */
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+// ─── Toast global ──────────────────────────────────────────────────────────────
+let _setToast = null;
+export function showToast(msg) {
+  if (_setToast) _setToast(msg);
+}
+
+export function Toast() {
+  const [msg, setMsg] = useState('');
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    _setToast = (m) => {
+      setMsg(m);
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setMsg(''), 3000);
+    };
+    return () => { _setToast = null; clearTimeout(timerRef.current); };
+  }, []);
+
+  if (!msg) return null;
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 24,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      background: '#2e7d32',
+      color: '#fff',
+      padding: '10px 24px',
+      borderRadius: 8,
+      fontWeight: 500,
+      fontSize: '0.9rem',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.18)',
+      zIndex: 99999,
+      pointerEvents: 'none',
+      whiteSpace: 'nowrap',
+    }}>
+      {msg}
+    </div>
+  );
+}
 import { linkifyDescription } from '../hooks/useGlosario.js';
 
 // ─── Tooltip caso de uso ───────────────────────────────────────────────────────
@@ -237,16 +279,28 @@ export default function GlosarioCard({
   // Copiar tarjeta al portapapeles
   function handleCopy(e) {
     e.preventDefault();
-    const texto = `${nombreLimpio}\n${tipoRaw}\n${domainValue}\n${item.descripcion || ''}`;
-    navigator.clipboard.writeText(texto).catch(() => {});
+    const descLimpia = (item.descripcion || '').replace(/<[^>]*>/g, '');
+    const casosTexto = casosUsoDetalle.map((cu) => cu.nombre).join(' | ');
+    const lineas = [
+      nombreLimpio,
+      `Últ. act: ${fechaAct}`,
+      tipoRaw.charAt(0).toUpperCase() + tipoRaw.slice(1).toLowerCase(),
+      `📁 ${domainValue}${casosTexto ? ' | ' + casosTexto : ''}`,
+      '',
+      descLimpia,
+    ];
+    navigator.clipboard.writeText(lineas.join('\n')).catch(() => {});
+    showToast('Tarjeta copiada al portapapeles.');
   }
 
-  // Compartir (copia URL con param ?buscar=...)
+  // Compartir: copia URL y actualiza la barra del navegador con ?buscar=...
   function handleShare(e) {
     e.preventDefault();
     const base = window.location.href.split('?')[0];
     const url  = `${base}?buscar=${encodeURIComponent(nombreLimpio)}`;
     navigator.clipboard.writeText(url).catch(() => {});
+    window.history.replaceState(null, '', `?buscar=${encodeURIComponent(nombreLimpio)}`);
+    showToast('Enlace compartido copiado al portapapeles.');
   }
 
   async function handleSaveEdit(datos, casosUsoIds) {
@@ -257,11 +311,6 @@ export default function GlosarioCard({
     } finally {
       setGuardando(false);
     }
-  }
-
-  // Registrar visita al hacer click en el nombre
-  function handleNombreClick() {
-    if (onRegisterReciente) onRegisterReciente(item);
   }
 
   // Click en cross-link
@@ -343,16 +392,14 @@ export default function GlosarioCard({
                   href={`Ficha_Atributo.aspx?atributo=${spId}`}
                   className="list-item-heading color-theme-1 link_subrrayado"
                   style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
-                  onClick={handleNombreClick}
-                >
+                                  >
                   {nombreLimpio}
                 </a>
               ) : (
                 <p
                   className="list-item-heading mb-0 mr-2"
                   style={{ fontSize: '1rem', fontWeight: 'bold', color: '#D2006E', cursor: 'default' }}
-                  onClick={handleNombreClick}
-                >
+                                  >
                   {nombreLimpio}
                 </p>
               )}

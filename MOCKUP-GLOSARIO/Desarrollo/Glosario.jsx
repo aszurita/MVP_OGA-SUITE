@@ -24,7 +24,7 @@ import React, { useState, useEffect } from 'react';
 import useGlosario  from './hooks/useGlosario.js';
 import { actualizarTermino, sincronizarRelacionesCasoUso } from './services/terminosService.js';
 
-import GlosarioCard       from './components/GlosarioCard.jsx';
+import GlosarioCard, { Toast } from './components/GlosarioCard.jsx';
 import GlosarioListItem   from './components/GlosarioListItem.jsx';
 import DominiosSidebar    from './components/DominiosSidebar.jsx';
 import RecientesSidebar   from './components/RecientesSidebar.jsx';
@@ -149,6 +149,7 @@ export default function Glosario() {
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
     <div id="glosario_terminos" className="flex-grow-1 px-3 transition-content">
+      <Toast />
 
       {/* ── Fila 1: Título + Buscador ── */}
       <div className="row">
