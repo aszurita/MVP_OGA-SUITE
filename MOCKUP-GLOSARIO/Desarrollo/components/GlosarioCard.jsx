@@ -7,6 +7,68 @@
 import React, { useState, useRef } from 'react';
 import { linkifyDescription } from '../hooks/useGlosario.js';
 
+// ─── Tooltip caso de uso ───────────────────────────────────────────────────────
+function CasoUsoTooltip({ nombre, dominio }) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <span
+      className="mb-0 glosario-caso-uso"
+      style={{ position: 'relative', display: 'inline', fontSize: '0.85rem', color: '#6c757d', cursor: 'help' }}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
+      {' '}| {nombre}
+      {visible && (
+        <span style={{
+          position: 'absolute',
+          bottom: 'calc(100% + 8px)',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#fff',
+          border: '1px solid #e8e8e8',
+          borderRadius: '0.5rem',
+          padding: '6px 12px',
+          fontSize: '0.8rem',
+          color: '#333',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+          whiteSpace: 'nowrap',
+          zIndex: 9999,
+          pointerEvents: 'none',
+          lineHeight: 1.4,
+        }}>
+          {nombre}
+          {dominio && (
+            <i style={{ color: '#bbb', fontSize: '0.9em', marginLeft: 4 }}>({dominio})</i>
+          )}
+          {/* flecha */}
+          <span style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '6px solid transparent',
+            borderRight: '6px solid transparent',
+            borderTop: '6px solid #e8e8e8',
+          }} />
+          <span style={{
+            position: 'absolute',
+            top: 'calc(100% - 1px)',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '5px solid transparent',
+            borderRight: '5px solid transparent',
+            borderTop: '5px solid #fff',
+          }} />
+        </span>
+      )}
+    </span>
+  );
+}
+
 // ─── Badges de características ─────────────────────────────────────────────────
 function AtributoBadges({ caracteristicas, datoPersonal, goldenRecord }) {
   const badges = [];
@@ -167,13 +229,15 @@ export default function GlosarioCard({
   const todosLosDominios = [...new Set([...dominiosDirectos, ...dominiosHeredados])];
   const domainValue = todosLosDominios.join(' | ') || 'Sin dominio';
 
-  // Casos de uso — texto visible (truncado a 60 chars)
-  const casosUsoNombres = casosUsoIds
-    .map((id) => dicCasosUso[id])
+  // Casos de uso — cada uno con su nombre + dominio para el tooltip
+  const casosUsoDetalle = casosUsoIds
+    .map((id) => {
+      const nombre  = dicCasosUso[id];
+      const dominio = mapaCUDominio[id];
+      return nombre ? { id, nombre, dominio } : null;
+    })
     .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b));
-  const cuTexto = casosUsoNombres.join(' | ');
-  const cuVisible = cuTexto.length > 60 ? cuTexto.substring(0, 57) + '...' : cuTexto;
+    .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
   // Descripción con cross-links
   const { dictCache, regexSeguro } = dictRef.current;
@@ -342,15 +406,9 @@ export default function GlosarioCard({
             <p className="mb-2" style={{ fontWeight: 500, fontSize: '0.8rem', color: '#333' }}>
               <i className="simple-icon-folder-alt mr-1" />
               {domainValue}
-              {cuVisible && (
-                <span
-                  className="mb-0 glosario-caso-uso"
-                  title={cuTexto}
-                  style={{ fontSize: '0.85rem', color: '#6c757d', cursor: 'help' }}
-                >
-                  {' '}| {cuVisible}
-                </span>
-              )}
+              {casosUsoDetalle.map((cu) => (
+                <CasoUsoTooltip key={cu.id} nombre={cu.nombre} dominio={cu.dominio} />
+              ))}
             </p>
             <p
               className="mb-0"
