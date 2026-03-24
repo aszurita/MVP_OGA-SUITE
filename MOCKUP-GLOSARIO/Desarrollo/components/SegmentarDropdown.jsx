@@ -92,7 +92,7 @@ export default function SegmentarDropdown({ activeSegmento, onSegmentar }) {
                       {SUBMENU_PDP.map((sub) => (
                         <a
                           key={sub.value}
-                          className="dropdown-item pl-4 py-1 text-muted"
+                          className="dropdown-item pl-4 py-1"
                           href="#"
                           style={{ fontSize: '0.85rem' }}
                           onClick={(e) => { e.preventDefault(); handleSelect(sub.value); }}

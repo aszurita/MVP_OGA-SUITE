@@ -11,11 +11,15 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   root: '.',
+  cacheDir: '.vite',
   server: {
     port: 5175,
     open: true,
   },
   build: {
     outDir: 'dist',
+  },
+  css: {
+    devSourcemap: false,
   },
 });

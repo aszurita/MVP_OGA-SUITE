@@ -57,19 +57,23 @@ function buildDictionary(todos) {
 export function linkifyDescription(descripcion, currentTermName, dictCache, regexSeguro) {
   if (!descripcion || !regexSeguro) return descripcion || 'Sin descripción disponible.';
 
-  return descripcion.replace(regexSeguro, (match) => {
-    const lowerMatch = match.toLowerCase();
-    if (currentTermName && lowerMatch === currentTermName.toLowerCase()) return match;
+  // fullMatch may include a leading non-word char (consumed by the (?:^|[^\p{L}\p{N}]) group).
+  // captured is the actual term name from the capture group — use it for the dict lookup.
+  return descripcion.replace(regexSeguro, (fullMatch, captured) => {
+    const lowerCapture = captured.toLowerCase();
+    if (currentTermName && lowerCapture === currentTermName.toLowerCase()) return fullMatch;
 
-    let termDesc  = dictCache[lowerMatch] || '';
-    const exactName = dictCache[lowerMatch + '_name'] || match;
+    let termDesc    = dictCache[lowerCapture] || '';
+    const exactName = dictCache[lowerCapture + '_name'] || captured;
 
-    if (!termDesc) return match;
+    if (!termDesc) return fullMatch;
 
     termDesc = termDesc.replace(/<[^>]*>?/gm, '').replace(/"/g, '&quot;');
     if (termDesc.length > 180) termDesc = termDesc.substring(0, 177) + '...';
 
-    return `<span class="glosario-crosslink badge badge-light" data-termino="${exactName}" title="${termDesc}" style="cursor:pointer;">${match}</span>`;
+    // Preserve the prefix char (e.g. space) that was consumed by the non-capturing group
+    const prefix = fullMatch.slice(0, fullMatch.length - captured.length);
+    return `${prefix}<span class="glosario-crosslink badge badge-light" data-termino="${exactName}" title="${termDesc}" style="cursor:pointer;">${captured}</span>`;
   });
 }
 
