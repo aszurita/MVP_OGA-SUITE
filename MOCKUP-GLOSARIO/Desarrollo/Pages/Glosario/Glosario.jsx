@@ -21,8 +21,8 @@
  */
 import React, { useState, useEffect } from 'react';
 
-import useGlosario from './hooks/useGlosario.js';
-import { actualizarTermino, sincronizarRelacionesCasoUso } from './services/terminosService.js';
+import useGlosario from '../../hooks/useGlosario.js';
+import { actualizarTermino, sincronizarRelacionesCasoUso } from '../../services/terminosService.js';
 
 import GlosarioCard, { Toast, showToast } from './components/GlosarioCard.jsx';
 import GlosarioListItem from './components/GlosarioListItem.jsx';
@@ -33,7 +33,7 @@ import FiltrarDropdown from './components/FiltrarDropdown.jsx';
 import ModalNuevoTermino from './components/ModalNuevoTermino.jsx';
 import ModalEliminar from './components/ModalEliminar.jsx';
 
-import './styles/Glosario.css';
+import '../../styles/Glosario.css';
 
 // ─── Paginación ───────────────────────────────────────────────────────────────
 function Paginacion({ currentPage, totalPages, onChange }) {
