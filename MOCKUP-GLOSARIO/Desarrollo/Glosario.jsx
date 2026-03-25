@@ -145,7 +145,7 @@ export default function Glosario() {
     .filter((item) => !eliminados.has(String(item.id)))
     .map((item) => terminosOverride[item.id] ? { ...item, ...terminosOverride[item.id] } : item);
 
-  const isOgaUser = true; // Cambiar a true para activar controles de edición/eliminación
+  const isOgaUser = false; // Cambiar a true para activar controles de edición/eliminación
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
