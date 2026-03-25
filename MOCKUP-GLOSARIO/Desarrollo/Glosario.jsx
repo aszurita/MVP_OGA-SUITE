@@ -21,17 +21,17 @@
  */
 import React, { useState, useEffect } from 'react';
 
-import useGlosario  from './hooks/useGlosario.js';
+import useGlosario from './hooks/useGlosario.js';
 import { actualizarTermino, sincronizarRelacionesCasoUso } from './services/terminosService.js';
 
-import GlosarioCard, { Toast } from './components/GlosarioCard.jsx';
-import GlosarioListItem   from './components/GlosarioListItem.jsx';
-import DominiosSidebar    from './components/DominiosSidebar.jsx';
-import RecientesSidebar   from './components/RecientesSidebar.jsx';
-import SegmentarDropdown  from './components/SegmentarDropdown.jsx';
-import FiltrarDropdown    from './components/FiltrarDropdown.jsx';
-import ModalNuevoTermino  from './components/ModalNuevoTermino.jsx';
-import ModalEliminar      from './components/ModalEliminar.jsx';
+import GlosarioCard, { Toast, showToast } from './components/GlosarioCard.jsx';
+import GlosarioListItem from './components/GlosarioListItem.jsx';
+import DominiosSidebar from './components/DominiosSidebar.jsx';
+import RecientesSidebar from './components/RecientesSidebar.jsx';
+import SegmentarDropdown from './components/SegmentarDropdown.jsx';
+import FiltrarDropdown from './components/FiltrarDropdown.jsx';
+import ModalNuevoTermino from './components/ModalNuevoTermino.jsx';
+import ModalEliminar from './components/ModalEliminar.jsx';
 
 import './styles/Glosario.css';
 
@@ -93,23 +93,23 @@ export default function Glosario() {
     loading, error,
     glosario, dominiosMapa, dicCasosUso, mapaCUDominio, mapaTermCU,
     dictRef,
-    searchQuery,    setSearchQuery,
-    activeDominio,  seleccionarDominio,
+    searchQuery, setSearchQuery,
+    activeDominio, seleccionarDominio,
     activeSegmento, setActiveSegmento,
     limpiarFiltros,
-    viewMode,       setViewMode,
+    viewMode, setViewMode,
     allFiltered, paginated, totalPages, currentPage, setCurrentPage, PAGE_SIZE,
-    showDominios,   toggleDominios,
-    showRecientes,  toggleRecientes,
+    showDominios, toggleDominios,
+    showRecientes, toggleRecientes,
     recientes,
-    modalNuevo,     setModalNuevo,
-    modalElim,      setModalElim,
+    modalNuevo, setModalNuevo,
+    modalElim, setModalElim,
     handleCrossLink,
   } = useGlosario();
 
   // Estado local para feedback de edición/eliminación sin recargar todo
   const [terminosOverride, setTerminosOverride] = useState({}); // id → datos actualizados
-  const [eliminados,       setEliminados]        = useState(new Set());
+  const [eliminados, setEliminados] = useState(new Set());
 
   // ─── Edición inline ───────────────────────────────────────────────────────
   async function handleEdit(datos, casosUsoSeleccionados) {
@@ -117,6 +117,7 @@ export default function Glosario() {
     await actualizarTermino(id, campos, 0);
     await sincronizarRelacionesCasoUso(id, casosUsoSeleccionados, 0);
     setTerminosOverride((prev) => ({ ...prev, [id]: { ...datos } }));
+    showToast(`"${datos.nombre || 'Término'}" editado exitosamente.`);
   }
 
   // ─── Eliminación ─────────────────────────────────────────────────────────
@@ -144,7 +145,7 @@ export default function Glosario() {
     .filter((item) => !eliminados.has(String(item.id)))
     .map((item) => terminosOverride[item.id] ? { ...item, ...terminosOverride[item.id] } : item);
 
-  const isOgaUser = false; // Cambiar a true para activar controles de edición/eliminación
+  const isOgaUser = true; // Cambiar a true para activar controles de edición/eliminación
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
