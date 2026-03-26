@@ -15,6 +15,14 @@ export default defineConfig({
   server: {
     port: 5175,
     open: true,
+    // Proxy para desarrollo local: evita CORS al llamar a la API del banco
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://gobinfoana01-2:8510',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
   build: {
     outDir: 'dist',

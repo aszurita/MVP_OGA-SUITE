@@ -3,7 +3,9 @@
  * Capa base para comunicación con la API de SQL Server.
  * Idéntico al ApiService del proyecto original, convertido a ES Module.
  */
-const BASE_URL = 'http://gobinfoana01-2:8510';
+// En dev local: usa la variable VITE_API_URL del .env (apunta directo al servidor)
+// En Docker/Azure: VITE_API_URL=/api  (Nginx hace el proxy hacia el backend)
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://gobinfoana01-2:8510';
 
 async function _fetch(endpoint, method, body) {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
