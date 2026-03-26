@@ -8,22 +8,22 @@ import React, { useState } from 'react';
 import { crearNuevoTermino } from '../../../services/terminosService.js';
 
 export default function ModalNuevoTermino({ show, onClose, dominiosMapa, dicCasosUso, onCreated }) {
-  const [guardando,  setGuardando]  = useState(false);
-  const [error,      setError]      = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
 
   // Campos del formulario — idénticos a los del ASPX
-  const [tipo,           setTipo]           = useState('ATRIBUTO');
-  const [nombre,         setNombre]         = useState('');
-  const [descripcion,    setDescripcion]    = useState('');
-  const [dominios,       setDominios]       = useState([]);
-  const [casosUso,       setCasosUso]       = useState([]);
-  const [caracteristicas,setCaracteristicas]= useState([]);
-  const [datoPersonal,   setDatoPersonal]   = useState('');
-  const [goldenRecord,   setGoldenRecord]   = useState('');
-  const [prioridad,      setPrioridad]      = useState('');
+  const [tipo, setTipo] = useState('ATRIBUTO');
+  const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [dominios, setDominios] = useState([]);
+  const [casosUso, setCasosUso] = useState([]);
+  const [caracteristicas, setCaracteristicas] = useState([]);
+  const [datoPersonal, setDatoPersonal] = useState('');
+  const [goldenRecord, setGoldenRecord] = useState('');
+  const [prioridad, setPrioridad] = useState('');
 
-  const allDominios  = Array.from(dominiosMapa.keys());
-  const allCasosUso  = Object.entries(dicCasosUso);
+  const allDominios = Array.from(dominiosMapa.keys());
+  const allCasosUso = Object.entries(dicCasosUso);
 
   const TIPOS_ATRIBUTO = [
     '(CDE) Elemento clave de datos',
@@ -49,14 +49,14 @@ export default function ModalNuevoTermino({ show, onClose, dominiosMapa, dicCaso
     try {
       await crearNuevoTermino({
         tipo,
-        nombre:         nombre.trim(),
+        nombre: nombre.trim(),
         descripcion,
-        dominios:       dominios.join('; '),
-        casos_uso:      casosUso.join('; '),
-        caracteristicas:caracteristicas.join('; '),
-        dato_personal:  datoPersonal || null,
-        golden_record:  goldenRecord === '1' ? 1 : 0,
-        prioridad:      prioridad ? Number(prioridad) : null,
+        dominios: dominios.join('; '),
+        casos_uso: casosUso.join('; '),
+        caracteristicas: caracteristicas.join('; '),
+        dato_personal: datoPersonal || null,
+        golden_record: goldenRecord === '1' ? 1 : 0,
+        prioridad: prioridad ? Number(prioridad) : null,
       }, 0);
 
       resetForm();

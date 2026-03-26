@@ -8,7 +8,7 @@ import { desactivarTermino } from '../../../services/terminosService.js';
 
 export default function ModalEliminar({ show, id, nombre, onClose, onDeleted }) {
   const [eliminando, setEliminando] = useState(false);
-  const [error,      setError]      = useState('');
+  const [error, setError] = useState('');
 
   async function handleEliminar() {
     if (!id) return;

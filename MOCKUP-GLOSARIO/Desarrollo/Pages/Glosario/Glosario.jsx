@@ -33,7 +33,7 @@ import FiltrarDropdown from './components/FiltrarDropdown.jsx';
 import ModalNuevoTermino from './components/ModalNuevoTermino.jsx';
 import ModalEliminar from './components/ModalEliminar.jsx';
 
-import '../../styles/Glosario.css';
+import './styles/Glosario.css';
 
 // ─── Paginación ───────────────────────────────────────────────────────────────
 function Paginacion({ currentPage, totalPages, onChange }) {
