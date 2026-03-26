@@ -1,0 +1,101 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# OGA-SUITE — Azure DevOps Pipeline
+# Build → Push ACR → Deploy Azure Container Apps
+# ─────────────────────────────────────────────────────────────────────────────
+
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  # Nombre del Azure Container Registry (sin .azurecr.io)
+  acrName: 'ogasuiteacr'
+  # Nombre de la imagen Docker
+  imageName: 'oga-frontend'
+  # Azure Container App
+  containerApp: 'oga-suite-app'
+  containerEnv: 'oga-suite-env'
+  # Resource Group
+  resourceGroup: 'rg-oga-suite'
+  # Tag de la imagen = número de build
+  imageTag: '$(Build.BuildId)'
+
+stages:
+
+# ── STAGE 1: Build y Push de imagen Docker ─────────────────────────────────
+- stage: Build
+  displayName: '🐳 Build Docker Image'
+  jobs:
+  - job: BuildAndPush
+    displayName: 'Build + Push a ACR'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    # Login al ACR
+    - task: Docker@2
+      displayName: 'Login a Azure Container Registry'
+      inputs:
+        command: login
+        containerRegistry: 'ACR-ServiceConnection'
+
+    # Build multi-stage de la imagen React
+    - task: Docker@2
+      displayName: 'Build imagen oga-frontend'
+      inputs:
+        command: build
+        dockerfile: 'MOCKUP-GLOSARIO/Desarrollo/Dockerfile'
+        buildContext: 'MOCKUP-GLOSARIO/Desarrollo'
+        repository: '$(acrName).azurecr.io/$(imageName)'
+        tags: |
+          $(imageTag)
+          latest
+        arguments: '--build-arg VITE_API_URL=/api'
+
+    # Push al registro
+    - task: Docker@2
+      displayName: 'Push imagen a ACR'
+      inputs:
+        command: push
+        repository: '$(acrName).azurecr.io/$(imageName)'
+        containerRegistry: 'ACR-ServiceConnection'
+        tags: |
+          $(imageTag)
+          latest
+
+# ── STAGE 2: Deploy a Azure Container Apps ────────────────────────────────
+- stage: Deploy
+  displayName: '🚀 Deploy a Azure'
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: DeployContainerApp
+    displayName: 'Actualizar Container App'
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: 'produccion'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureCLI@2
+            displayName: 'Deploy nueva imagen'
+            inputs:
+              azureSubscription: 'Azure-ServiceConnection'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "Desplegando imagen: $(acrName).azurecr.io/$(imageName):$(imageTag)"
+
+                az containerapp update \
+                  --name $(containerApp) \
+                  --resource-group $(resourceGroup) \
+                  --image $(acrName).azurecr.io/$(imageName):$(imageTag)
+
+                echo "Deploy completado. URL:"
+                az containerapp show \
+                  --name $(containerApp) \
+                  --resource-group $(resourceGroup) \
+                  --query properties.configuration.ingress.fqdn \
+                  --output tsv

@@ -1,0 +1,95 @@
+version: '3.9'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OGA-SUITE · Docker Compose
+# Levanta: frontend React + Redis + (API opcional)
+#
+# USO:
+#   docker compose up --build          → primera vez
+#   docker compose up                  → siguientes veces
+#   docker compose down                → detener y limpiar
+#   docker compose logs -f frontend    → ver logs del frontend
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Frontend React (Vite build → Nginx) ─────────────────────────────────
+  frontend:
+    build:
+      context: ./MOCKUP-GLOSARIO/Desarrollo
+      dockerfile: Dockerfile
+      args:
+        # En Docker la API se llama via /api (Nginx hace el proxy)
+        VITE_API_URL: /api
+    container_name: oga-frontend
+    ports:
+      - "3000:80"        # Abrir en: http://localhost:3000
+    depends_on:
+      - redis
+    networks:
+      - oga-network
+    restart: unless-stopped
+    labels:
+      - "com.oga.service=frontend"
+      - "com.oga.version=1.0"
+
+  # ── Redis Cache ──────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: oga-redis
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_PASSWORD:-ogaredis2024}
+    ports:
+      - "6379:6379"      # Solo para debug local — comentar en producción
+    volumes:
+      - redis-data:/data
+    networks:
+      - oga-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-ogaredis2024}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "com.oga.service=cache"
+
+  # ── API Backend ──────────────────────────────────────────────────────────
+  # NOTA: Descomenta este bloque cuando tengas el código fuente de la API.
+  # Mientras tanto, el frontend apuntará directamente a gobinfoana01-2:8510.
+  #
+  # api:
+  #   build:
+  #     context: ./api
+  #     dockerfile: Dockerfile
+  #   container_name: oga-api
+  #   environment:
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT:-1433}
+  #     - DB_NAME=${DB_NAME:-PROCESOS_BI}
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASS=${DB_PASS}
+  #     - REDIS_URL=redis://:${REDIS_PASSWORD:-ogaredis2024}@redis:6379
+  #     - PORT=8510
+  #     - NODE_ENV=production
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - oga-network
+  #   restart: unless-stopped
+
+# ── Redes ────────────────────────────────────────────────────────────────────
+networks:
+  oga-network:
+    driver: bridge
+    name: oga-suite-net
+
+# ── Volúmenes persistentes ───────────────────────────────────────────────────
+volumes:
+  redis-data:
+    name: oga-redis-data

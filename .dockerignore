@@ -1,0 +1,38 @@
+# ── Dependencias y builds (nunca en la imagen) ────────────────────────────────
+node_modules/
+dist/
+.vite/
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+.git/
+.gitignore
+
+# ── Assets legado del sistema ASP.NET ─────────────────────────────────────────
+# Estos 600+ archivos existen por compatibilidad con Desarrollo_OGA
+# pero NO forman parte del bundle React. Se excluyen para que la imagen
+# sea ~25 MB en vez de ~750 MB.
+js/
+css/
+font/
+img/
+docs/
+Profiling/
+Validador_Data/
+datasets-txt/
+Documentos/
+reportes/
+logos/
+shared/
+
+# ── Archivos de entorno ───────────────────────────────────────────────────────
+.env
+.env.local
+.env.development
+.env.development.local
+# .env.production se incluye si existe (para variables públicas VITE_*)
+
+# ── Archivos de desarrollo ────────────────────────────────────────────────────
+*.md
+*.log
+.DS_Store
+Thumbs.db

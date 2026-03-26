@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OGA-SUITE — Plan de Containerización y Despliegue</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #21262d;
+      --border: #30363d;
+      --accent: #1f6feb;
+      --accent2: #388bfd;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --red: #f85149;
+      --purple: #8b949e;
+      --redis: #dc382d;
+      --azure: #0078d4;
+      --docker: #2496ed;
+      --podman: #892ca0;
+      --text: #e6edf3;
+      --muted: #8b949e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #0a1628 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(31,111,235,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(31,111,235,0.1);
+      border: 1px solid rgba(31,111,235,0.3);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: var(--accent2);
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #e6edf3 0%, #388bfd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 28px;
+    }
+    .hero-pills {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .pill-docker  { background: rgba(36,150,237,0.1); border-color: rgba(36,150,237,0.4); color: #2496ed; }
+    .pill-redis   { background: rgba(220,56,45,0.1);  border-color: rgba(220,56,45,0.4);  color: #ff6b6b; }
+    .pill-azure   { background: rgba(0,120,212,0.1);  border-color: rgba(0,120,212,0.4);  color: #50b0ff; }
+    .pill-podman  { background: rgba(137,44,160,0.1); border-color: rgba(137,44,160,0.4); color: #c084fc; }
+    .pill-react   { background: rgba(97,218,251,0.08);border-color: rgba(97,218,251,0.3); color: #61dafb; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+    main { padding: 48px 32px; max-width: 1200px; margin: 0 auto; }
+
+    /* ── SECTION TITLES ── */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      margin-top: 56px;
+    }
+    .section-title:first-of-type { margin-top: 0; }
+    .section-num {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      margin-top: -16px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .card-title { font-size: 16px; font-weight: 700; }
+    .card-desc  { font-size: 13px; color: var(--muted); }
+
+    /* ── GRID ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+    @media (max-width: 900px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+    .stat {
+      background: var(--surface);
+      padding: 20px 24px;
+      text-align: center;
+    }
+    .stat-n  { font-size: 32px; font-weight: 800; line-height: 1; }
+    .stat-l  { font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* ── ARCH DIAGRAM ── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .arch-box {
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 140px;
+      border: 2px solid;
+      position: relative;
+    }
+    .arch-box .ab-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .arch-box .ab-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .arch-box .ab-sub {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-top: 2px;
+    }
+    .arch-arrow {
+      font-size: 22px;
+      color: var(--muted);
+      margin: 0 8px;
+      flex-shrink: 0;
+    }
+    .arch-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      margin: 0 8px;
+    }
+    .arch-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .ab-user      { border-color: #4ade80; background: rgba(74,222,128,0.08); color: #4ade80; }
+    .ab-nginx     { border-color: #22d3ee; background: rgba(34,211,238,0.08); color: #22d3ee; }
+    .ab-react     { border-color: #61dafb; background: rgba(97,218,251,0.08); color: #61dafb; }
+    .ab-api       { border-color: #f59e0b; background: rgba(245,158,11,0.08); color: #f59e0b; }
+    .ab-redis     { border-color: #ef4444; background: rgba(239,68,68,0.08);  color: #ef4444; }
+    .ab-sql       { border-color: #a78bfa; background: rgba(167,139,250,0.08);color: #a78bfa; }
+    .ab-azure-net { border-color: #0078d4; background: rgba(0,120,212,0.06);  color: #60a5fa; }
+    .ab-acr       { border-color: #0078d4; background: rgba(0,120,212,0.06);  color: #60a5fa; }
+
+    /* ── FILE TREE ── */
+    .tree {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .tree-new    { color: #3fb950; }
+    .tree-mod    { color: #d29922; }
+    .tree-keep   { color: #8b949e; }
+    .tree-del    { color: #f85149; text-decoration: line-through; }
+    .tree-dir    { color: #388bfd; font-weight: 700; }
+    .tree-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .badge-new  { background: rgba(63,185,80,0.2);  color: #3fb950; }
+    .badge-mod  { background: rgba(210,153,34,0.2); color: #d29922; }
+    .badge-keep { background: rgba(139,148,158,0.2);color: #8b949e; }
+
+    /* ── STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .step::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .step:last-child::before { display: none; }
+    .step-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      transition: all 0.2s;
+    }
+    .step-body {
+      padding-bottom: 32px;
+      flex: 1;
+    }
+    .step-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; padding-top: 8px; }
+    .step-desc  { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+
+    /* ── CODE BLOCK ── */
+    .code {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'Consolas', monospace;
+    }
+    .code-wrap { margin-bottom: 16px; }
+    .code-wrap .code { border-radius: 0 0 8px 8px; }
+
+    .c-comment  { color: #6e7681; }
+    .c-key      { color: #ff7b72; }
+    .c-str      { color: #a5d6ff; }
+    .c-val      { color: #79c0ff; }
+    .c-green    { color: #56d364; }
+    .c-yellow   { color: #e3b341; }
+
+    /* ── TABLE ── */
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      background: var(--surface2);
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ── TAG ── */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tag-docker { background: rgba(36,150,237,0.15); color: #2496ed; }
+    .tag-redis  { background: rgba(220,56,45,0.15);  color: #ff6b6b; }
+    .tag-azure  { background: rgba(0,120,212,0.15);  color: #60a5fa; }
+    .tag-react  { background: rgba(97,218,251,0.1);  color: #61dafb; }
+    .tag-sql    { background: rgba(167,139,250,0.15);color: #c084fc; }
+    .tag-nginx  { background: rgba(34,211,238,0.1);  color: #22d3ee; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-left: 4px solid;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .callout-info    { border-color: var(--accent2); background: rgba(56,139,253,0.08); }
+    .callout-warn    { border-color: var(--yellow);  background: rgba(210,153,34,0.08); }
+    .callout-tip     { border-color: var(--green);   background: rgba(63,185,80,0.08);  }
+    .callout-danger  { border-color: var(--red);     background: rgba(248,81,73,0.08);  }
+    .callout strong  { font-weight: 700; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 32px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    nav a:hover { color: var(--text); background: var(--surface2); }
+    .nav-brand { color: var(--text); font-weight: 700; margin-right: 16px; font-size: 14px; }
+
+    /* ── REDIS SECTION ── */
+    .redis-uses {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .redis-use-card {
+      background: rgba(220,56,45,0.06);
+      border: 1px solid rgba(220,56,45,0.25);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .redis-use-card .ru-icon { font-size: 24px; margin-bottom: 8px; }
+    .redis-use-card .ru-title { font-weight: 700; margin-bottom: 4px; font-size: 14px; color: #ff6b6b; }
+    .redis-use-card .ru-desc  { font-size: 13px; color: var(--muted); }
+
+    /* ── AZURE SERVICES ── */
+    .azure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .azure-card {
+      background: rgba(0,120,212,0.06);
+      border: 1px solid rgba(0,120,212,0.25);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .azure-card .az-icon   { font-size: 28px; margin-bottom: 8px; }
+    .azure-card .az-title  { font-weight: 700; font-size: 14px; color: #60a5fa; margin-bottom: 4px; }
+    .azure-card .az-name   { font-size: 12px; color: #388bfd; font-weight: 600; margin-bottom: 6px; }
+    .azure-card .az-desc   { font-size: 12px; color: var(--muted); }
+
+    /* ── PODMAN NOTE ── */
+    .podman-note {
+      background: linear-gradient(135deg, rgba(137,44,160,0.08), rgba(31,111,235,0.06));
+      border: 1px solid rgba(137,44,160,0.3);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .podman-note h3 { color: #c084fc; margin-bottom: 10px; font-size: 16px; }
+
+    ul, ol { padding-left: 20px; }
+    li { margin-bottom: 4px; font-size: 14px; color: var(--muted); }
+    li strong { color: var(--text); }
+
+    .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+    /* Print */
+    @media print {
+      body { background: white; color: black; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🏦 Banco Guayaquil · OGA-SUITE MVP</div>
+  <h1>Plan de Containerización<br>y Despliegue en Azure</h1>
+  <p>Análisis completo del proyecto, estrategia Docker/Podman, Redis y pipeline hacia Azure. Generado: Marzo 2026.</p>
+  <div class="hero-pills">
+    <span class="pill pill-docker">🐳 Docker</span>
+    <span class="pill pill-redis">⚡ Redis</span>
+    <span class="pill pill-azure">☁️ Azure</span>
+    <span class="pill pill-podman">🦭 Podman (futuro)</span>
+    <span class="pill pill-react">⚛️ React + Vite</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">OGA-SUITE</span>
+  <a href="#inventario">📦 Inventario</a>
+  <a href="#arquitectura">🏗️ Arquitectura</a>
+  <a href="#contenedores">🐳 Contenedores</a>
+  <a href="#redis">⚡ Redis</a>
+  <a href="#estructura">📁 Estructura</a>
+  <a href="#azure">☁️ Azure</a>
+  <a href="#pasos">📋 Pasos</a>
+  <a href="#podman">🦭 Podman</a>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 0 — INVENTARIO DEL PROYECTO
+══════════════════════════════════════════════════════ -->
+<div id="inventario">
+  <div class="section-title">
+    <div class="section-num">0</div>
+    Inventario del Proyecto (Estado Actual)
+  </div>
+  <p class="section-sub">Lo que existe hoy en el repositorio antes de tocar nada</p>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-n" style="color:#3fb950">731</div>
+      <div class="stat-l">Archivos · MOCKUP-GLOSARIO<br><small style="font-size:10px">(App React activa)</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#d29922">759</div>
+      <div class="stat-l">Archivos · Desarrollo_OGA<br><small style="font-size:10px">(Legacy ASP.NET)</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#388bfd">48</div>
+      <div class="stat-l">Archivos · MOCKUP-3PAGES<br><small style="font-size:10px">(Mockup simple)</small></div>
+    </div>
+    <div class="stat">
+      <div class="stat-n" style="color:#f85149">0</div>
+      <div class="stat-l">Dockerfiles existentes<br><small style="font-size:10px">(Empezamos desde cero)</small></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(97,218,251,0.1);">⚛️</div>
+        <div>
+          <div class="card-title">MOCKUP-GLOSARIO</div>
+          <div class="card-desc">App React principal — branch activo</div>
+        </div>
+      </div>
+      <table>
+        <tr><td>Framework</td><td><span class="tag tag-react">React 18.2</span> + Vite 5</td></tr>
+        <tr><td>Puerto dev</td><td>:5175</td></tr>
+        <tr><td>Build output</td><td><code>dist/</code></td></tr>
+        <tr><td>API base</td><td><code>gobinfoana01-2:8510</code></td></tr>
+        <tr><td>Fuente React real</td><td>~30 archivos en <code>src/</code></td></tr>
+        <tr><td>Assets legacy</td><td>~700 archivos (js, css, img, font)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(210,153,34,0.1);">🏛️</div>
+        <div>
+          <div class="card-title">Desarrollo_OGA</div>
+          <div class="card-desc">Legacy ASP.NET — todas las páginas</div>
+        </div>
+      </div>
+      <table>
+        <tr><td>Tecnología</td><td>ASP.NET ASPX</td></tr>
+        <tr><td>Páginas</td><td>60+ archivos .aspx</td></tr>
+        <tr><td>JS propio</td><td>399 archivos jQuery</td></tr>
+        <tr><td>CSS</td><td>33 archivos</td></tr>
+        <tr><td>Imágenes</td><td>131 archivos</td></tr>
+        <tr><td>Host típico</td><td>IIS en Windows Server</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(248,81,73,0.1);">🔌</div>
+        <div>
+          <div class="card-title">API Backend</div>
+          <div class="card-desc">Servidor existente en el banco</div>
+        </div>
+      </div>
+      <table>
+        <tr><td>URL</td><td><code>gobinfoana01-2:8510</code></td></tr>
+        <tr><td>Endpoints</td><td><code>POST /query</code><br><code>POST /insert</code><br><code>PUT /update</code></td></tr>
+        <tr><td>DB</td><td>SQL Server (PROCESOS_BI)</td></tr>
+        <tr><td>Tablas</td><td>T_terminos, t_mapa_dominios,<br>t_casos_uso_analitica</td></tr>
+        <tr><td>Estado</td><td>Servidor físico del banco</td></tr>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>⚠️ Observación importante:</strong> El 95% del peso del proyecto (js/, css/, img/, font/) son assets del sistema legado copiados dentro del proyecto React. El código React real son ~30 archivos. Esto impacta en el tamaño de las imágenes Docker — lo manejamos con un .dockerignore bien configurado.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 1 — ARQUITECTURA OBJETIVO
+══════════════════════════════════════════════════════ -->
+<div id="arquitectura">
+  <div class="section-title">
+    <div class="section-num">1</div>
+    Arquitectura Objetivo
+  </div>
+  <p class="section-sub">Cómo quedarán comunicadas todas las piezas con Docker + Redis + Azure</p>
+
+  <div class="arch-diagram">
+    <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:24px;text-transform:uppercase;letter-spacing:1px">Flujo completo · Usuario → Internet → Azure → Contenedores</div>
+
+    <!-- Fila 1: Usuario → Azure Front Door → Nginx -->
+    <div class="arch-row" style="margin-bottom:16px">
+      <div class="arch-box ab-user">
+        <div class="ab-label">Cliente</div>
+        <div class="ab-name">👤 Usuario</div>
+        <div class="ab-sub">Banco / Internet</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box ab-azure-net">
+        <div class="ab-label">Azure</div>
+        <div class="ab-name">🌐 Front Door</div>
+        <div class="ab-sub">HTTPS / CDN / WAF</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box ab-nginx">
+        <div class="ab-label">Container 1</div>
+        <div class="ab-name">⚡ Nginx</div>
+        <div class="ab-sub">Reverse Proxy · :80/443</div>
+      </div>
+    </div>
+
+    <!-- Fila 2: Nginx → [React | API] -->
+    <div style="text-align:center;margin:8px 0;color:var(--muted)">↓ rutas</div>
+    <div class="arch-row" style="gap:16px;margin-bottom:16px">
+
+      <div class="arch-group">
+        <div class="arch-group-label">Contenedores Docker (Azure Container Apps)</div>
+        <div class="arch-row" style="gap:12px">
+          <div class="arch-box ab-react" style="min-width:160px">
+            <div class="ab-label">Container 2</div>
+            <div class="ab-name">⚛️ React App</div>
+            <div class="ab-sub">dist/ servido por Nginx<br>Glosario + Políticas</div>
+          </div>
+          <div class="arch-box ab-api" style="min-width:160px">
+            <div class="ab-label">Container 3</div>
+            <div class="ab-name">🔌 API Backend</div>
+            <div class="ab-sub">Node/Express · :8510<br>REST + SQL</div>
+          </div>
+          <div class="arch-box ab-redis" style="min-width:160px">
+            <div class="ab-label">Container 4</div>
+            <div class="ab-name">⚡ Redis</div>
+            <div class="ab-sub">Cache · Sessions<br>:6379</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fila 3: → SQL Server -->
+    <div style="text-align:center;margin:8px 0;color:var(--muted)">↓ datos</div>
+    <div class="arch-row">
+      <div class="arch-box ab-sql">
+        <div class="ab-label">Base de Datos</div>
+        <div class="ab-name">🗄️ SQL Server</div>
+        <div class="ab-sub">PROCESOS_BI<br>Servidor del Banco (Azure SQL o gobinfoana01-2)</div>
+      </div>
+      <div class="arch-arrow" style="margin-left:24px">←→</div>
+      <div class="arch-box ab-acr" style="min-width:160px">
+        <div class="ab-label">Registro</div>
+        <div class="ab-name">📦 Azure Container<br>Registry (ACR)</div>
+        <div class="ab-sub">Imágenes Docker<br>Versionadas</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout callout-tip">
+    <strong>💡 Decisión clave:</strong> El <strong>Nginx actúa como reverse proxy</strong>. Expone un solo puerto al exterior (:80/:443) y enruta internamente hacia el React estático o hacia la API. Esto simplifica el firewall del banco enormemente.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 2 — LOS 4 CONTENEDORES
+══════════════════════════════════════════════════════ -->
+<div id="contenedores">
+  <div class="section-title">
+    <div class="section-num">2</div>
+    Los 4 Contenedores Docker
+  </div>
+  <p class="section-sub">Qué va dentro de cada imagen, por qué y qué expone</p>
+
+  <!-- CONTAINER 1: NGINX -->
+  <div class="card" style="border-color:rgba(34,211,238,0.3)">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(34,211,238,0.1);font-size:22px">⚡</div>
+      <div>
+        <div class="card-title" style="color:#22d3ee">Contenedor 1 — Nginx Reverse Proxy</div>
+        <div class="card-desc">Imagen base: nginx:alpine · Puerto expuesto: 80 (local) / 443 en Azure</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">¿Qué hace?</strong></p>
+        <ul>
+          <li>Recibe todo el tráfico HTTP/HTTPS de usuarios</li>
+          <li>Ruta <code>/</code> → sirve el React app (estático)</li>
+          <li>Ruta <code>/api/</code> → proxy hacia API container :8510</li>
+          <li>Maneja CORS, headers de seguridad, gzip</li>
+          <li>Sirve archivos estáticos con caché agresiva (img, css, js)</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">¿Por qué existe?</strong></p>
+        <ul>
+          <li>Un solo punto de entrada al sistema</li>
+          <li>El banco solo abre UN puerto en el firewall</li>
+          <li>Puede escalar React y API independientemente</li>
+          <li>SSL termination en un solo lugar</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER 2: REACT -->
+  <div class="card" style="border-color:rgba(97,218,251,0.3)">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(97,218,251,0.1);font-size:22px">⚛️</div>
+      <div>
+        <div class="card-title" style="color:#61dafb">Contenedor 2 — React App (Frontend)</div>
+        <div class="card-desc">Build multi-stage: node:18-alpine → nginx:alpine · Solo sirve archivos dist/</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">Proceso de build (multi-stage)</strong></p>
+        <ul>
+          <li><strong>Stage 1 (builder):</strong> node:18-alpine → <code>npm ci</code> → <code>npm run build</code></li>
+          <li><strong>Stage 2 (runner):</strong> nginx:alpine → copia solo el <code>dist/</code></li>
+          <li>Imagen final: ~25 MB (sin node_modules)</li>
+          <li>Variables de entorno inyectadas en build time con Vite</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">¿Qué incluye?</strong></p>
+        <ul>
+          <li>✅ <code>src/</code> (React source compilado)</li>
+          <li>✅ Assets estáticos (img, font, css)</li>
+          <li>✅ <code>dist/index.html</code> + bundles JS</li>
+          <li>❌ node_modules (excluido)</li>
+          <li>❌ Archivos fuente .jsx (excluido)</li>
+          <li>❌ js/ legacy de 399 archivos (excluido en prod)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER 3: API -->
+  <div class="card" style="border-color:rgba(245,158,11,0.3)">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(245,158,11,0.1);font-size:22px">🔌</div>
+      <div>
+        <div class="card-title" style="color:#f59e0b">Contenedor 3 — API Backend</div>
+        <div class="card-desc">Imagen: node:18-alpine · Puerto interno: 8510</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">¿Qué contiene?</strong></p>
+        <ul>
+          <li>El servidor Node/Express que corre en <code>gobinfoana01-2:8510</code></li>
+          <li>Endpoints: <code>/query</code>, <code>/insert</code>, <code>/update</code></li>
+          <li>Conexión a SQL Server (PROCESOS_BI)</li>
+          <li>Capa de Redis para cachear respuestas</li>
+        </ul>
+      </div>
+      <div>
+        <div class="callout callout-warn" style="margin:0">
+          <strong>⚠️ Nota:</strong> Si el código fuente de la API está en el servidor del banco, necesitas obtenerlo para containerizarlo. Si solo tienes el binario/URL, lo referencias como servicio externo en el <code>docker-compose.yml</code> y solo containerizas el frontend + Redis.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER 4: REDIS -->
+  <div class="card" style="border-color:rgba(220,56,45,0.3)">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(220,56,45,0.1);font-size:22px">⚡</div>
+      <div>
+        <div class="card-title" style="color:#ff6b6b">Contenedor 4 — Redis Cache</div>
+        <div class="card-desc">Imagen oficial: redis:7-alpine · Puerto interno: 6379</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">¿Para qué lo usas?</strong></p>
+        <ul>
+          <li>Cache de todos los términos del glosario (TTL 5 min)</li>
+          <li>Cache de dominios y mapas de dominios</li>
+          <li>Términos recientes por usuario (ya los tienes en state)</li>
+          <li>Rate limiting en la API</li>
+          <li>Sesiones de usuario (si implementas auth)</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px"><strong style="color:var(--text)">Config mínima</strong></p>
+        <ul>
+          <li>Imagen: <code>redis:7-alpine</code> (10 MB)</li>
+          <li>Puerto: <code>6379</code> (solo interno, nunca expuesto)</li>
+          <li>Persistencia: <code>appendonly yes</code></li>
+          <li>Memoria máxima: <code>256mb</code></li>
+          <li>En Azure: reemplazar por <strong>Azure Cache for Redis</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 3 — USO DE REDIS (DETALLE)
+══════════════════════════════════════════════════════ -->
+<div id="redis">
+  <div class="section-title">
+    <div class="section-num">3</div>
+    ¿Para Qué Específicamente Redis?
+  </div>
+  <p class="section-sub">Casos de uso concretos en OGA-SUITE</p>
+
+  <div class="redis-uses">
+
+    <div class="redis-use-card">
+      <div class="ru-icon">📚</div>
+      <div class="ru-title">Cache de Términos</div>
+      <div class="ru-desc">El endpoint <code>getTerminosAll()</code> hace una query pesada a SQL. Redis la cachea por 5 minutos. Si hay 50 usuarios simultáneos, SQL recibe 1 query en vez de 50.</div>
+    </div>
+
+    <div class="redis-use-card">
+      <div class="ru-icon">🕐</div>
+      <div class="ru-title">Términos Recientes</div>
+      <div class="ru-desc">Hoy los guardas en <code>localStorage</code>. Con Redis puedes sincronizarlos entre dispositivos del mismo usuario usando su ID bancario como key.</div>
+    </div>
+
+    <div class="redis-use-card">
+      <div class="ru-icon">🗺️</div>
+      <div class="ru-title">Cache de Dominios</div>
+      <div class="ru-desc"><code>t_mapa_dominios</code> casi no cambia. Redis lo mantiene en memoria y sirve instantáneo. TTL de 30 minutos.</div>
+    </div>
+
+    <div class="redis-use-card">
+      <div class="ru-icon">🔍</div>
+      <div class="ru-title">Resultados de Búsqueda</div>
+      <div class="ru-desc">Búsquedas frecuentes como "cliente", "transacción" se cachean como <code>search:cliente → [términos]</code> con TTL de 2 minutos.</div>
+    </div>
+
+    <div class="redis-use-card">
+      <div class="ru-icon">🚦</div>
+      <div class="ru-title">Rate Limiting</div>
+      <div class="ru-desc">Limitar requests por IP o usuario. Ej: máx 100 requests/minuto. Fundamental en entornos bancarios para evitar abusos.</div>
+    </div>
+
+    <div class="redis-use-card">
+      <div class="ru-icon">🔐</div>
+      <div class="ru-title">Sesiones (futuro)</div>
+      <div class="ru-desc">Cuando agregues autenticación bancaria (LDAP/AD), las sesiones van en Redis. Permiten logout centralizado y expiración automática.</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="code-header">
+      <span>Ejemplo de integración Redis en la API (Node.js)</span>
+      <span style="color:var(--green)">apiService.js — con cache</span>
+    </div>
+    <div class="code"><span class="c-comment">// Patrón Cache-Aside: primero busca en Redis, si no hay va a SQL</span>
+<span class="c-key">async function</span> <span class="c-green">getTerminosAll</span>() {
+  <span class="c-key">const</span> cacheKey = <span class="c-str">'terminos:all'</span>;
+
+  <span class="c-comment">// 1. Intentar desde cache</span>
+  <span class="c-key">const</span> cached = <span class="c-key">await</span> redis.get(cacheKey);
+  <span class="c-key">if</span> (cached) <span class="c-key">return</span> JSON.parse(cached);
+
+  <span class="c-comment">// 2. Cache miss → consulta SQL Server</span>
+  <span class="c-key">const</span> result = <span class="c-key">await</span> <span class="c-green">query</span>(<span class="c-str">`SELECT * FROM procesos_bi.dbo.T_terminos WHERE activo = 1`</span>);
+
+  <span class="c-comment">// 3. Guardar en cache por 5 minutos</span>
+  <span class="c-key">await</span> redis.setex(cacheKey, <span class="c-val">300</span>, JSON.stringify(result));
+
+  <span class="c-key">return</span> result;
+}</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 4 — ESTRUCTURA DE ARCHIVOS
+══════════════════════════════════════════════════════ -->
+<div id="estructura">
+  <div class="section-title">
+    <div class="section-num">4</div>
+    Estructura de Archivos Propuesta
+  </div>
+  <p class="section-sub">Dónde poner cada archivo Docker. En verde = nuevo, amarillo = modificado, gris = sin cambios</p>
+
+  <div class="tree">
+<span class="tree-dir">MVP_OGA-SUITE/</span>
+│
+├── <span class="tree-new">docker-compose.yml</span>         <span class="tree-badge badge-new">NUEVO</span>     ← Orquesta todos los contenedores (dev local)
+├── <span class="tree-new">docker-compose.prod.yml</span>    <span class="tree-badge badge-new">NUEVO</span>     ← Override para producción/Azure
+├── <span class="tree-new">.env.example</span>               <span class="tree-badge badge-new">NUEVO</span>     ← Variables de entorno (sin secretos)
+├── <span class="tree-new">.env</span>                       <span class="tree-badge badge-new">NUEVO</span>     ← Secretos reales (en .gitignore ✅)
+├── <span class="tree-keep">.gitignore</span>                 <span class="tree-badge badge-mod">MOD</span>      ← Agregar: .env, dist/, *.env.local
+│
+├── <span class="tree-dir">docker/</span>                    <span class="tree-badge badge-new">NUEVA CARPETA</span>
+│   ├── <span class="tree-dir">nginx/</span>
+│   │   ├── <span class="tree-new">Dockerfile</span>         <span class="tree-badge badge-new">NUEVO</span>     ← FROM nginx:alpine
+│   │   └── <span class="tree-new">nginx.conf</span>         <span class="tree-badge badge-new">NUEVO</span>     ← Reglas de proxy y rutas
+│   ├── <span class="tree-dir">frontend/</span>
+│   │   └── <span class="tree-new">Dockerfile</span>         <span class="tree-badge badge-new">NUEVO</span>     ← Multi-stage: node→build→nginx
+│   └── <span class="tree-dir">api/</span>
+│       └── <span class="tree-new">Dockerfile</span>         <span class="tree-badge badge-new">NUEVO</span>     ← FROM node:18-alpine (si tienes el código)
+│
+├── <span class="tree-dir">MOCKUP-GLOSARIO/</span>
+│   └── <span class="tree-dir">Desarrollo/</span>            <span class="tree-badge badge-keep">SIN CAMBIOS</span>   ← Todo el código React queda aquí
+│       ├── <span class="tree-new">.dockerignore</span>      <span class="tree-badge badge-new">NUEVO</span>     ← Excluye: node_modules/, js/ legacy, img/
+│       ├── <span class="tree-keep">src/</span>               ← React source (main.jsx, App.jsx, Pages/, etc.)
+│       ├── <span class="tree-keep">services/</span>         ← apiService.js, terminosService.js
+│       ├── <span class="tree-keep">hooks/</span>            ← useGlosario.js
+│       ├── <span class="tree-keep">package.json</span>      ← Sin cambios
+│       ├── <span class="tree-mod">vite.config.js</span>    <span class="tree-badge badge-mod">MOD</span>      ← Agregar variables de entorno
+│       ├── <span class="tree-keep">js/</span>               ← 399 archivos legacy (se excluyen en docker prod)
+│       ├── <span class="tree-keep">css/</span>              ← 33 archivos legacy
+│       └── <span class="tree-keep">img/</span>              ← 131 imágenes
+│
+├── <span class="tree-dir">MOCKUP-3PAGES/</span>             <span class="tree-badge badge-keep">SIN CAMBIOS</span>   ← Mockup simple, sin containerizar aún
+└── <span class="tree-dir">Desarrollo_OGA/</span>            <span class="tree-badge badge-keep">SIN CAMBIOS</span>   ← Legacy ASP.NET, se maneja por separado (IIS)
+  </div>
+
+  <div class="callout callout-info" style="margin-top:16px">
+    <strong>ℹ️ ¿Por qué <code>docker/</code> separado y no junto al código?</strong> Mantener los Dockerfiles en una carpeta dedicada es una práctica profesional que separa la infraestructura del código fuente. Cuando el banco tenga un equipo DevOps, ellos tocan solo la carpeta <code>docker/</code>, no el código React.
+  </div>
+
+  <!-- DOCKERFILES -->
+  <div style="margin-top:28px">
+    <div class="code-header">
+      <span>docker/frontend/Dockerfile</span>
+      <span style="color:#61dafb">Multi-stage build · Imagen final ~25MB</span>
+    </div>
+    <div class="code"><span class="c-comment"># ── STAGE 1: Build de React con Vite ─────────────────────────────────</span>
+<span class="c-key">FROM</span> node:18-alpine <span class="c-key">AS</span> builder
+
+<span class="c-key">WORKDIR</span> /app
+
+<span class="c-comment"># Copiar solo package files primero (aprovechar cache de Docker)</span>
+<span class="c-key">COPY</span> MOCKUP-GLOSARIO/Desarrollo/package*.json ./
+
+<span class="c-comment"># Instalar dependencias (solo producción para el build)</span>
+<span class="c-key">RUN</span> npm ci
+
+<span class="c-comment"># Copiar el código fuente React (el .dockerignore excluye js/ legacy)</span>
+<span class="c-key">COPY</span> MOCKUP-GLOSARIO/Desarrollo/ .
+
+<span class="c-comment"># Variables de entorno para el build</span>
+<span class="c-key">ARG</span> VITE_API_URL
+<span class="c-key">ENV</span> VITE_API_URL=$VITE_API_URL
+
+<span class="c-comment"># Compilar la aplicación</span>
+<span class="c-key">RUN</span> npm run build
+
+<span class="c-comment"># ── STAGE 2: Servir con Nginx (imagen mínima) ─────────────────────────</span>
+<span class="c-key">FROM</span> nginx:alpine
+
+<span class="c-comment"># Copiar solo el resultado del build (dist/)</span>
+<span class="c-key">COPY</span> --from=builder /app/dist /usr/share/nginx/html
+
+<span class="c-comment"># Configuración de Nginx para SPA (React Router)</span>
+<span class="c-key">COPY</span> docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+<span class="c-key">EXPOSE</span> 80
+
+<span class="c-key">CMD</span> ["nginx", "-g", "daemon off;"]</div>
+  </div>
+
+  <div style="margin-top:16px">
+    <div class="code-header">
+      <span>docker/nginx/nginx.conf</span>
+      <span style="color:#22d3ee">Reverse proxy + SPA fallback</span>
+    </div>
+    <div class="code">server {
+    listen 80;
+    server_name _;
+
+    <span class="c-comment"># Gzip para mejor rendimiento</span>
+    gzip on;
+    gzip_types text/html text/css application/javascript application/json;
+
+    <span class="c-comment"># Servir React SPA</span>
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html;
+        <span class="c-comment"># Crucial para React Router — rutas como /glosario, /politicas</span>
+        try_files $uri $uri/ /index.html;
+    }
+
+    <span class="c-comment"># Proxy hacia la API (evita CORS en el browser)</span>
+    location /api/ {
+        proxy_pass         http://api:8510/;
+        proxy_http_version 1.1;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    <span class="c-comment"># Cache agresiva para assets estáticos</span>
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|woff2?)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+}</div>
+  </div>
+
+  <div style="margin-top:16px">
+    <div class="code-header">
+      <span>docker-compose.yml</span>
+      <span style="color:#3fb950">Desarrollo local — levantar todo con un comando</span>
+    </div>
+    <div class="code">version: '3.9'
+
+services:
+
+  <span class="c-comment"># ── Frontend React ──────────────────────────────────────────────────</span>
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost/api}
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+      - redis
+    networks:
+      - oga-network
+    restart: unless-stopped
+
+  <span class="c-comment"># ── API Backend ─────────────────────────────────────────────────────</span>
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=PROCESOS_BI
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - REDIS_URL=redis://redis:6379
+      - PORT=8510
+    depends_on:
+      - redis
+    networks:
+      - oga-network
+    restart: unless-stopped
+    <span class="c-comment"># Si la API NO está containerizada, comentar este servicio</span>
+    <span class="c-comment"># y poner gobinfoana01-2:8510 como servicio externo</span>
+
+  <span class="c-comment"># ── Redis Cache ─────────────────────────────────────────────────────</span>
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"    <span class="c-comment"># solo para debug local, no en prod</span>
+    volumes:
+      - redis-data:/data
+    networks:
+      - oga-network
+    restart: unless-stopped
+
+  <span class="c-comment"># ── Nginx Proxy (opcional en dev, necesario en prod) ────────────────</span>
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - api
+    networks:
+      - oga-network
+    restart: unless-stopped
+
+networks:
+  oga-network:
+    driver: bridge
+
+volumes:
+  redis-data:</div>
+  </div>
+
+  <div style="margin-top:16px">
+    <div class="code-header">
+      <span>MOCKUP-GLOSARIO/Desarrollo/.dockerignore</span>
+      <span style="color:#f59e0b">Excluye archivos pesados del contexto Docker</span>
+    </div>
+    <div class="code">node_modules/
+dist/
+.vite/
+.git/
+
+<span class="c-comment"># Assets legacy que NO van en la imagen Docker de producción</span>
+<span class="c-comment"># (Solo se usan en el entorno de desarrollo ASP.NET)</span>
+js/
+css/
+font/
+img/
+docs/
+Profiling/
+Validador_Data/
+datasets-txt/
+Documentos/
+reportes/
+logos/
+
+<span class="c-comment"># Archivos de desarrollo</span>
+*.md
+.env*
+!.env.production</div>
+  </div>
+
+  <div class="callout callout-warn" style="margin-top:16px">
+    <strong>⚠️ Impacto del .dockerignore:</strong> Sin él, el contexto Docker sería ~750 MB (399 archivos JS legacy + imágenes). Con el .dockerignore, el contexto de build es ~2 MB. La imagen final queda en ~25 MB. Diferencia de 30x.
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 5 — AZURE
+══════════════════════════════════════════════════════ -->
+<div id="azure">
+  <div class="section-title">
+    <div class="section-num">5</div>
+    Despliegue en Azure
+  </div>
+  <p class="section-sub">Servicios de Azure que usarías — del registro de imágenes hasta la app en producción</p>
+
+  <div class="azure-grid">
+
+    <div class="azure-card">
+      <div class="az-icon">📦</div>
+      <div class="az-title">Container Registry</div>
+      <div class="az-name">Azure Container Registry (ACR)</div>
+      <div class="az-desc">Donde subes y versionas tus imágenes Docker. Es como Docker Hub pero privado y dentro de Azure. Cada push de código genera una nueva imagen.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">🚀</div>
+      <div class="az-title">Runtime de Contenedores</div>
+      <div class="az-name">Azure Container Apps</div>
+      <div class="az-desc">Corre tus contenedores sin gestionar VMs. Auto-scaling, HTTPS automático, integración con ACR. Más simple que AKS para este proyecto.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">⚡</div>
+      <div class="az-title">Redis Managed</div>
+      <div class="az-name">Azure Cache for Redis</div>
+      <div class="az-desc">Redis administrado por Azure. Sin mantenimiento, con alta disponibilidad, backups automáticos. En prod reemplaza al contenedor Redis local.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">🌐</div>
+      <div class="az-title">Entrada / CDN</div>
+      <div class="az-name">Azure Front Door</div>
+      <div class="az-desc">CDN global + WAF (firewall de aplicaciones) + HTTPS. Los assets estáticos del React (JS, CSS, img) se sirven desde el edge, ultra rápido.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">🗄️</div>
+      <div class="az-title">Base de Datos</div>
+      <div class="az-name">Azure SQL (o keep server)</div>
+      <div class="az-desc">Puedes migrar PROCESOS_BI a Azure SQL Database (compatible con SQL Server 100%). O dejar gobinfoana01-2 y conectar desde Container Apps via VNet.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">🔑</div>
+      <div class="az-title">Secretos</div>
+      <div class="az-name">Azure Key Vault</div>
+      <div class="az-desc">Almacena strings de conexión, contraseñas de DB, API keys. Container Apps los consume automáticamente. Nunca secretos en el código.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">🔁</div>
+      <div class="az-title">CI/CD</div>
+      <div class="az-name">Azure DevOps Pipelines</div>
+      <div class="az-desc">Pipeline automático: push a main → build imagen → push a ACR → deploy a Container Apps. El banco ya tiene Azure DevOps.</div>
+    </div>
+
+    <div class="azure-card">
+      <div class="az-icon">📊</div>
+      <div class="az-title">Observabilidad</div>
+      <div class="az-name">Azure Monitor + App Insights</div>
+      <div class="az-desc">Logs, métricas, alertas, trazas de requests. Ves exactamente qué query SQL está siendo lenta o cuántos cache hits tiene Redis.</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="code-header">
+      <span>azure-pipelines.yml</span>
+      <span style="color:#0078d4">CI/CD — build → push ACR → deploy</span>
+    </div>
+    <div class="code">trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  acrName: 'ogasuiteacr'
+  imageName: 'oga-frontend'
+  containerApp: 'oga-suite-app'
+  resourceGroup: 'rg-oga-suite'
+
+stages:
+
+- stage: Build
+  jobs:
+  - job: BuildAndPush
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    - task: Docker@2
+      displayName: 'Build imagen Docker'
+      inputs:
+        command: build
+        dockerfile: 'docker/frontend/Dockerfile'
+        buildContext: '.'
+        repository: '$(acrName).azurecr.io/$(imageName)'
+        tags: |
+          $(Build.BuildId)
+          latest
+        arguments: '--build-arg VITE_API_URL=$(VITE_API_URL_PROD)'
+
+    - task: Docker@2
+      displayName: 'Push a Azure Container Registry'
+      inputs:
+        command: push
+        repository: '$(acrName).azurecr.io/$(imageName)'
+        containerRegistry: 'ACR-ServiceConnection'
+        tags: |
+          $(Build.BuildId)
+          latest
+
+- stage: Deploy
+  jobs:
+  - job: DeployContainerApp
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Deploy a Azure Container Apps'
+      inputs:
+        azureSubscription: 'Azure-ServiceConnection'
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az containerapp update \
+            --name $(containerApp) \
+            --resource-group $(resourceGroup) \
+            --image $(acrName).azurecr.io/$(imageName):$(Build.BuildId)</div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 6 — PASOS A SEGUIR
+══════════════════════════════════════════════════════ -->
+<div id="pasos">
+  <div class="section-title">
+    <div class="section-num">6</div>
+    Pasos a Seguir (Orden Exacto)
+  </div>
+  <p class="section-sub">De donde estás hoy hasta tener todo en Azure</p>
+
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(63,185,80,0.15);border-color:#3fb950;color:#3fb950">1</div>
+      <div class="step-body">
+        <div class="step-title">Crear la estructura de carpetas Docker</div>
+        <div class="step-desc">Crear <code>docker/nginx/</code>, <code>docker/frontend/</code>, <code>docker/api/</code> en la raíz del proyecto.</div>
+        <div class="code">mkdir -p docker/nginx docker/frontend docker/api</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(63,185,80,0.15);border-color:#3fb950;color:#3fb950">2</div>
+      <div class="step-body">
+        <div class="step-title">Crear los archivos Docker</div>
+        <div class="step-desc">Copiar los Dockerfile, nginx.conf, docker-compose.yml y .dockerignore de este plan.</div>
+        <div class="code">touch docker/frontend/Dockerfile
+touch docker/nginx/nginx.conf
+touch docker-compose.yml
+touch .env.example
+touch MOCKUP-GLOSARIO/Desarrollo/.dockerignore</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(63,185,80,0.15);border-color:#3fb950;color:#3fb950">3</div>
+      <div class="step-body">
+        <div class="step-title">Crear .env con las variables de entorno</div>
+        <div class="step-desc">Crear el archivo <code>.env</code> real (no commiteado) con los valores del banco.</div>
+        <div class="code"><span class="c-comment"># .env — NO commitear, está en .gitignore</span>
+VITE_API_URL=http://gobinfoana01-2:8510
+DB_HOST=gobinfoana01-2
+DB_USER=tu_usuario
+DB_PASS=tu_contraseña_segura</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(63,185,80,0.15);border-color:#3fb950;color:#3fb950">4</div>
+      <div class="step-body">
+        <div class="step-title">Adaptar vite.config.js para usar variables de entorno</div>
+        <div class="step-desc">En lugar de hardcodear la URL de la API, leerla desde <code>import.meta.env.VITE_API_URL</code>.</div>
+        <div class="code"><span class="c-comment">// En apiService.js — cambiar la URL hardcodeada</span>
+<span class="c-comment">// ANTES:</span>
+<span class="c-key">const</span> BASE_URL = <span class="c-str">'http://gobinfoana01-2:8510'</span>;
+
+<span class="c-comment">// DESPUÉS:</span>
+<span class="c-key">const</span> BASE_URL = import.meta.env.VITE_API_URL || <span class="c-str">'http://gobinfoana01-2:8510'</span>;</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(56,139,253,0.15);border-color:#388bfd;color:#388bfd">5</div>
+      <div class="step-body">
+        <div class="step-title">Build y prueba local con Docker</div>
+        <div class="step-desc">Verificar que la imagen se construye correctamente antes de subir nada.</div>
+        <div class="code"><span class="c-comment"># Construir solo el frontend primero</span>
+docker build -f docker/frontend/Dockerfile -t oga-frontend:test .
+
+<span class="c-comment"># Ver el tamaño de la imagen</span>
+docker images oga-frontend:test
+
+<span class="c-comment"># Levantar todo el stack</span>
+docker compose up --build
+
+<span class="c-comment"># Verificar que funciona</span>
+curl http://localhost:3000/glosario</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(56,139,253,0.15);border-color:#388bfd;color:#388bfd">6</div>
+      <div class="step-body">
+        <div class="step-title">Crear recursos en Azure</div>
+        <div class="step-desc">Crear el Resource Group, ACR y Container Apps en el portal de Azure o con CLI.</div>
+        <div class="code"><span class="c-comment"># Con Azure CLI (instalar az CLI primero)</span>
+az login
+
+<span class="c-comment"># Crear Resource Group</span>
+az group create --name rg-oga-suite --location eastus
+
+<span class="c-comment"># Crear Azure Container Registry</span>
+az acr create --resource-group rg-oga-suite \
+  --name ogasuiteacr --sku Basic
+
+<span class="c-comment"># Crear Azure Cache for Redis (tier C0 = 250MB, dev/test)</span>
+az redis create --name oga-redis \
+  --resource-group rg-oga-suite \
+  --location eastus --sku Basic --vm-size C0</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(56,139,253,0.15);border-color:#388bfd;color:#388bfd">7</div>
+      <div class="step-body">
+        <div class="step-title">Push de imágenes a Azure Container Registry</div>
+        <div class="step-desc">Subir las imágenes Docker al registro privado de Azure.</div>
+        <div class="code"><span class="c-comment"># Login al registro</span>
+az acr login --name ogasuiteacr
+
+<span class="c-comment"># Tag de la imagen con el nombre del ACR</span>
+docker tag oga-frontend:test ogasuiteacr.azurecr.io/oga-frontend:v1.0
+
+<span class="c-comment"># Push al registro</span>
+docker push ogasuiteacr.azurecr.io/oga-frontend:v1.0
+
+<span class="c-comment"># Verificar que está en el registro</span>
+az acr repository list --name ogasuiteacr</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(56,139,253,0.15);border-color:#388bfd;color:#388bfd">8</div>
+      <div class="step-body">
+        <div class="step-title">Crear Container App en Azure</div>
+        <div class="step-desc">Desplegar el contenedor desde ACR hacia Azure Container Apps.</div>
+        <div class="code"><span class="c-comment"># Crear Container Apps environment</span>
+az containerapp env create \
+  --name oga-suite-env \
+  --resource-group rg-oga-suite \
+  --location eastus
+
+<span class="c-comment"># Crear la Container App con la imagen</span>
+az containerapp create \
+  --name oga-suite-app \
+  --resource-group rg-oga-suite \
+  --environment oga-suite-env \
+  --image ogasuiteacr.azurecr.io/oga-frontend:v1.0 \
+  --registry-server ogasuiteacr.azurecr.io \
+  --target-port 80 \
+  --ingress external \
+  --min-replicas 1 \
+  --max-replicas 3</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(167,139,250,0.15);border-color:#a78bfa;color:#c084fc">9</div>
+      <div class="step-body">
+        <div class="step-title">Configurar Azure DevOps Pipeline (CI/CD)</div>
+        <div class="step-desc">Automatizar el deploy para que cada push a <code>main</code> despliegue automáticamente.</div>
+        <div class="step-desc">Crear <code>azure-pipelines.yml</code> en la raíz del proyecto con el contenido del paso anterior.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num" style="background:rgba(167,139,250,0.15);border-color:#a78bfa;color:#c084fc">10</div>
+      <div class="step-body">
+        <div class="step-title">Integrar Redis en la API (opcional avanzado)</div>
+        <div class="step-desc">Agregar la capa de cache Redis en el código del API backend para reducir carga en SQL Server.</div>
+        <div class="step-desc">Instalar <code>ioredis</code> en el proyecto API e implementar el patrón Cache-Aside mostrado en la Sección 3.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     SECCIÓN 7 — MIGRACIÓN A PODMAN
+══════════════════════════════════════════════════════ -->
+<div id="podman">
+  <div class="section-title">
+    <div class="section-num">7</div>
+    Migración a Podman (Cuando Llegue el Momento)
+  </div>
+  <p class="section-sub">La gran noticia: no necesitas reescribir nada</p>
+
+  <div class="podman-note">
+    <h3>🦭 Podman es compatible 100% con Docker</h3>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px">
+      Podman lee los mismos Dockerfiles, el mismo docker-compose.yml (via podman-compose), y usa los mismos comandos. La migración es literalmente instalar Podman y cambiar alias.
+    </p>
+    <div class="code"><span class="c-comment"># Instalar podman-compose</span>
+pip install podman-compose
+
+<span class="c-comment"># Los mismos comandos — solo cambia "docker" por "podman"</span>
+podman build -f docker/frontend/Dockerfile -t oga-frontend .
+podman-compose up --build
+
+<span class="c-comment"># O crear alias para no cambiar hábitos</span>
+alias docker=podman
+alias docker-compose=podman-compose</div>
+  </div>
+
+  <div style="margin-top:20px" class="grid-2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">✅ Ventajas de Podman para el banco</div>
+      <ul>
+        <li><strong>Rootless:</strong> corre sin root — más seguro</li>
+        <li><strong>Sin daemon:</strong> no hay proceso en background</li>
+        <li><strong>RHEL/UBI:</strong> imágenes certificadas para empresas</li>
+        <li><strong>OpenShift compatible:</strong> Azure Red Hat OpenShift</li>
+        <li><strong>Sin licencia:</strong> Docker Desktop ya cobra en empresas grandes</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">📋 Qué cambia al migrar</div>
+      <ul>
+        <li><strong>NADA</strong> en los Dockerfiles</li>
+        <li><strong>NADA</strong> en el docker-compose.yml</li>
+        <li><strong>NADA</strong> en el código de la app</li>
+        <li>Solo: instalar Podman + podman-compose</li>
+        <li>Opcional: ajustar variables de entorno de la red</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     TABLA RESUMEN
+══════════════════════════════════════════════════════ -->
+<div>
+  <div class="section-title">
+    <div class="section-num" style="background:var(--surface2);border:1px solid var(--border);">📋</div>
+    Resumen de Servicios y Tecnologías
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <table>
+      <thead>
+        <tr>
+          <th>Componente</th>
+          <th>Local (Docker)</th>
+          <th>Azure (Prod)</th>
+          <th>Tamaño aprox.</th>
+          <th>Puerto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Frontend React</td>
+          <td><span class="tag tag-docker">docker build</span></td>
+          <td><span class="tag tag-azure">Container Apps</span></td>
+          <td>~25 MB</td>
+          <td>:80</td>
+        </tr>
+        <tr>
+          <td>Nginx Proxy</td>
+          <td><span class="tag tag-nginx">nginx:alpine</span></td>
+          <td><span class="tag tag-azure">Ingress nativo</span></td>
+          <td>~10 MB</td>
+          <td>:80/:443</td>
+        </tr>
+        <tr>
+          <td>API Backend</td>
+          <td><span class="tag tag-docker">node:18-alpine</span></td>
+          <td><span class="tag tag-azure">Container Apps</span></td>
+          <td>~150 MB</td>
+          <td>:8510</td>
+        </tr>
+        <tr>
+          <td>Redis Cache</td>
+          <td><span class="tag tag-redis">redis:7-alpine</span></td>
+          <td><span class="tag tag-azure">Azure Cache Redis</span></td>
+          <td>~10 MB</td>
+          <td>:6379 (interno)</td>
+        </tr>
+        <tr>
+          <td>SQL Server</td>
+          <td><span class="tag tag-sql">gobinfoana01-2</span></td>
+          <td><span class="tag tag-azure">Azure SQL / externo</span></td>
+          <td>Servidor banco</td>
+          <td>:1433</td>
+        </tr>
+        <tr>
+          <td>Registry</td>
+          <td><span class="tag tag-docker">Docker local</span></td>
+          <td><span class="tag tag-azure">ACR</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>CI/CD</td>
+          <td>—</td>
+          <td><span class="tag tag-azure">Azure DevOps</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>OGA-SUITE MVP · Plan de Containerización y Despliegue · Banco Guayaquil</p>
+  <p style="margin-top:6px;font-size:11px">Docker → Podman · Redis · Azure Container Apps · ACR · Azure DevOps CI/CD</p>
+</footer>
+
+</body>
+</html>
