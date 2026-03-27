@@ -15,10 +15,9 @@ const NAV_ITEMS = [
     disabled: true,
   },
   {
-    path: null,
+    path: '/libro-dominios',
     icon: 'iconsminds-library',
     label: 'Libro de Dominios',
-    disabled: true,
   },
   {
     path: '/glosario',
@@ -55,7 +54,7 @@ export default function SideMenu() {
         <div className="scroll">
           <ul className="list-unstyled" id="suite-navbar">
             {NAV_ITEMS.map((item) => {
-              const isActive = item.path && item.path === activePath;
+              const isActive = item.path && (item.path === activePath || activePath.startsWith(item.path + '/'));
 
               if (item.disabled) {
                 return (
