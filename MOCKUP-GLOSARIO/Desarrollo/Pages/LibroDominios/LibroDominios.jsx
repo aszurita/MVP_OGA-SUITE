@@ -2,11 +2,16 @@
  * LibroDominios.jsx
  * Página principal del Libro de Dominios.
  * Route: /libro-dominios
+ *
+ * Estructura idéntica al ASPX original:
+ *   row > col-12 > h1 (inline-block por Dore) + nav breadcrumb + float-right buttons
+ *   row > col-12 > card > card-body > secciones de dominios
  */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDominios } from '../../services/dominiosService.js';
 import DominioCarta from './components/DominioCarta.jsx';
+import ModalNuevoDominio from './components/ModalNuevoDominio.jsx';
 import './styles/LibroDominios.css';
 
 const TABS = ['Todos', 'Maestros', 'Transaccionales', 'Derivados', 'Mis Dominios'];
@@ -18,14 +23,14 @@ export default function LibroDominios() {
   const [activeTab, setActiveTab] = useState('Todos');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchDominios() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getDominios();
-        setDominios(data);
+        setDominios(await getDominios());
       } catch (err) {
         console.error(err);
         setError('Error al cargar los dominios. Intente nuevamente.');
@@ -40,7 +45,6 @@ export default function LibroDominios() {
     navigate(`/ficha-dominio/${id_dominio}`);
   }
 
-  // Filtra dominios por tipo — acepta "Maestros", "Dominio Maestro", "Maestro", etc.
   function dominiosByTipo(tipo) {
     const key = tipo.replace(/^Dominio\s*/i, '').replace(/s$/i, '').toLowerCase();
     return dominios.filter((d) => {
@@ -49,94 +53,113 @@ export default function LibroDominios() {
     });
   }
 
-  // Determina qué secciones renderizar según el tab activo
   function getSecciones() {
-    if (activeTab === 'Mis Dominios') {
-      return TIPOS.map((tipo) => ({ tipo, items: [] }));
-    }
-    if (activeTab === 'Todos') {
-      return TIPOS.map((tipo) => ({ tipo, items: dominiosByTipo(tipo) }));
-    }
+    if (activeTab === 'Mis Dominios') return TIPOS.map((tipo) => ({ tipo, items: [] }));
+    if (activeTab === 'Todos') return TIPOS.map((tipo) => ({ tipo, items: dominiosByTipo(tipo) }));
     return [{ tipo: activeTab, items: dominiosByTipo(activeTab) }];
   }
 
   const secciones = getSecciones();
 
   return (
-    <div className="libro-dominios-container">
-      {/* Cabecera: título + tabs inline + botones (igual que el ASPX) */}
-      <div className="libro-dominios-header">
-        <div className="libro-dominios-title-tabs">
-          <h4>
-            <i className="iconsminds-books mr-2" style={{ color: '#D2006E' }} />
-            Libro de Dominios
-          </h4>
-          <nav className="libro-dominios-breadcrumb">
-            {TABS.map((tab, i) => (
-              <span key={tab} style={{ display: 'flex', alignItems: 'center' }}>
-                {i > 0 && <span className="sep">&nbsp;|&nbsp;</span>}
-                <button
-                  className={`tab-link${activeTab === tab ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
+    <div className='flex-grow-1 px-3 transition-content'>
+      {/* ── Fila de cabecera — idéntica al col-12 del ASPX ─── */}
+      <div className="row">
+        <div className="col-12">
+
+          {/* Botones float-right (van primero para que el float funcione) */}
+          <div className="float-right mb-1 d-flex" style={{ gap: '8px' }}>
+            <button type="button" className="btn btn-outline-dark">
+              Priorizacion
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => setModalOpen(true)}
+            >
+              Agregar nuevo dominio
+            </button>
+          </div>
+
+          {/* Título — display:inline-block definido en style.css del tema */}
+          <h1>Libro de Dominios</h1>
+
+          {/* Breadcrumb de filtros — d-lg-inline-block para estar al lado del h1 */}
+          <nav
+            className="breadcrumb-container d-none d-sm-block d-lg-inline-block"
+            aria-label="breadcrumb"
+          >
+            <ol className="breadcrumb pt-0 libro-filter">
+              {TABS.map((tab) => (
+                <li
+                  key={tab}
+                  className={`breadcrumb-item${activeTab === tab ? ' filtro-actual' : ''}`}
                 >
-                  {tab}
-                </button>
-              </span>
-            ))}
+                  <a style={{ cursor: 'pointer' }} onClick={() => setActiveTab(tab)}>
+                    {tab}
+                  </a>
+                </li>
+              ))}
+            </ol>
           </nav>
-        </div>
-        <div className="header-actions">
-          <button className="btn-priorizar">
-            <i className="simple-icon-list mr-1" />
-            Priorización
-          </button>
-          <button className="btn-agregar-dominio">
-            <i className="simple-icon-plus mr-1" />
-            Agregar nuevo dominio
-          </button>
+
         </div>
       </div>
 
-      {/* Tarjeta blanca contenedora — equivale a .card del ASPX */}
-      <div className="libro-dominios-card">
-        {/* Estado de carga */}
-        {loading && (
-          <div className="libro-dominios-spinner">
-            <div className="spinner-border" style={{ color: '#D2006E' }} role="status">
-              <span className="sr-only">Cargando...</span>
-            </div>
-          </div>
-        )}
+      {/* ── Fila de contenido — card con secciones de dominios ── */}
+      <div className="row">
+        <div className="col-12">
+          <div className="card">
+            <div className="card-body">
 
-        {/* Estado de error */}
-        {!loading && error && (
-          <div className="alert alert-danger">{error}</div>
-        )}
-
-        {/* Secciones de dominios */}
-        {!loading && !error && secciones.map(({ tipo, items }) => (
-          <div key={tipo} className="dominio-section">
-            <h5>{tipo}</h5>
-            <div className="dominio-cards-grid">
-              {items.length === 0 ? (
-                <span className="empty-section">
-                  {activeTab === 'Mis Dominios'
-                    ? 'No tienes dominios asignados.'
-                    : `No hay dominios de tipo ${tipo}.`}
-                </span>
-              ) : (
-                items.map((d) => (
-                  <DominioCarta
-                    key={d.id_dominio}
-                    dominio={d}
-                    onClick={handleDominioClick}
-                  />
-                ))
+              {loading && (
+                <div className="libro-dominios-spinner">
+                  <div className="spinner-border" style={{ color: '#D2006E' }} role="status">
+                    <span className="sr-only">Cargando...</span>
+                  </div>
+                </div>
               )}
+
+              {!loading && error && (
+                <div className="alert alert-danger">{error}</div>
+              )}
+
+              {!loading && !error && secciones.map(({ tipo, items }) => (
+                <div key={tipo} className="dominio-section">
+                  <h5>{tipo}</h5>
+                  <div className="dominio-cards-grid">
+                    {items.length === 0 ? (
+                      <span className="empty-section">
+                        {activeTab === 'Mis Dominios'
+                          ? 'No tienes dominios asignados.'
+                          : `No hay dominios de tipo ${tipo}.`}
+                      </span>
+                    ) : (
+                      items.map((d) => (
+                        <DominioCarta
+                          key={d.id_dominio}
+                          dominio={d}
+                          onClick={handleDominioClick}
+                        />
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))}
+
             </div>
           </div>
-        ))}
+        </div>
       </div>
+
+      <ModalNuevoDominio
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSaved={() => {
+          setModalOpen(false);
+          getDominios().then(setDominios).catch(console.error);
+        }}
+      />
     </div>
   );
 }

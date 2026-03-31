@@ -5,122 +5,9 @@
    Color primario: #D2006E
    ============================================================ */
 
-/* ── Contenedor principal ─────────────────────────────────── */
-.libro-dominios-container {
-  padding: 24px 28px;
-  min-height: 100vh;
-  background: #f8f9fa;
-}
-
-/* ── Cabecera: título + tabs inline + botones ─────────────── */
-.libro-dominios-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.libro-dominios-title-tabs {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0;
-}
-
-.libro-dominios-title-tabs h4 {
-  font-weight: 700;
-  color: #2d2d2d;
-  margin: 0 18px 0 0;
-  font-size: 1.4rem;
-  white-space: nowrap;
-}
-
-/* Breadcrumb de tabs — igual que ol.breadcrumb del ASPX */
-.libro-dominios-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.libro-dominios-breadcrumb .tab-link {
-  background: none;
-  border: none;
-  padding: 0 6px;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: #6c757d;
-  cursor: pointer;
-  transition: color 0.15s;
-  line-height: 1;
-}
-
-.libro-dominios-breadcrumb .tab-link:hover {
-  color: #D2006E;
-}
-
-.libro-dominios-breadcrumb .tab-link.active {
-  color: #D2006E;
-  font-weight: 700;
-}
-
-.libro-dominios-breadcrumb .sep {
-  color: #adb5bd;
-  font-size: 0.85rem;
-  user-select: none;
-}
-
-/* ── Botones de acción ────────────────────────────────────── */
-.header-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.btn-priorizar {
-  border: 2px solid #333;
-  color: #333;
-  background: transparent;
-  border-radius: 6px;
-  padding: 5px 16px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-}
-
-.btn-priorizar:hover {
-  background: #333;
-  color: #fff;
-}
-
-.btn-agregar-dominio {
-  background: #D2006E;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 5px 16px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.18s;
-}
-
-.btn-agregar-dominio:hover {
-  background: #a8005a;
-}
-
-/* ── Card blanca contenedora (equivale a .card en el ASPX) ── */
-.libro-dominios-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
-}
+/* Header: el tema Dore define h1 { display: inline-block } en style.css,
+   lo que permite que h1 + nav d-lg-inline-block + float-right botones
+   queden todos en la misma fila — idéntico al ASPX. No necesita CSS extra. */
 
 /* ── Sección por tipo (Maestros / Transaccionales / Derivados) ─ */
 .dominio-section {
@@ -138,6 +25,7 @@
 .dominio-cards-grid {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   margin: 10px 0;
 }
 
@@ -166,8 +54,8 @@
 
 /* Texto del nombre del dominio */
 .dominio-carta .nombre {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: bold;
   line-height: 1.3;
   word-break: break-word;
   hyphens: auto;
@@ -245,6 +133,227 @@
     height: 55px;
   }
 }
+
+/* ── Modal nuevo dominio ──────────────────────────────────── */
+.domain-modal {
+  border: 0;
+  border-radius: 1.1rem;
+  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.18);
+  min-height: 78vh;
+  height: 82vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+.modal-nuevo-dominio {
+  max-width: 960px;
+  width: 95%;
+}
+
+.domain-modal__header,
+.domain-modal__footer {
+  border: 0;
+  padding: 0.75rem !important;
+}
+
+.domain-modal__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.75rem !important;
+}
+
+.domain-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.06);
+  z-index: 2;
+}
+
+.domain-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.domain-form-section {
+  background: #fafbfc;
+  border: 1px solid #eef0f3;
+  border-radius: 12px;
+  padding: 18px 18px 14px;
+  margin-bottom: 14px;
+}
+
+.domain-form-section__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.domain-form-section__helper {
+  color: #6c757d;
+  margin-top: -4px;
+  margin-bottom: 12px;
+}
+
+/* Stepper */
+.domain-stepper {
+  padding: 6px 22px;
+}
+
+.domain-wizard-steps {
+  gap: 8px;
+}
+
+.domain-wizard-steps .nav-link {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #475569;
+  font-weight: 600;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
+.domain-wizard-steps .nav-link.active {
+  background: #D2006E;
+  color: #fff;
+  border-color: #D2006E;
+  box-shadow: 0 10px 26px rgba(210, 0, 110, 0.25);
+}
+
+.domain-wizard-steps .nav-link.done {
+  background: #ecfdf3;
+  border-color: #22c55e;
+  color: #166534;
+  cursor: pointer;
+}
+
+/* Estructura grid */
+.domain-structure-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-areas:
+    "lider admins"
+    "custodio admins"
+    "seguridad admins";
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .domain-structure-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "lider" "custodio" "seguridad" "admins";
+  }
+}
+
+.structure-card {
+  border: 1px solid #e8ecf2;
+  border-radius: 12px;
+  padding: 10px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+}
+
+.structure-card h6 {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.structure-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.structure-card__icon { color: #D2006E; font-size: 1.1rem; }
+.structure-card--lider     { grid-area: lider;    }
+.structure-card--custodio  { grid-area: custodio; }
+.structure-card--seguridad { grid-area: seguridad;}
+.structure-card--admins    { grid-area: admins;   }
+
+.structure-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.structure-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+  border-bottom: 1px solid #f1f2f6;
+  font-size: 0.82rem;
+}
+
+.structure-list li:last-child { border-bottom: 0; }
+
+.structure-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f4f5f7;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.structure-meta { flex: 1; min-width: 0; }
+.structure-meta strong { display: block; font-size: 0.7rem;  line-height: 1.1; }
+.structure-meta small  { display: block; color: #6c757d; font-size: 0.78rem; }
+
+.structure-remove {
+  border: 0;
+  background: none;
+  color: #D2006E;
+  font-size: 0.85rem;
+  padding: 2px;
+  cursor: pointer;
+}
+
+/* Typeahead */
+.typeahead-menu {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.35rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.typeahead-menu .item {
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.typeahead-menu .item:hover { background: #f3f6ff; }
+
+.domain-pagination__label { font-weight: 600; color: #475569; }
+
+/* ────────────────────────────────────────────────────────── */
 
 @media (max-width: 480px) {
   .dominio-carta {
