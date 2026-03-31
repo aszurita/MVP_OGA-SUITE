@@ -14,19 +14,13 @@
   margin-bottom: 28px;
 }
 
-.dominio-section h5 {
-  font-weight: 600;
-  color: #2d2d2d;
-  font-size: 0.95rem;
-  margin-bottom: 10px;
-}
 
 /* ── Contenedor de cards — equivale a .waffle_container ──── */
 .dominio-cards-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 10px 0;
+  margin: 10px;
 }
 
 /* ── Carta de dominio — equivale a .box en style.css ───────── */
@@ -52,39 +46,45 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
+/* Tooltip custom (reemplaza el title nativo del browser) */
+.dominio-carta[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 100;
+}
+
+.dominio-carta[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
 /* Texto del nombre del dominio */
 .dominio-carta .nombre {
   font-size: 0.8rem;
-  font-weight: bold;
   line-height: 1.3;
   word-break: break-word;
   hyphens: auto;
 }
 
 /* ── Con avance: equivale a .activo en style.css ─────────── */
+/* El fondo sólido se mantiene igual al ASPX original — solo agrega animación de pulso */
 .dominio-carta.activo {
-  background: #fff !important;
-  border-width: 2px;
-  border-style: solid;
   font-weight: bold;
-  /* Animación de pulso — igual que @keyframes activado */
   animation: activado 2s infinite;
-}
-
-/* Colores específicos por tipo cuando tiene avance (.Dominio-Maestro.activo, etc.) */
-.dominio-carta.Dominio-Maestro.activo {
-  color: #D2006E;
-  border-color: #D2006E;
-}
-
-.dominio-carta.Dominio-Transaccional.activo {
-  border-color: #160F41;
-  color: #160F41;
-}
-
-.dominio-carta.Dominio-Derivado.activo {
-  border-color: #9FDCEE;
-  /* color se aplica inline desde el componente */
 }
 
 /* ── Animación de pulso — idéntica al ASPX ──────────────── */

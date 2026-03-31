@@ -7,7 +7,7 @@ import apiService from './apiService.js';
 
 // La tabla de dominios real en SQL (la misma que usa el Glosario para listar dominios)
 const TABLA_DOMINIOS_MAPA    = 'PROCESOS_BI.DBO.t_mapa_dominios';
-const TABLA_DOMINIO_AVANCES  = 'PROCESOS_BI.DBO.T_DOMINIO_AVANCES';
+const TABLA_DOMINIO_AVANCES  = 'PROCESOS_BI.DBO.T_DOMINIO_AVANCES'; // Lista de Sharepoints
 const TABLA_ARTEFACTOS       = 'PROCESOS_BI.DBO.T_ARTEFACTOS';
 const TABLA_ESTRUCTURA       = 'PROCESOS_BI.DBO.T_ESTRUCTURA_DOMINIO';
 const TABLA_TABLAS_INV       = 'PROCESOS_BI.DBO.T_TABLAS_INVENTARIO';

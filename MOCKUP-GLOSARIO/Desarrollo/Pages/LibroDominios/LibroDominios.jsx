@@ -16,6 +16,11 @@ import './styles/LibroDominios.css';
 
 const TABS = ['Todos', 'Maestros', 'Transaccionales', 'Derivados', 'Mis Dominios'];
 const TIPOS = ['Maestros', 'Transaccionales', 'Derivados'];
+const TIPO_BASEDATOS = {
+  'Maestros': 'Maestro',
+  'Transaccionales': 'Transaccional',
+  'Derivados': 'Derivado'
+};
 
 export default function LibroDominios() {
   const navigate = useNavigate();
@@ -46,7 +51,8 @@ export default function LibroDominios() {
   }
 
   function dominiosByTipo(tipo) {
-    const key = tipo.replace(/^Dominio\s*/i, '').replace(/s$/i, '').toLowerCase();
+    let tipo_base = TIPO_BASEDATOS[tipo];
+    const key = tipo_base.replace(/^Dominio\s*/i, '').replace(/s$/i, '').toLowerCase();
     return dominios.filter((d) => {
       const t = (d.tipo_dominio || '').replace(/^Dominio\s*/i, '').replace(/s$/i, '').toLowerCase();
       return t === key || t.startsWith(key);
@@ -62,7 +68,7 @@ export default function LibroDominios() {
   const secciones = getSecciones();
 
   return (
-    <div className='flex-grow-1 px-3 transition-content'>
+    <div className='flex-grow-1 pl-3 transition-content'>
       {/* ── Fila de cabecera — idéntica al col-12 del ASPX ─── */}
       <div className="row">
         <div className="col-12">

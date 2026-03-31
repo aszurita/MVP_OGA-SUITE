@@ -11,25 +11,25 @@
 
 // Colores fijos por tipo — idénticos a los del ASPX
 const COLOR_POR_TIPO = {
-  maestro:       '#D2006E',  // rosa banco
+  maestro: '#D2006E',  // rosa banco
   transaccional: '#160F41',  // azul oscuro
-  derivado:      '#9FDCEE',  // celeste
+  derivado: '#9FDCEE',  // celeste
 };
 
 function colorPorTipo(tipo_dominio) {
   const t = (tipo_dominio || '').toLowerCase();
-  if (t.includes('maestro'))       return COLOR_POR_TIPO.maestro;
+  if (t.includes('maestro')) return COLOR_POR_TIPO.maestro;
   if (t.includes('transaccional')) return COLOR_POR_TIPO.transaccional;
-  if (t.includes('derivado'))      return COLOR_POR_TIPO.derivado;
+  if (t.includes('derivado')) return COLOR_POR_TIPO.derivado;
   return '#D2006E';
 }
 
 // CSS class equivalente al ASPX: "Dominio-Maestro", "Dominio-Transaccional", "Dominio-Derivado"
 function getTipoClass(tipo_dominio) {
   const t = (tipo_dominio || '').toLowerCase();
-  if (t.includes('maestro'))       return 'Dominio-Maestro';
+  if (t.includes('maestro')) return 'Dominio-Maestro';
   if (t.includes('transaccional')) return 'Dominio-Transaccional';
-  if (t.includes('derivado'))      return 'Dominio-Derivado';
+  if (t.includes('derivado')) return 'Dominio-Derivado';
   return '';
 }
 
@@ -55,11 +55,11 @@ export default function DominioCarta({ dominio, onClick }) {
     : { backgroundColor: color };
 
   // Texto: derivado sin avance usa texto oscuro (igual que .box.Dominio-Derivado en style.css)
-  const nombreColor = tieneAvance ? color : (esDerivado ? '#160F41' : '#fff');
+  const nombreColor = tieneAvance ? (esDerivado ? '#160F41' : color) : (esDerivado ? '#160F41' : '#fff');
 
   // Tooltip solo cuando tiene avance, igual que el ASPX
   const tooltipText = tieneAvance
-    ? `Porcentaje de avance: ${avance.toFixed(2)}%`
+    ? `Avance: ${avance.toFixed(0)}%`
     : undefined;
 
   function handleClick() {
@@ -70,7 +70,7 @@ export default function DominioCarta({ dominio, onClick }) {
     <div
       className={`dominio-carta ${tipoClass}${tieneAvance ? ' activo' : ''}`}
       style={cardStyle}
-      title={tooltipText}
+      data-tooltip={tooltipText}
       onClick={handleClick}
       role="button"
       tabIndex={0}
