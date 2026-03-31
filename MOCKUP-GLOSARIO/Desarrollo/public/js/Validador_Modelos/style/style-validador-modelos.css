@@ -1,0 +1,443 @@
+.resumen-metadatos-linaje {
+    width: 280px !important;
+    position: absolute;
+    z-index: 1020;
+    top: 50%;
+    right: 0;
+    /* background: #fff; */
+    /* box-shadow: 0 1px 15px rgba(0,0,0,.04), 0 1px 6px rgba(0,0,0,.04); */
+    transform: translate(280px, -50%);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: transform .4s ease-out;
+}
+
+.resumen-metadatos-linaje .resumen-metadatos-linaje-button {
+    position: absolute;
+    left: -47px;
+    background: #fff;
+    padding: 13px;
+    border-radius: .2rem;
+    color: #3a3a3a;
+    /* box-shadow: -2px 0 5px rgba(0,0,0,.04); */
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.2);
+    /* Sombra del modal */
+    font-size: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #00365a;
+}
+
+.resumen-metadatos-linaje.shown {
+    transform: translate(0, calc(-50% + .5px));
+    transition: transform .4s ease-out;
+}
+
+.link_subrrayado {
+    cursor: pointer;
+}
+
+.link_subrrayado:hover {
+    text-decoration: underline;
+    color: #D2006E !important;
+}
+
+
+.modal_editar_indicadores {
+    display: none;
+    /* Oculta el modal por defecto */
+    position: fixed;
+    /* Fija el modal en la pantalla */
+    top: 2%;
+    /* Posiciona el modal en la parte superior */
+    /* left: 54.5%; Posiciona el modal en el centro horizontal */
+    /* transform: translate(-50%, 0%); Ajusta el modal para que esté perfectamente centrado */
+
+
+    z-index: 1050;
+    /* Asegura que el modal esté por encima de otros elementos */
+    background-color: white;
+    /* Color de fondo del modal */
+    padding: 20px;
+    /* Espaciado interno del modal */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    /* Sombra del modal */
+    border-radius: 10px;
+    /* Bordes redondeados */
+}
+
+.modal-content {
+    max-width: 100%;
+    /* Ancho máximo del contenido del modal */
+    margin: auto;
+    /* Centra el contenido dentro del modal */
+    border-radius: 10px !important;
+}
+
+
+.valor-input-text {
+    color: #e9ecef
+}
+
+.modal_editar_indicadores.active {
+    display: flex;
+    /* Muestra el modal cuando tiene la clase 'active' */
+    width: 85%;
+    padding: 15px;
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.modal_consulta_calidad {
+    display: none;
+    /* Oculta el modal por defecto */
+    position: fixed;
+    /* Fija el modal en la pantalla */
+    top: 14%;
+    /* Posiciona el modal en la parte superior */
+    left: 50%;
+    /* Posiciona el modal en el centro horizontal */
+    transform: translate(-50%, 0%);
+    /* Ajusta el modal para que esté perfectamente centrado */
+    z-index: 1052;
+    /* Asegura que el modal esté por encima de otros elementos */
+    background-color: white;
+    /* Color de fondo del modal */
+    padding: 20px;
+    /* Espaciado interno del modal */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    /* Sombra del modal */
+    border-radius: 10px;
+    /* Bordes redondeados */
+}
+
+.modal_consulta_calidad.active {
+    display: block;
+    /* Muestra el modal cuando tiene la clase 'active' */
+    width: 70%;
+    padding: 10px;
+}
+
+
+.input_procentajes {
+    width: 50%;
+}
+
+form#form_indicadores {
+    text-align: center;
+}
+
+.dataTables_length {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    padding-right: 70px;
+    transform: translateY(-30px);
+}
+
+.dataTables_info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding-left: 30px;
+    transform: translateY(-40px);
+}
+
+#consulta_indicadores_calidad_length label {
+    display: flex;
+}
+
+
+#indicadores_calidad_wrapper .dataTables_length {
+    display: none;
+}
+
+#indicadores_calidad_wrapper .dataTables_info {
+    display: none;
+}
+
+
+.dataTables_scrollBody {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
+
+.dataTables_scrollHeadInner {
+    width: 100% !important;
+    min-width: 100%;
+}
+
+div.dataTables_wrapper div.dataTables_filter input {
+    margin-left: 0;
+    border: 0.5px solid #696767;
+    padding: 6px;
+    border-radius: 13px;
+    width: 300px;
+    height: 40px;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-top: 10px;
+}
+
+.checkbox-no-aplica-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.select-entidades {
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 1px;
+    position: fixed;
+}
+
+.btnGuardarIndicadores {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    font-size: 16px;
+    margin-right: 20px;
+    transform: translateX(10px);
+    padding-top: 0px;
+    color: rgb(210, 0, 110);
+}
+
+.form-group {
+    margin-bottom: 0px;
+    display: flex;
+    flex-direction: row;
+    padding-right: 50px;
+    width: 170px;
+}
+
+.form-group-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.input_datos_tabla {
+    border-radius: 5px;
+    border-width: 0.1px;
+    margin-bottom: 5px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.label_datos_tabla {
+    font-weight: bold;
+}
+
+.ui-autocomplete {
+    z-index: 1055;
+}
+
+
+#indicadores_calidad_wrapper .dataTables_paginate {
+    display: none;
+}
+
+
+.tabla_indicadores_calidad {
+    min-width: 300px !important;
+    /* Ancho minimo de la tabla */
+    width: 100% !important;
+    /* Ancho fijo de la tabla */
+    table-layout: fixed;
+    /* Asegura que las columnas respeten el ancho definido */
+}
+
+.tabla_indicadores_calidad th,
+.tabla_indicadores_calidad td {
+    width: 20%;
+    /* Ancho fijo de las columnas */
+    overflow: hidden;
+    /* Oculta el contenido desbordado */
+    text-overflow: ellipsis;
+    /* Agrega "..." al contenido desbordado */
+    white-space: nowrap;
+    /* Evita que el texto se divida en varias líneas */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    padding: 1px;
+}
+
+.close {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close_consulta {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.btnGuardarIndicadores:disabled {
+    color: #696767;
+    cursor: not-allowed;
+    /* Cambia el cursor para indicar que el botón está deshabilitado */
+    opacity: 0.6;
+    /* Reduce la opacidad del botón para hacerlo parecer deshabilitado */
+}
+
+input.form-control.form-input-valor.valor_calidad_atributo {
+    height: 25px;
+    width: 100%;
+    /*transform: translateX(20px);*/
+}
+
+input.form-control.form-input-valor.valor_calidad_reglas {
+    width: 100%;
+    height: 25px;
+    /*transform: translateX(20px);*/
+}
+
+button.btnConsultarCalidad {
+    /* height: 30px;
+width: 30px; */
+    padding: .5rem;
+    border: 0px;
+    background-color: rgb(210, 0, 110);
+    color: white;
+    border-radius: 3px;
+}
+
+ul.pagination {
+    margin-bottom: 0;
+}
+
+
+.input-campos-search-select {
+    overflow-y: auto;
+}
+
+.modal-backdrop {
+    top: 100px !important;
+    width: 110vw;
+}
+
+.modal {
+    top: 50px;
+}
+
+/*.contenedores-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+*/
+
+.custom-switch .custom-switch-btn {
+    transition: background-color 0.3s ease;
+}
+
+.custom-switch .custom-switch-input:not(:checked)+.custom-switch-btn {
+    background-color: #ccc !important;
+    border-color: #ccc !important;
+}
+
+.custom-switch .custom-switch-input:checked+.custom-switch-btn {
+    background-color: #D2006E !important;
+    border-color: #D2006E !important;
+}
+
+.card-preguntas {
+    border: initial;
+    background: white;
+    border-radius: 0.1rem;
+    box-shadow: 0 1px 15px rgb(255 255 255 / 75%), 0 1px 6px rgba(0, 0, 0, 0.1) !important;
+    margin: 1% !important;
+}
+
+.border-card {
+    background: #ffffff !important;
+}
+
+.seccion-item {
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.seccion-item.selected {
+    background-color: #D2006E;
+    color: rgb(255, 255, 255);
+    /* Cambiar el color del texto */
+    border: 2px solid #D2006E;
+    /* O un borde para mayor contraste */
+}
+/* Hover del item seleccionado en la card */
+.seccion-item.selected:hover {
+    background-color: #b4005c;
+    color: rgb(255, 255, 255);
+    border: 2px solid #b4005c;
+}
+
+.seccion-item:hover {
+    background-color: #f7f7f7;
+    /* Cambio de fondo al pasar el mouse */
+}
+
+/* ✅ Estilo base para TODOS los botones de validación */
+    /* Estilos para los botones redondos */
+    .btn-icon-only {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: all 0.3s ease;
+        background-color: transparent !important; /* Fondo transparente por defecto */
+    }
+    
+    /* Efecto hover para todos los botones de acción */
+    .action-btn:hover {
+        background-color: #b4005c !important;
+        border-color: #b4005c !important;
+        color: white !important; /* Icono blanco al hacer hover */
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(180, 0, 92, 0.25);
+    }
+    
+    /* Botón de descartar - mantiene el estilo rojo pero con hover magenta */
+    #btnDescartarCambios {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    
+    #btnDescartarCambios:hover {
+        background-color: #b4005c !important;
+        border-color: #b4005c !important;
+        color: white !important;
+        box-shadow: 0 6px 12px rgba(180, 0, 92, 0.25);
+    }
+    
+    /* Botón de candado - mantiene el estilo verde pero con hover magenta */
+    #btnBloquearValidacion {
+        color: #28a745;
+        border-color: #28a745;
+    }
+    
+    #btnBloquearValidacion:hover {
+        background-color: #b4005c !important;
+        border-color: #b4005c !important;
+        color: white !important;
+        box-shadow: 0 6px 12px rgba(180, 0, 92, 0.25);
+    }

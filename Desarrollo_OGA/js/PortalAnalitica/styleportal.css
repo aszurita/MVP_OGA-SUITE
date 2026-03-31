@@ -1,0 +1,57 @@
+.main-container {
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    width: 100%;
+}
+
+.btn-portal-analitica {
+    position: relative;
+    box-shadow: 0 2px 5px 1px rgba(64, 60, 67, .16) !important;
+    /* background: white !important; */
+    border-radius: 0.75rem !important;
+    border: initial;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    word-wrap: break-word;
+    padding: 1.5rem 2rem;
+    height: 250px;
+    width: 250px;
+}
+
+.btn-portal-analitica>i {
+    font-size: 3rem;
+}
+
+#data-analytics,
+#voz-colaborador {
+    display: none;
+}
+
+.section-options {
+    width: 85% !important;
+}
+
+.section-options>a {
+    height: 150px;
+    width: 150px;
+}
+
+.main-container>section {
+    display: flex;
+    justify-content: center;
+}
+
+#btn-section-back,
+#btn-service-back {
+    display: none;
+    position: absolute;
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    left: 5%;
+}

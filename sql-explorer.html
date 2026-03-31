@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SQL Explorer — OGA API</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a2e; }
+
+  .header {
+    background: linear-gradient(135deg, #D2006E, #a0004f);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header h1 { font-size: 1.2rem; font-weight: 700; }
+  .header small { font-size: 0.75rem; opacity: 0.85; margin-left: 8px; }
+  .api-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-family: monospace;
+  }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 52px); }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: #fff;
+    border-right: 1px solid #e2e8f0;
+    overflow-y: auto;
+    padding: 12px 0;
+  }
+  .sidebar-section { padding: 6px 14px; }
+  .sidebar-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #94a3b8;
+    font-weight: 700;
+    margin-bottom: 6px;
+    margin-top: 10px;
+  }
+  .table-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 10px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: #334155;
+    font-family: monospace;
+    transition: background .12s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .table-btn:hover { background: #fdf0f7; color: #D2006E; }
+  .table-btn.active { background: #fdf0f7; color: #D2006E; font-weight: 700; }
+
+  /* ── Main ── */
+  .main { display: flex; flex-direction: column; overflow: hidden; }
+
+  .query-panel {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 20px;
+    flex-shrink: 0;
+  }
+
+  .query-form { display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 10px; align-items: end; }
+  .field-group label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+  .field-group input, .field-group textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 0.85rem;
+    font-family: monospace;
+    color: #1e293b;
+    transition: border-color .15s;
+    resize: none;
+  }
+  .field-group input:focus, .field-group textarea:focus {
+    outline: none;
+    border-color: #D2006E;
+    box-shadow: 0 0 0 3px rgba(210,0,110,.1);
+  }
+
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: all .12s;
+  }
+  .btn-primary { background: #D2006E; color: #fff; }
+  .btn-primary:hover { background: #a0004f; }
+  .btn-secondary { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn-ghost { background: none; color: #D2006E; border: 1px solid #D2006E; }
+  .btn-ghost:hover { background: #fdf0f7; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .preset-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .preset-chip {
+    padding: 3px 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-family: monospace;
+    cursor: pointer;
+    color: #475569;
+    transition: all .12s;
+  }
+  .preset-chip:hover { background: #fdf0f7; border-color: #D2006E; color: #D2006E; }
+
+  /* ── Results ── */
+  .results-area { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+  .results-meta {
+    padding: 8px 20px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.78rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .results-meta .count { font-weight: 700; color: #D2006E; }
+  .results-meta .elapsed { color: #94a3b8; }
+
+  .table-wrap { flex: 1; overflow: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-family: monospace;
+    white-space: nowrap;
+    border-right: 1px solid #334155;
+    z-index: 2;
+    user-select: none;
+  }
+  thead th:not(:first-child) {
+    cursor: pointer;
+  }
+  thead th:not(:first-child):hover { background: #334155; }
+  thead th .sort-icon { margin-left: 5px; opacity: 0.4; font-style: normal; font-size: 0.75em; }
+  thead th.sort-asc  .sort-icon,
+  thead th.sort-desc .sort-icon { opacity: 1; color: #fb7185; }
+  thead th:first-child { width: 40px; text-align: center; cursor: default; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: #fdf0f7; }
+  tbody td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    border-right: 1px solid #f1f5f9;
+    font-family: monospace;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #334155;
+    cursor: pointer;
+  }
+  tbody td:first-child { text-align: center; color: #94a3b8; font-size: 0.7rem; }
+  tbody td.null-val { color: #94a3b8; font-style: italic; }
+  tbody td.num-val { color: #0284c7; }
+  tbody td.bool-val { color: #7c3aed; }
+  tbody td:hover { white-space: normal; word-break: break-all; background: #fff7fe; }
+
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: #94a3b8;
+  }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .empty-state p { font-size: 0.9rem; }
+
+  .error-box {
+    margin: 16px 20px;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #b91c1c;
+    font-size: 0.82rem;
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #D2006E;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .cols-panel {
+    padding: 8px 20px;
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+    font-size: 0.75rem;
+    color: #92400e;
+    flex-shrink: 0;
+    display: none;
+  }
+  .cols-panel.visible { display: block; }
+  .col-chip {
+    display: inline-block;
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin: 2px 3px;
+    font-family: monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+  .col-chip:hover { background: #fde68a; }
+
+  .tab-bar {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #64748b;
+    border-bottom: 2px solid transparent;
+    transition: all .12s;
+  }
+  .tab-btn.active { color: #D2006E; border-bottom-color: #D2006E; font-weight: 600; }
+  .tab-btn:hover { background: #f8fafc; }
+
+  #json-view {
+    flex: 1;
+    overflow: auto;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: monospace;
+    font-size: 0.78rem;
+    padding: 16px;
+    white-space: pre;
+    display: none;
+  }
+
+  .copy-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e293b;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+    z-index: 9999;
+  }
+  .copy-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+    <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+    <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+  </svg>
+  <h1>SQL Explorer <small>OGA Suite API</small></h1>
+  <span class="api-badge" id="api-url-badge">http://gobinfoana01-2:8510</span>
+</div>
+
+<div class="layout">
+  <!-- Sidebar con tablas conocidas -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Tablas SQL</div>
+
+      <div class="sidebar-title" style="color:#D2006E; margin-top:8px;">Dominios</div>
+      <button class="table-btn" onclick="loadTable('procesos_bi.dbo.t_mapa_dominios')">t_mapa_dominios</button>
+      <button class="table-btn" onclick="loadTable('procesos_bi.dbo.t_subdominios')">t_subdominios</button>
+      <button class="table-btn" onclick="loadTable('procesos_bi.dbo.t_estructura_gobierno')">t_estructura_gobierno</button>
+      <button class="table-btn" onclick="loadTable('procesos_bi.dbo.t_pasos_dominio_desarrollo')">t_pasos_dominio_desarrollo</button>
+
+      <div class="sidebar-title" style="color:#D2006E; margin-top:8px;">Glosario / Términos</div>
+      <button class="table-btn" onclick="loadTable('procesos_bi.dbo.T_terminos')">T_terminos</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.t_casos_uso_analitica')">t_casos_uso_analitica</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_CASOS_USO_TERMINOS_MB')">T_CASOS_USO_TERMINOS_MB</button>
+
+      <div class="sidebar-title" style="color:#D2006E; margin-top:8px;">Inventario</div>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_ARTEFACTOS')">T_ARTEFACTOS</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_ESTRUCTURA_DOMINIO')">T_ESTRUCTURA_DOMINIO</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_TABLAS_INVENTARIO')">T_TABLAS_INVENTARIO</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_LIBRO_DOMINIOS')">T_LIBRO_DOMINIOS</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_DOMINIO_AVANCES')">T_DOMINIO_AVANCES</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.t_casos_uso_analitica')">t_casos_uso_analitica</button>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.T_CASOS_USO_FUENTES')">T_CASOS_USO_FUENTES</button>
+
+      <div class="sidebar-title" style="color:#D2006E; margin-top:8px;">Catálogos</div>
+      <button class="table-btn" onclick="loadTable('PROCESOS_BI.DBO.Z_CATALOGO_OGASUITE')">Z_CATALOGO_OGASUITE</button>
+
+      <div class="sidebar-title" style="margin-top:12px;">Consultas rápidas</div>
+      <button class="table-btn" onclick="setPreset('describe')">🔍 Ver columnas de tabla</button>
+      <button class="table-btn" onclick="setPreset('count')">🔢 Contar registros</button>
+      <button class="table-btn" onclick="setPreset('dominios')">📋 Dominios activos</button>
+      <button class="table-btn" onclick="setPreset('atributos_dominio')">📌 Atributos por dominio</button>
+      <button class="table-btn" onclick="setPreset('casos_dominio')">📁 Casos de uso por dominio</button>
+      <button class="table-btn" onclick="setPreset('avances')">📊 Avances de dominio</button>
+    </div>
+  </div>
+
+  <!-- Panel principal -->
+  <div class="main">
+    <div class="query-panel">
+      <div class="query-form">
+        <div class="field-group">
+          <label>Campos (SELECT)</label>
+          <input id="f-campos" value="*" placeholder="*, id, nombre, ..." spellcheck="false" />
+        </div>
+        <div class="field-group">
+          <label>Tabla / Vista (FROM)</label>
+          <input id="f-origen" value="procesos_bi.dbo.t_mapa_dominios" placeholder="esquema.dbo.tabla" spellcheck="false" />
+        </div>
+        <div class="field-group">
+          <label>Condición (WHERE)</label>
+          <input id="f-condicion" value="sn_activo = 1" placeholder="1=1  /  id = 5  /  tipo = 'TERMINO'" spellcheck="false" />
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="runQuery()" id="btn-run">
+          ▶ Ejecutar
+        </button>
+        <button class="btn btn-ghost" onclick="describeTable()">
+          📋 Ver columnas
+        </button>
+        <button class="btn btn-secondary" onclick="clearResults()">
+          ✕ Limpiar
+        </button>
+        <span id="status-text" style="font-size:0.78rem; color:#64748b; margin-left:4px;"></span>
+
+        <div style="margin-left:auto; display:flex; gap:6px; align-items:center;">
+          <label style="font-size:0.72rem; color:#64748b;">TOP</label>
+          <input id="f-top" type="number" value="50" min="1" max="5000"
+            style="width:70px; border:1px solid #cbd5e1; border-radius:6px; padding:5px 8px; font-size:0.82rem;" />
+        </div>
+      </div>
+
+      <div class="preset-row" id="preset-row">
+        <span style="font-size:0.7rem; color:#94a3b8; align-self:center;">Atajos:</span>
+        <span class="preset-chip" onclick="quickFilter('sn_activo = 1')">sn_activo=1</span>
+        <span class="preset-chip" onclick="quickFilter('1=1')">Sin filtro</span>
+        <span class="preset-chip" onclick="setTOP(10)">TOP 10</span>
+        <span class="preset-chip" onclick="setTOP(100)">TOP 100</span>
+        <span class="preset-chip" onclick="setTOP(1000)">TOP 1000</span>
+      </div>
+    </div>
+
+    <!-- Columnas detectadas -->
+    <div class="cols-panel" id="cols-panel">
+      <strong style="margin-right:8px;">📋 Columnas:</strong>
+      <span id="cols-list"></span>
+      <span style="float:right; color:#b45309; font-size:0.7rem; cursor:pointer;" onclick="document.getElementById('cols-panel').classList.remove('visible')">✕ cerrar</span>
+    </div>
+
+    <!-- Tabs tabla / JSON -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-table" onclick="switchTab('table')">Tabla</button>
+      <button class="tab-btn" id="tab-json" onclick="switchTab('json')">JSON raw</button>
+    </div>
+
+    <!-- Resultados -->
+    <div class="results-area">
+      <div class="results-meta" id="results-meta" style="display:none;">
+        <span>Resultados: <span class="count" id="result-count">0</span></span>
+        <span class="elapsed" id="result-elapsed"></span>
+        <button class="btn btn-secondary" style="padding:3px 10px; font-size:0.72rem; margin-left:auto;" onclick="copyJSON()">📋 Copiar JSON</button>
+        <button class="btn btn-secondary" style="padding:3px 10px; font-size:0.72rem;" onclick="exportCSV()">⬇ CSV</button>
+      </div>
+
+      <div id="error-display"></div>
+
+      <div class="table-wrap" id="table-view">
+        <div class="empty-state">
+          <div class="icon">🗄️</div>
+          <p>Selecciona una tabla del sidebar o escribe una consulta y presiona <strong>Ejecutar</strong></p>
+        </div>
+      </div>
+
+      <pre id="json-view"></pre>
+    </div>
+  </div>
+</div>
+
+<div class="copy-toast" id="copy-toast"></div>
+
+<script>
+const API = 'http://gobinfoana01-2:8510';
+let lastData = [];
+let activeTab = 'table';
+let sortState = { col: null, dir: 'asc' }; // columna activa y dirección
+
+// ── Ejecutar query ─────────────────────────────────────────────────────────────
+async function runQuery() {
+  const campos    = document.getElementById('f-campos').value.trim() || '*';
+  const origen    = document.getElementById('f-origen').value.trim();
+  const condicion = document.getElementById('f-condicion').value.trim() || '1=1';
+  const top       = parseInt(document.getElementById('f-top').value) || 50;
+
+  if (!origen) { showError('Debes indicar una tabla (FROM).'); return; }
+
+  const btn = document.getElementById('btn-run');
+  const status = document.getElementById('status-text');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Ejecutando...';
+  status.textContent = '';
+  clearError();
+  hideResults();
+
+  const t0 = Date.now();
+  try {
+    const resp = await fetch(`${API}/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ campos, origen, condicion, top }),
+    });
+
+    const elapsed = Date.now() - t0;
+
+    if (!resp.ok) {
+      const txt = await resp.text();
+      throw new Error(txt);
+    }
+
+    let data = await resp.json();
+    if (!Array.isArray(data)) data = data ? [data] : [];
+
+    lastData = data;
+    sortState = { col: null, dir: 'asc' }; // reset sort al hacer nueva query
+    renderResults(data, elapsed);
+
+    // Resalta tabla activa en sidebar
+    document.querySelectorAll('.table-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.table-btn').forEach(b => {
+      if (b.textContent.trim() && origen.toLowerCase().includes(b.textContent.trim().toLowerCase()))
+        b.classList.add('active');
+    });
+
+  } catch (err) {
+    showError(err.message || String(err));
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '▶ Ejecutar';
+  }
+}
+
+// ── Renderizar tabla ───────────────────────────────────────────────────────────
+function renderResults(data, elapsed) {
+  const meta = document.getElementById('results-meta');
+
+  if (elapsed !== undefined) {
+    document.getElementById('result-count').textContent = data.length.toLocaleString();
+    document.getElementById('result-elapsed').textContent = `${elapsed}ms`;
+    meta.style.display = 'flex';
+  }
+
+  const tableView = document.getElementById('table-view');
+  const jsonView  = document.getElementById('json-view');
+
+  if (data.length === 0) {
+    tableView.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>La consulta no devolvió resultados.</p></div>';
+    jsonView.textContent = '[]';
+    showColumns([]);
+    return;
+  }
+
+  const cols = Object.keys(data[0]);
+  showColumns(cols);
+
+  // Ordenar datos según sortState
+  const sorted = sortData(data);
+
+  // Cabecera con flechas de sort
+  let html = '<table><thead><tr><th>#</th>';
+  cols.forEach(c => {
+    const isActive = sortState.col === c;
+    const cls = isActive ? (sortState.dir === 'asc' ? 'sort-asc' : 'sort-desc') : '';
+    const icon = isActive ? (sortState.dir === 'asc' ? '▲' : '▼') : '⇅';
+    html += `<th class="${cls}" onclick="toggleSort('${c}')" title="Ordenar por ${c}">
+               ${c}<i class="sort-icon">${icon}</i>
+             </th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  sorted.forEach((row, i) => {
+    html += `<tr>`;
+    html += `<td>${i + 1}</td>`;
+    cols.forEach(c => {
+      const val = row[c];
+      if (val === null || val === undefined || val === '') {
+        html += `<td class="null-val" title="NULL">NULL</td>`;
+      } else if (typeof val === 'number') {
+        html += `<td class="num-val" title="${val}" onclick="copyCell('${val}')">${val}</td>`;
+      } else if (typeof val === 'boolean') {
+        html += `<td class="bool-val">${val}</td>`;
+      } else {
+        const escaped = String(val).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        html += `<td title="${escaped}" onclick="copyCell(this.title)">${escaped}</td>`;
+      }
+    });
+    html += `</tr>`;
+  });
+
+  html += '</tbody></table>';
+  tableView.innerHTML = html;
+
+  // JSON view (siempre muestra datos originales sin orden)
+  jsonView.textContent = JSON.stringify(data, null, 2);
+  if (activeTab === 'json') jsonView.style.display = 'block';
+}
+
+// ── Ordenar ────────────────────────────────────────────────────────────────────
+function sortData(data) {
+  if (!sortState.col) return data;
+  const col = sortState.col;
+  const dir = sortState.dir === 'asc' ? 1 : -1;
+  return [...data].sort((a, b) => {
+    let va = a[col], vb = b[col];
+    // Nulls siempre al final
+    if (va === null || va === undefined) return 1;
+    if (vb === null || vb === undefined) return -1;
+    // Numérico
+    if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+    // Fecha (ISO string)
+    if (typeof va === 'string' && /^\d{4}-\d{2}-\d{2}/.test(va)) {
+      return (new Date(va) - new Date(vb)) * dir;
+    }
+    // Texto
+    return String(va).localeCompare(String(vb), 'es', { sensitivity: 'base' }) * dir;
+  });
+}
+
+function toggleSort(col) {
+  if (sortState.col === col) {
+    // misma columna → cambia dirección, o si ya estaba desc vuelve a sin orden
+    if (sortState.dir === 'asc') sortState.dir = 'desc';
+    else { sortState.col = null; sortState.dir = 'asc'; }
+  } else {
+    sortState.col = col;
+    sortState.dir = 'asc';
+  }
+  renderResults(lastData);  // re-renderiza sin nueva query
+}
+
+// ── Ver columnas de una tabla ──────────────────────────────────────────────────
+async function describeTable() {
+  const origen = document.getElementById('f-origen').value.trim();
+  if (!origen) { showError('Debes indicar una tabla.'); return; }
+
+  document.getElementById('f-condicion').value = '1=1';
+  document.getElementById('f-campos').value = '*';
+  document.getElementById('f-top').value = '1';
+  await runQuery();
+  document.getElementById('f-top').value = '50';
+}
+
+// ── Mostrar panel de columnas ─────────────────────────────────────────────────
+function showColumns(cols) {
+  const panel = document.getElementById('cols-panel');
+  const list  = document.getElementById('cols-list');
+  if (cols.length === 0) { panel.classList.remove('visible'); return; }
+
+  list.innerHTML = cols.map(c =>
+    `<span class="col-chip" title="Clic para filtrar por ${c}" onclick="filterByCol('${c}')">${c}</span>`
+  ).join('');
+  panel.classList.add('visible');
+}
+
+// ── Cargar tabla del sidebar ───────────────────────────────────────────────────
+function loadTable(tabla) {
+  document.getElementById('f-origen').value = tabla;
+  document.getElementById('f-campos').value = '*';
+  document.getElementById('f-condicion').value = '1=1';
+  document.getElementById('f-top').value = '50';
+  runQuery();
+}
+
+// ── Presets de consulta ────────────────────────────────────────────────────────
+function setPreset(tipo) {
+  const presets = {
+    describe: {
+      campos: '*', origen: document.getElementById('f-origen').value || 'procesos_bi.dbo.t_mapa_dominios',
+      condicion: '1=1', top: 1
+    },
+    count: {
+      campos: 'COUNT(*) AS total', origen: document.getElementById('f-origen').value || 'procesos_bi.dbo.t_mapa_dominios',
+      condicion: '1=1', top: 1
+    },
+    dominios: {
+      campos: 'id_dominio, descripcion_dominio, Tipo, codigo_Dominio, sn_activo',
+      origen: 'procesos_bi.dbo.t_mapa_dominios',
+      condicion: 'sn_activo = 1', top: 100
+    },
+    atributos_dominio: {
+      campos: 'id, nombre, tipo, dominios, dato_personal, golden_record',
+      origen: 'procesos_bi.dbo.T_terminos',
+      condicion: "sn_activo = 1 AND dominios LIKE '%Registro de Clientes%'", top: 50
+    },
+    casos_dominio: {
+      campos: 'id_caso_uso, descripcion_caso_uso, id_dominio, subdominio, estado',
+      origen: 'PROCESOS_BI.DBO.t_casos_uso_analitica',
+      condicion: 'id_dominio = 1 AND sn_activo = 1', top: 50
+    },
+    avances: {
+      campos: 'id_subdominio, id_paso, txt_desc_paso, estado_paso, porcentaje_avance, fecha_carga',
+      origen: 'procesos_bi.dbo.t_pasos_dominio_desarrollo',
+      condicion: 'id_subdominio IN (SELECT id_subdominio FROM procesos_bi.dbo.t_subdominios WHERE id_dominio = 1)', top: 50
+    },
+  };
+
+  const p = presets[tipo];
+  if (!p) return;
+  document.getElementById('f-campos').value    = p.campos;
+  document.getElementById('f-origen').value    = p.origen;
+  document.getElementById('f-condicion').value = p.condicion;
+  document.getElementById('f-top').value       = p.top || 50;
+  runQuery();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function quickFilter(cond) {
+  document.getElementById('f-condicion').value = cond;
+}
+function setTOP(n) {
+  document.getElementById('f-top').value = n;
+}
+function filterByCol(col) {
+  document.getElementById('f-campos').value = col;
+  runQuery();
+}
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-table').classList.toggle('active', tab === 'table');
+  document.getElementById('tab-json').classList.toggle('active', tab === 'json');
+  document.getElementById('table-view').style.display = tab === 'table' ? '' : 'none';
+  document.getElementById('json-view').style.display  = tab === 'json'  ? 'block' : 'none';
+}
+function clearResults() {
+  lastData = [];
+  document.getElementById('table-view').innerHTML =
+    '<div class="empty-state"><div class="icon">🗄️</div><p>Selecciona una tabla o escribe una consulta.</p></div>';
+  document.getElementById('json-view').textContent = '';
+  document.getElementById('results-meta').style.display = 'none';
+  document.getElementById('cols-panel').classList.remove('visible');
+  clearError();
+}
+function hideResults() {
+  document.getElementById('results-meta').style.display = 'none';
+  document.getElementById('table-view').innerHTML =
+    '<div class="empty-state"><div class="icon" style="font-size:1.5rem">⏳</div><p>Cargando...</p></div>';
+}
+function showError(msg) {
+  // Intenta parsear el JSON de error de la API
+  let display = msg;
+  try {
+    const parsed = JSON.parse(msg);
+    display = parsed.detail || msg;
+  } catch(e) {}
+  document.getElementById('error-display').innerHTML =
+    `<div class="error-box">❌ ${display}</div>`;
+}
+function clearError() {
+  document.getElementById('error-display').innerHTML = '';
+}
+function copyCell(val) {
+  navigator.clipboard.writeText(val).catch(() => {});
+  showToast(`Copiado: ${val}`);
+}
+function copyJSON() {
+  navigator.clipboard.writeText(JSON.stringify(lastData, null, 2)).catch(() => {});
+  showToast('JSON copiado al portapapeles');
+}
+function exportCSV() {
+  if (!lastData.length) return;
+  const cols = Object.keys(lastData[0]);
+  const rows = [cols.join(',')];
+  lastData.forEach(r => {
+    rows.push(cols.map(c => {
+      const v = r[c] == null ? '' : String(r[c]);
+      return v.includes(',') || v.includes('"') || v.includes('\n')
+        ? `"${v.replace(/"/g, '""')}"` : v;
+    }).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `query_${Date.now()}.csv`;
+  a.click();
+}
+function showToast(msg) {
+  const t = document.getElementById('copy-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Ejecutar con Ctrl+Enter
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runQuery(); }
+});
+
+// Cargar tabla inicial al abrir
+window.addEventListener('load', () => {
+  setTimeout(() => loadTable('procesos_bi.dbo.t_mapa_dominios'), 300);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+/* ============================================================
+   FichaDominio.css
+   Estilos compartidos por FichaDominio y todas sus sub-páginas.
+   Color primario: #D2006E
+   ============================================================ */
+
+/* ── Wrapper general de página de dominio ─────────────────── */
+.dominio-page-wrapper {
+  padding: 0;
+  min-height: 100vh;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Barra superior del dominio ───────────────────────────── */
+.dominio-header-bar {
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+  padding: 16px 28px 0 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* ── Fila superior: círculo + info + stats ────────────────── */
+.dominio-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Círculo de progreso ──────────────────────────────────── */
+.dominio-progress-circle {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.dominio-progress-circle svg {
+  width: 80px;
+  height: 80px;
+  transform: rotate(-90deg);
+}
+
+.dominio-progress-circle .circle-bg {
+  fill: none;
+  stroke: #e9ecef;
+  stroke-width: 8;
+}
+
+.dominio-progress-circle .circle-fill {
+  fill: none;
+  stroke: #D2006E;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.dominio-progress-circle .pct-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #D2006E;
+}
+
+/* ── Información del dominio (nombre, ola, estado) ───────── */
+.dominio-header-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.dominio-header-info h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2d2d2d;
+  margin: 0 0 6px 0;
+}
+
+.dominio-header-info .chip-ola {
+  display: inline-block;
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+  border-radius: 12px;
+  padding: 2px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.dominio-header-info .chip-estado {
+  display: inline-block;
+  border-radius: 12px;
+  padding: 2px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dominio-header-info .chip-estado.activo {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.dominio-header-info .chip-estado.inactivo {
+  background: #fce4ec;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+}
+
+/* ── Barra de estadísticas (Atributos, Términos, etc.) ────── */
+.dominio-stats-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 4px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 18px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.18s, color 0.18s;
+  min-width: 80px;
+}
+
+.stat-item:hover {
+  background: #fef0f6;
+  color: #D2006E;
+}
+
+.stat-item.active {
+  border-bottom-color: #D2006E;
+  color: #D2006E;
+}
+
+.stat-item i {
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+  color: #6c757d;
+}
+
+.stat-item.active i,
+.stat-item:hover i {
+  color: #D2006E;
+}
+
+.stat-item .stat-num {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #2d2d2d;
+}
+
+.stat-item .stat-label {
+  font-size: 0.65rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+/* ── Navegación de tabs del dominio ───────────────────────── */
+.dominio-nav-tabs {
+  display: flex;
+  gap: 0;
+  background: #fff;
+  border-top: 1px solid #dee2e6;
+  overflow-x: auto;
+}
+
+.dominio-nav-tab {
+  padding: 10px 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.dominio-nav-tab:hover {
+  color: #D2006E;
+  background: #fef0f6;
+}
+
+.dominio-nav-tab.active {
+  color: #D2006E;
+  border-bottom-color: #D2006E;
+  font-weight: 700;
+}
+
+/* ── Cuerpo de la ficha: dos columnas ─────────────────────── */
+.ficha-dominio-body {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  padding: 24px 28px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* ── Panel izquierdo: avances ─────────────────────────────── */
+.avances-panel {
+  width: 300px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 16px;
+}
+
+.avances-panel h6 {
+  font-weight: 700;
+  color: #2d2d2d;
+  margin-bottom: 14px;
+  font-size: 0.88rem;
+  border-bottom: 2px solid #D2006E;
+  padding-bottom: 6px;
+}
+
+.avance-item {
+  margin-bottom: 10px;
+}
+
+.avance-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.avance-item-label {
+  font-size: 0.75rem;
+  color: #495057;
+  flex: 1;
+  margin-right: 8px;
+  line-height: 1.3;
+}
+
+.avance-status {
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.avance-status.completado {
+  color: #2e7d32;
+}
+
+.avance-status.en-proceso {
+  color: #e65100;
+}
+
+.avance-progress {
+  height: 3px;
+  border-radius: 2px;
+  background: #e9ecef;
+  overflow: hidden;
+}
+
+.avance-progress-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: #D2006E;
+  transition: width 0.4s ease;
+}
+
+.avance-progress-bar.completado {
+  background: #2e7d32;
+}
+
+.avance-progress-bar.en-proceso {
+  background: #e65100;
+}
+
+/* ── Panel derecho: información del dominio ───────────────── */
+.dominio-info-panel {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  padding: 20px;
+}
+
+.dominio-info-panel h6 {
+  font-weight: 700;
+  color: #2d2d2d;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  border-bottom: 2px solid #D2006E;
+  padding-bottom: 6px;
+}
+
+.info-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.info-field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.info-label {
+  font-size: 0.68rem;
+  color: #adb5bd;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 0.85rem;
+  color: #2d2d2d;
+  font-weight: 500;
+}
+
+/* ── Grilla de artefactos ─────────────────────────────────── */
+.artefactos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 4px;
+}
+
+@media (max-width: 1100px) {
+  .artefactos-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .artefactos-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .artefactos-grid { grid-template-columns: 1fr; }
+}
+
+.artefacto-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px 12px;
+  text-align: center;
+  background: #fff;
+  cursor: default;
+  transition: box-shadow 0.18s;
+}
+
+.artefacto-card:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+.artefacto-card i {
+  font-size: 2rem;
+  color: #D2006E;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.artefacto-card .artefacto-nombre {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.artefacto-card .artefacto-tipo {
+  font-size: 0.68rem;
+  color: #6c757d;
+}
+
+.artefacto-card .badge-ni {
+  font-size: 0.62rem;
+  background: #fce4ec;
+  color: #c62828;
+  border-radius: 10px;
+  padding: 1px 8px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* ── Estructura del dominio ───────────────────────────────── */
+.estructura-layout {
+  display: flex;
+  gap: 24px;
+  padding: 20px 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.estructura-empleados-panel {
+  width: 260px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.estructura-empleados-panel h6 {
+  font-weight: 700;
+  color: #2d2d2d;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.estructura-empleados-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.estructura-empleado-item {
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+  color: #495057;
+}
+
+.estructura-empleado-item:hover {
+  background: #fef0f6;
+  color: #D2006E;
+}
+
+.estructura-main {
+  flex: 1;
+  min-width: 300px;
+}
+
+.estructura-add-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.estructura-add-bar select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.rol-section {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.rol-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #2d2d2d;
+}
+
+.rol-section-header i {
+  color: #D2006E;
+  font-size: 1rem;
+}
+
+.persona-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 14px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  color: #495057;
+  margin: 4px 4px 4px 0;
+}
+
+.persona-chip .chip-remove {
+  cursor: pointer;
+  color: #adb5bd;
+  font-size: 0.7rem;
+  margin-left: 2px;
+  transition: color 0.15s;
+}
+
+.persona-chip .chip-remove:hover {
+  color: #D2006E;
+}
+
+.persona-numbered {
+  font-size: 0.82rem;
+  color: #495057;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ── Tablas del inventario ────────────────────────────────── */
+.tablas-layout {
+  display: flex;
+  gap: 0;
+  flex: 1;
+  min-height: 600px;
+}
+
+.tablas-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #dee2e6;
+  padding: 16px 0;
+}
+
+.tablas-sidebar-item {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  color: #495057;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tablas-sidebar-item:hover {
+  background: #fef0f6;
+  color: #D2006E;
+}
+
+.tablas-sidebar-item.active {
+  background: #fce4ec;
+  color: #D2006E;
+  font-weight: 600;
+  border-left: 3px solid #D2006E;
+}
+
+.tablas-container {
+  flex: 1;
+  padding: 20px 24px;
+  background: #f8f9fa;
+}
+
+.tablas-container h5 {
+  font-weight: 700;
+  color: #2d2d2d;
+  margin-bottom: 14px;
+}
+
+.tabla-row {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tabla-row-path {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  flex: 1;
+  min-width: 200px;
+}
+
+.tabla-row-campo {
+  font-size: 0.72rem;
+  color: #6c757d;
+}
+
+.tabla-row-pct {
+  width: 80px;
+}
+
+.tabla-row-pct .progress {
+  height: 6px;
+}
+
+.tabla-row-pct .progress-bar {
+  background: #D2006E;
+}
+
+.tabla-row-etiqueta {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 0.68rem;
+  margin: 1px;
+}
+
+.tabla-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.tabla-row-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+  font-size: 0.85rem;
+  padding: 2px 4px;
+  transition: color 0.15s;
+}
+
+.tabla-row-actions button:hover {
+  color: #D2006E;
+}
+
+/* ── Casos de uso ─────────────────────────────────────────── */
+.casos-uso-container {
+  padding: 20px 28px;
+}
+
+.casos-uso-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.casos-uso-counters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  display: inline-block;
+  border-radius: 12px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.ingresado {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #90caf9;
+}
+
+.status-badge.en-proceso {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+
+.status-badge.en-calidad {
+  background: #fffde7;
+  color: #f57f17;
+  border: 1px solid #fff176;
+}
+
+.status-badge.cerrado {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.caso-uso-subdomain-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+
+.caso-uso-subdomain-card:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.09);
+  border-color: #D2006E;
+}
+
+.caso-uso-subdomain-card i {
+  font-size: 1.3rem;
+  color: #D2006E;
+}
+
+.caso-uso-subdomain-card .sub-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #2d2d2d;
+}
+
+.caso-uso-subdomain-card .sub-count {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.caso-use-card {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: box-shadow 0.15s;
+}
+
+.caso-use-card:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.09);
+}
+
+.caso-use-card .caso-nombre {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2d2d2d;
+}
+
+/* ── Spinner y errores ────────────────────────────────────── */
+.dominio-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.dominio-error {
+  padding: 16px;
+  color: #c62828;
+  background: #fce4ec;
+  border-radius: 6px;
+  margin: 16px 28px;
+}
+
+/* ── Sección interior ─────────────────────────────────────── */
+.dominio-section-body {
+  padding: 0 28px 28px;
+  flex: 1;
+}
+
+.dominio-section-body h5 {
+  font-weight: 700;
+  color: #2d2d2d;
+  margin-bottom: 14px;
+}
+
+/* ── Search bar ───────────────────────────────────────────── */
+.dominio-search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dominio-search-bar .form-control {
+  flex: 1;
+  max-width: 360px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  border: 1px solid #dee2e6;
+}
+
+/* ── Paginación ───────────────────────────────────────────── */
+.dominio-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.dominio-pagination button {
+  border: 1px solid #dee2e6;
+  background: #fff;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #495057;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dominio-pagination button:hover,
+.dominio-pagination button.active {
+  background: #D2006E;
+  color: #fff;
+  border-color: #D2006E;
+}
+
+/* ── Responsive general ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .ficha-dominio-body {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .avances-panel {
+    width: 100%;
+  }
+
+  .dominio-header-bar {
+    padding: 12px 16px 0;
+  }
+
+  .stat-item {
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dominio-nav-tab {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .estructura-layout {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .estructura-empleados-panel {
+    width: 100%;
+  }
+}
