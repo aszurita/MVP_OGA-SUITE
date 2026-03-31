@@ -43,7 +43,7 @@ export default function DominioCarta({ dominio, onClick }) {
   } = dominio;
 
   const color = color_dominio || colorPorTipo(tipo_dominio);
-  const avance = parseFloat(porcentaje_avance) || 0;
+  const avance = (parseFloat(porcentaje_avance) || 0) * 100;
   const tieneAvance = avance > 0;
   const tipoClass = getTipoClass(tipo_dominio);
   const esDerivado = tipoClass === 'Dominio-Derivado';
@@ -59,7 +59,7 @@ export default function DominioCarta({ dominio, onClick }) {
 
   // Tooltip solo cuando tiene avance, igual que el ASPX
   const tooltipText = tieneAvance
-    ? `Avance: ${avance.toFixed(0)}%`
+    ? `Porcentaje de avance:\n${avance.toFixed(2)}%`
     : undefined;
 
   function handleClick() {
