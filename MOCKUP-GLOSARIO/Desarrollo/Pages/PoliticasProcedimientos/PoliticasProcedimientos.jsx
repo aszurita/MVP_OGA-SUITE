@@ -1,10 +1,10 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import index from './politicas-index.json';
 import './styles/PoliticasProcedimientos.css';
 
 function Sidebar({ activeTab, activeDoc, onNavigate, onOpenDoc, onClose }) {
   const sidebarLevels = [
-    { tab: 'gob-modelos', sectionId: 'politicas', levelLabel: 'Nivel 1', label: 'Políticas' },
+    { tab: 'gob-modelos', sectionId: 'politicas', levelLabel: 'Nivel 1', label: 'Polí­ticas' },
     { tab: 'nivel-2', sectionId: 'nivel-2', levelLabel: 'Nivel 2', label: 'Estándares y lineamientos' },
     { tab: 'nivel-3', sectionId: 'nivel-3', levelLabel: 'Nivel 3', label: 'Procedimientos operativos' },
     { tab: 'nivel-4', sectionId: 'nivel-4', levelLabel: 'Nivel 4', label: 'Anexos' },
@@ -13,9 +13,9 @@ function Sidebar({ activeTab, activeDoc, onNavigate, onOpenDoc, onClose }) {
   return (
     <aside className="pp-sidebar">
       <div className="pp-sidebar-header">
-        <p className="pp-sidebar-title">Índice de documentos</p>
+        <p className="pp-sidebar-title">Indice de documentos</p>
         <button className="pp-sidebar-close" type="button" aria-label="Cerrar" onClick={onClose}>
-          ×
+          x
         </button>
       </div>
 
@@ -40,37 +40,43 @@ function Sidebar({ activeTab, activeDoc, onNavigate, onOpenDoc, onClose }) {
 
               {isActive && section && (
                 <div className="pp-sidebar-docs">
-                  {section.docs.map((doc) => (
-                    <div key={doc.id} className={`pp-sidebar-doc-card${doc.missing ? ' missing' : ''}`}>
-                      <p className="pp-sidebar-doc-title">{doc.title}</p>
-                      <p className="pp-sidebar-doc-desc">{doc.desc}</p>
+                  {section.docs.map((doc) => {
+                    if (doc.subcards || doc.links) {
+                      return <Anexo4Card key={doc.id} doc={doc} />;
+                    }
 
-                      {!doc.missing && (
-                        <div className="pp-sidebar-doc-actions">
-                          {doc.word && (
-                            <button
-                              type="button"
-                              className={`pp-sidebar-doc-chip${activeDoc?.pdf === doc.word ? ' active' : ''}`}
-                              title={`Ver documento: ${doc.title}`}
-                              onClick={() => onOpenDoc({ pdf: doc.word, title: doc.title })}
-                            >
-                              W
-                            </button>
-                          )}
-                          {doc.slides && (
-                            <button
-                              type="button"
-                              className={`pp-sidebar-doc-chip alt${activeDoc?.pdf === doc.slides ? ' active' : ''}`}
-                              title={`Ver presentación: ${doc.title}`}
-                              onClick={() => onOpenDoc({ pdf: doc.slides, title: doc.title })}
-                            >
-                              P
-                            </button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                    return (
+                      <div key={doc.id} className={`pp-sidebar-doc-card${doc.missing ? ' missing' : ''}`}>
+                        <p className="pp-sidebar-doc-title">{doc.title}</p>
+                        <p className="pp-sidebar-doc-desc">{doc.desc}</p>
+
+                        {!doc.missing && (
+                          <div className="pp-sidebar-doc-actions">
+                            {doc.word && (
+                              <button
+                                type="button"
+                                className={`pp-sidebar-doc-chip${activeDoc?.pdf === doc.word ? ' active' : ''}`}
+                                title={`Ver documento: ${doc.title}`}
+                                onClick={() => onOpenDoc({ pdf: doc.word, title: doc.title })}
+                              >
+                                W
+                              </button>
+                            )}
+                            {doc.slides && (
+                              <button
+                                type="button"
+                                className={`pp-sidebar-doc-chip alt${activeDoc?.pdf === doc.slides ? ' active' : ''}`}
+                                title={`Ver presentación: ${doc.title}`}
+                                onClick={() => onOpenDoc({ pdf: doc.slides, title: doc.title })}
+                              >
+                                P
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -112,28 +118,32 @@ function DocChip({ letter, label, onClick }) {
 
 function Anexo4Card({ doc }) {
   return (
-    <div className="pp-doc-card">
-      <p className="pp-doc-card-title">{doc.title}</p>
-      <p className="pp-doc-card-desc">{doc.desc}</p>
+    <div className="pp-doc-card pp-doc-card-anexo">
+      <div className="pp-doc-title">{doc.title}</div>
+      <div className="pp-doc-sub">{doc.desc}</div>
 
-      {doc.links?.map((lnk, i) => (
-        <div key={i} className="pp-links-row">
-          <span className="pp-links-row-label">{lnk.label}</span>
-          <a className="pp-link" href={lnk.href} target="_blank" rel="noopener noreferrer">
-            Abrir carpeta
-          </a>
+      {doc.links?.length ? (
+        <div className="pp-link-list">
+          {doc.links.map((lnk, i) => (
+            <div key={i} className="pp-link-item">
+              <span className="pp-link-label">{lnk.label}</span>
+              <a className="pp-link" href={lnk.href} target="_blank" rel="noopener noreferrer">
+                {lnk.linkLabel ?? 'Abrir enlace'}
+              </a>
+            </div>
+          ))}
         </div>
-      ))}
+      ) : null}
 
-      {doc.subcards && (
+      {doc.subcards?.length ? (
         <div className="pp-subcards">
           {doc.subcards.map((sc, i) => (
             <div key={i} className="pp-subcard">
-              <span className="pp-subcard-title">{sc.title}</span>
-              <span className="pp-subcard-note">{sc.note}</span>
+              <div className="pp-subcard-title">{sc.title}</div>
+              <div className="pp-subcard-note">{sc.note}</div>
               {sc.href ? (
                 <a className="pp-link" href={sc.href} target="_blank" rel="noopener noreferrer">
-                  {sc.linkLabel}
+                  {sc.linkLabel ?? 'Abrir enlace'}
                 </a>
               ) : (
                 <span className="pp-tag">{sc.tag}</span>
@@ -141,7 +151,7 @@ function Anexo4Card({ doc }) {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -197,7 +207,7 @@ function LevelView({ section, activeDoc, onOpen, onBack }) {
     return (
       <>
         <button className="pp-back-btn" type="button" onClick={onBack}>
-          Volver al índice
+          Volver al Indice
         </button>
         <PdfViewer src={activeDoc.pdf} />
       </>
@@ -231,6 +241,14 @@ const SIMPLE_PDFS = {
   'procesos-apoyo': '/docs/PoliticasProcedimientos/APO 7.1.2 - Administrar calidad y estrategia de datos de la organizacion.pdf',
 };
 
+const INDICE_DEFAULT_PDFS = {
+  indice: index.indice,
+  'gob-modelos': '/docs/PoliticasDataHub/Politicas De Gobierno De Modelos/Word.pdf',
+  'nivel-2': '/docs/PoliticasDataHub/Estandares Y Lineamientos/Nivel 2.pdf',
+  'nivel-3': '/docs/PoliticasDataHub/Procedimientos Operativos/Nivel 3.pdf',
+  'nivel-4': '/docs/PoliticasDataHub/Anexos/Anexos.pdf',
+};
+
 const INDICE_CONTEXT = new Set(['indice', 'nivel-2', 'nivel-3', 'nivel-4', 'gob-modelos']);
 
 export default function PoliticasProcedimientos() {
@@ -239,7 +257,7 @@ export default function PoliticasProcedimientos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const NAV = [
-    { id: 'politicas', label: 'Políticas' },
+    { id: 'politicas', label: 'Polí­ticas' },
     { id: 'manifiesto', label: 'Manifiesto' },
     { id: 'procesos', label: 'Procesos' },
     { id: 'procesos-apoyo', label: 'Procesos de Apoyo' },
@@ -268,7 +286,7 @@ export default function PoliticasProcedimientos() {
 
     if (activeTab === 'gob-modelos') {
       if (sidebarOpen) {
-        return activeDoc ? <PdfViewer src={activeDoc.pdf} /> : null;
+        return <PdfViewer src={activeDoc?.pdf ?? INDICE_DEFAULT_PDFS[activeTab]} />;
       }
 
       const section = index.sections.find((s) => s.id === 'politicas');
@@ -283,14 +301,18 @@ export default function PoliticasProcedimientos() {
     if (!section) return null;
 
     if (sidebarOpen) {
+      const src = activeDoc?.pdf ?? INDICE_DEFAULT_PDFS[activeTab];
+
       return activeDoc ? (
         <>
           <button className="pp-back-btn" type="button" onClick={() => setActiveDoc(null)}>
-            Volver al índice
+            Volver al Índice
           </button>
-          <PdfViewer src={activeDoc.pdf} />
+          <PdfViewer src={src} />
         </>
-      ) : null;
+      ) : (
+        <PdfViewer src={src} />
+      );
     }
 
     return (
@@ -308,7 +330,7 @@ export default function PoliticasProcedimientos() {
       <div className="row">
         <div className="col-12">
           <div className="pp-header">
-            <h1>Políticas y Procedimientos</h1>
+            <h1>Polí­ticas y Procedimientos</h1>
             <nav aria-label="secciones">
               <ul className="pp-nav">
                 {NAV.map((item) => (
@@ -329,7 +351,7 @@ export default function PoliticasProcedimientos() {
               <button
                 type="button"
                 className={`pp-btn-hamburger${sidebarOpen ? ' open' : ''}`}
-                aria-label={sidebarOpen ? 'Cerrar índice' : 'Abrir índice'}
+                aria-label={sidebarOpen ? 'Cerrar Í­ndice' : 'Abrir Í­ndice'}
                 onClick={() => setSidebarOpen((value) => !value)}
               >
                 <span /><span /><span />

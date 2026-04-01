@@ -306,18 +306,43 @@
 }
 
 /* ─── Links card (Anexo 4) ───────────────────────────────── */
-.pp-links-row {
+.pp-doc-card-anexo {
+  gap: 12px;
+}
+
+.pp-doc-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #202020;
+  line-height: 1.45;
+}
+
+.pp-doc-sub {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #666;
+}
+
+.pp-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pp-link-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 4px 0;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.pp-links-row-label {
+.pp-link-label {
   font-size: 12px;
-  color: #444;
-  font-weight: 500;
+  color: #333;
+  font-weight: 700;
 }
 
 .pp-link {
@@ -334,39 +359,48 @@
 .pp-subcards {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 10px;
 }
 
 .pp-subcard {
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 10px 12px;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 12px 12px 10px;
   background: #fafafa;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 10px;
 }
 
 .pp-subcard-title {
   font-size: 12px;
-  font-weight: 600;
-  color: #222;
+  font-weight: 700;
+  color: #202020;
+  line-height: 1.7;
 }
 
 .pp-subcard-note {
   font-size: 11px;
   color: #777;
+  line-height: 1.8;
+}
+
+.pp-subcard .pp-link,
+.pp-subcard .pp-tag {
+  align-self: center;
 }
 
 .pp-tag {
-  display: inline-block;
-  background: #f0f0f0;
-  border-radius: 12px;
-  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 6px 18px;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
   font-size: 11px;
-  color: #555;
-  align-self: flex-start;
+  color: #666;
 }
 
 /* ─── Sidebar ────────────────────────────────────────────── */
