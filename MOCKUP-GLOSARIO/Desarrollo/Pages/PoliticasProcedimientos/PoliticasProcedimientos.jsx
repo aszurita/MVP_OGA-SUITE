@@ -202,16 +202,9 @@ function PoliticasView({ section }) {
   );
 }
 
-function LevelView({ section, activeDoc, onOpen, onBack }) {
+function LevelView({ section, activeDoc, onOpen }) {
   if (activeDoc) {
-    return (
-      <>
-        <button className="pp-back-btn" type="button" onClick={onBack}>
-          Volver al Indice
-        </button>
-        <PdfViewer src={activeDoc.pdf} />
-      </>
-    );
+    return <PdfViewer src={activeDoc.pdf} />;
   }
 
   return (
@@ -279,6 +272,14 @@ export default function PoliticasProcedimientos() {
     }
   }
 
+  function handleCloseSidebar() {
+    setSidebarOpen(false);
+
+    if (!activeDoc && INDICE_CONTEXT.has(activeTab) && activeTab !== 'indice') {
+      setActiveTab('indice');
+    }
+  }
+
   function renderContent() {
     if (SIMPLE_PDFS[activeTab]) {
       return <PdfViewer src={SIMPLE_PDFS[activeTab]} />;
@@ -303,16 +304,7 @@ export default function PoliticasProcedimientos() {
     if (sidebarOpen) {
       const src = activeDoc?.pdf ?? INDICE_DEFAULT_PDFS[activeTab];
 
-      return activeDoc ? (
-        <>
-          <button className="pp-back-btn" type="button" onClick={() => setActiveDoc(null)}>
-            Volver al Índice
-          </button>
-          <PdfViewer src={src} />
-        </>
-      ) : (
-        <PdfViewer src={src} />
-      );
+      return <PdfViewer src={src} />;
     }
 
     return (
@@ -320,7 +312,6 @@ export default function PoliticasProcedimientos() {
         section={section}
         activeDoc={activeDoc}
         onOpen={setActiveDoc}
-        onBack={() => setActiveDoc(null)}
       />
     );
   }
@@ -352,7 +343,7 @@ export default function PoliticasProcedimientos() {
                 type="button"
                 className={`pp-btn-hamburger${sidebarOpen ? ' open' : ''}`}
                 aria-label={sidebarOpen ? 'Cerrar Í­ndice' : 'Abrir Í­ndice'}
-                onClick={() => setSidebarOpen((value) => !value)}
+                onClick={() => (sidebarOpen ? handleCloseSidebar() : setSidebarOpen(true))}
               >
                 <span /><span /><span />
               </button>
@@ -374,7 +365,7 @@ export default function PoliticasProcedimientos() {
                     activeDoc={activeDoc}
                     onNavigate={handleNavigate}
                     onOpenDoc={setActiveDoc}
-                    onClose={() => setSidebarOpen(false)}
+                    onClose={handleCloseSidebar}
                   />
                 )}
               </div>
