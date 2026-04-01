@@ -2,14 +2,14 @@ import { useState } from 'react';
 import index from './politicas-index.json';
 import './styles/PoliticasProcedimientos.css';
 
-/* ── Sidebar ──────────────────────────────────────────────── */
-function Sidebar({ activeTab, onNavigate, onClose }) {
+function Sidebar({ activeTab, activeDoc, onNavigate, onOpenDoc, onClose }) {
   const sidebarLevels = [
-    { tab: 'gob-modelos', levelLabel: 'Nivel 1', label: 'Políticas' },
-    { tab: 'nivel-2',     levelLabel: 'Nivel 2', label: 'Estándares y lineamientos' },
-    { tab: 'nivel-3',     levelLabel: 'Nivel 3', label: 'Procedimientos operativos' },
-    { tab: 'nivel-4',     levelLabel: 'Nivel 4', label: 'Anexos' },
+    { tab: 'gob-modelos', sectionId: 'politicas', levelLabel: 'Nivel 1', label: 'Políticas' },
+    { tab: 'nivel-2', sectionId: 'nivel-2', levelLabel: 'Nivel 2', label: 'Estándares y lineamientos' },
+    { tab: 'nivel-3', sectionId: 'nivel-3', levelLabel: 'Nivel 3', label: 'Procedimientos operativos' },
+    { tab: 'nivel-4', sectionId: 'nivel-4', levelLabel: 'Nivel 4', label: 'Anexos' },
   ];
+
   return (
     <aside className="pp-sidebar">
       <div className="pp-sidebar-header">
@@ -18,37 +18,73 @@ function Sidebar({ activeTab, onNavigate, onClose }) {
           ×
         </button>
       </div>
+
       <div className="pp-sidebar-body">
-        {sidebarLevels.map(({ tab, levelLabel, label }) => (
-          <div key={tab} className="pp-sidebar-level">
-            <p className="pp-sidebar-level-label">{levelLabel}</p>
-            <button
-              type="button"
-              className={`pp-sidebar-level-btn${activeTab === tab ? ' active' : ''}`}
-              onClick={() => onNavigate(tab)}
-            >
-              <span className="pp-menu-icon" aria-hidden="true">
-                <span /><span /><span />
-              </span>
-              {label}
-            </button>
-          </div>
-        ))}
+        {sidebarLevels.map(({ tab, sectionId, levelLabel, label }) => {
+          const isActive = activeTab === tab;
+          const section = index.sections.find((item) => item.id === sectionId);
+
+          return (
+            <div key={tab} className="pp-sidebar-level">
+              <p className="pp-sidebar-level-label">{levelLabel}</p>
+              <button
+                type="button"
+                className={`pp-sidebar-level-btn${isActive ? ' active' : ''}`}
+                onClick={() => onNavigate(tab)}
+              >
+                <span className="pp-menu-icon" aria-hidden="true">
+                  <span /><span /><span />
+                </span>
+                {label}
+              </button>
+
+              {isActive && section && (
+                <div className="pp-sidebar-docs">
+                  {section.docs.map((doc) => (
+                    <div key={doc.id} className={`pp-sidebar-doc-card${doc.missing ? ' missing' : ''}`}>
+                      <p className="pp-sidebar-doc-title">{doc.title}</p>
+                      <p className="pp-sidebar-doc-desc">{doc.desc}</p>
+
+                      {!doc.missing && (
+                        <div className="pp-sidebar-doc-actions">
+                          {doc.word && (
+                            <button
+                              type="button"
+                              className={`pp-sidebar-doc-chip${activeDoc?.pdf === doc.word ? ' active' : ''}`}
+                              title={`Ver documento: ${doc.title}`}
+                              onClick={() => onOpenDoc({ pdf: doc.word, title: doc.title })}
+                            >
+                              W
+                            </button>
+                          )}
+                          {doc.slides && (
+                            <button
+                              type="button"
+                              className={`pp-sidebar-doc-chip alt${activeDoc?.pdf === doc.slides ? ' active' : ''}`}
+                              title={`Ver presentación: ${doc.title}`}
+                              onClick={() => onOpenDoc({ pdf: doc.slides, title: doc.title })}
+                            >
+                              P
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </aside>
   );
 }
 
-/* ── PDF viewer ───────────────────────────────────────────── */
 function PdfViewer({ src }) {
   return (
     <div className="pp-pdf-wrap">
-      <iframe
-        key={src}
-        src={src}
-        title="Visor de documento"
-        loading="lazy"
-      >
+      <iframe key={src} src={src} title="Visor de documento" loading="lazy">
         <p className="pp-pdf-error">
           Tu navegador no puede mostrar el PDF.{' '}
           <a href={src} target="_blank" rel="noopener noreferrer">Abrir aquí</a>
@@ -58,9 +94,9 @@ function PdfViewer({ src }) {
   );
 }
 
-/* ── W / P chip button ────────────────────────────────────── */
 function DocChip({ letter, label, onClick }) {
   const isWord = letter === 'W';
+
   return (
     <button
       type="button"
@@ -74,12 +110,12 @@ function DocChip({ letter, label, onClick }) {
   );
 }
 
-/* ── Anexo 4 card (links + subcards) ─────────────────────── */
 function Anexo4Card({ doc }) {
   return (
     <div className="pp-doc-card">
       <p className="pp-doc-card-title">{doc.title}</p>
       <p className="pp-doc-card-desc">{doc.desc}</p>
+
       {doc.links?.map((lnk, i) => (
         <div key={i} className="pp-links-row">
           <span className="pp-links-row-label">{lnk.label}</span>
@@ -88,6 +124,7 @@ function Anexo4Card({ doc }) {
           </a>
         </div>
       ))}
+
       {doc.subcards && (
         <div className="pp-subcards">
           {doc.subcards.map((sc, i) => (
@@ -109,7 +146,6 @@ function Anexo4Card({ doc }) {
   );
 }
 
-/* ── Regular document card ────────────────────────────────── */
 function DocCard({ doc, onOpen }) {
   if (doc.subcards || doc.links) return <Anexo4Card doc={doc} />;
 
@@ -117,6 +153,7 @@ function DocCard({ doc, onOpen }) {
     <div className={`pp-doc-card${doc.missing ? ' missing' : ''}`}>
       <p className="pp-doc-card-title">{doc.title}</p>
       <p className="pp-doc-card-desc">{doc.desc}</p>
+
       {!doc.missing && (
         <div className="pp-doc-card-actions">
           {doc.word && (
@@ -139,15 +176,15 @@ function DocCard({ doc, onOpen }) {
   );
 }
 
-/* ── Políticas view (single doc with W/P toggle) ─────────── */
 function PoliticasView({ section }) {
   const [mode, setMode] = useState('word');
   const doc = section.docs[0];
   const src = mode === 'word' ? doc.word : doc.slides;
+
   return (
     <>
       <div className="pp-doc-card-actions left" style={{ marginBottom: 12 }}>
-        <DocChip letter="W" label="Ver documento"    onClick={() => setMode('word')} />
+        <DocChip letter="W" label="Ver documento" onClick={() => setMode('word')} />
         <DocChip letter="P" label="Ver presentación" onClick={() => setMode('slides')} />
       </div>
       <PdfViewer src={src} />
@@ -155,7 +192,6 @@ function PoliticasView({ section }) {
   );
 }
 
-/* ── Level view (cards grid) ──────────────────────────────── */
 function LevelView({ section, activeDoc, onOpen, onBack }) {
   if (activeDoc) {
     return (
@@ -167,6 +203,7 @@ function LevelView({ section, activeDoc, onOpen, onBack }) {
       </>
     );
   }
+
   return (
     <>
       <div className="pp-section-header">
@@ -177,6 +214,7 @@ function LevelView({ section, activeDoc, onOpen, onBack }) {
           {section.sectionLabel}
         </span>
       </div>
+
       <div className="pp-cards-grid">
         {section.docs.map((doc) => (
           <DocCard key={doc.id} doc={doc} onOpen={onOpen} />
@@ -186,35 +224,29 @@ function LevelView({ section, activeDoc, onOpen, onBack }) {
   );
 }
 
-/* PDFs de las pestañas simples (originales) */
 const SIMPLE_PDFS = {
-  'politicas':      '/docs/PoliticasProcedimientos/Politica de Gobierno de Informacion y Analitica 072023.pdf#zoom=80',
-  'manifiesto':     '/docs/PoliticasProcedimientos/MANIFIESTO DE USO DE DATOS BANCO GUAYAQUIL.pdf',
-  'procesos':       '/docs/PoliticasProcedimientos/APO 7.1.1 Gestionar mapa de dominios.pdf',
+  politicas: '/docs/PoliticasProcedimientos/Politica de Gobierno de Informacion y Analitica 072023.pdf#zoom=80',
+  manifiesto: '/docs/PoliticasProcedimientos/MANIFIESTO DE USO DE DATOS BANCO GUAYAQUIL.pdf',
+  procesos: '/docs/PoliticasProcedimientos/APO 7.1.1 Gestionar mapa de dominios.pdf',
   'procesos-apoyo': '/docs/PoliticasProcedimientos/APO 7.1.2 - Administrar calidad y estrategia de datos de la organizacion.pdf',
 };
 
-/* Pestañas que pertenecen al contexto "Índice" */
-const INDICE_CONTEXT = new Set(['indice', 'nivel-2', 'nivel-3', 'nivel-4']);
+const INDICE_CONTEXT = new Set(['indice', 'nivel-2', 'nivel-3', 'nivel-4', 'gob-modelos']);
 
-/* ══ Main component ═══════════════════════════════════════ */
 export default function PoliticasProcedimientos() {
-  const [activeTab, setActiveTab]     = useState('politicas');
-  const [activeDoc, setActiveDoc]     = useState(null); // { pdf, title }
+  const [activeTab, setActiveTab] = useState('politicas');
+  const [activeDoc, setActiveDoc] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  /* Solo 6 ítems visibles en el nav.
-     Nivel 2/3/4 se navegan desde el sidebar. */
   const NAV = [
-    { id: 'politicas',      label: 'Políticas' },
-    { id: 'manifiesto',     label: 'Manifiesto' },
-    { id: 'procesos',       label: 'Procesos' },
+    { id: 'politicas', label: 'Políticas' },
+    { id: 'manifiesto', label: 'Manifiesto' },
+    { id: 'procesos', label: 'Procesos' },
     { id: 'procesos-apoyo', label: 'Procesos de Apoyo' },
-    { id: 'gob-modelos',    label: 'Gobierno de Modelos' },
-    { id: 'indice',         label: 'Índice' },
+    { id: 'gob-modelos', label: 'Gobierno de Modelos' },
+    { id: 'indice', label: 'Índice' },
   ];
 
-  /* "Índice" se resalta cuando se está en cualquier nivel */
   function navIsActive(id) {
     if (id === 'indice') return INDICE_CONTEXT.has(activeTab);
     return activeTab === id;
@@ -223,29 +255,44 @@ export default function PoliticasProcedimientos() {
   function handleNavigate(tab) {
     setActiveTab(tab);
     setActiveDoc(null);
-    if (INDICE_CONTEXT.has(tab)) setSidebarOpen(true);
+
+    if (INDICE_CONTEXT.has(tab)) {
+      setSidebarOpen(true);
+    }
   }
 
   function renderContent() {
-    // Pestañas simples
     if (SIMPLE_PDFS[activeTab]) {
       return <PdfViewer src={SIMPLE_PDFS[activeTab]} />;
     }
 
-    // Gobierno de Modelos → Nivel 1 con W/P
     if (activeTab === 'gob-modelos') {
+      if (sidebarOpen) {
+        return activeDoc ? <PdfViewer src={activeDoc.pdf} /> : null;
+      }
+
       const section = index.sections.find((s) => s.id === 'politicas');
       return <PoliticasView section={section} />;
     }
 
-    // Índice general
     if (activeTab === 'indice') {
       return <PdfViewer src={index.indice} />;
     }
 
-    // Niveles 2 / 3 / 4
     const section = index.sections.find((s) => s.id === activeTab);
     if (!section) return null;
+
+    if (sidebarOpen) {
+      return activeDoc ? (
+        <>
+          <button className="pp-back-btn" type="button" onClick={() => setActiveDoc(null)}>
+            Volver al índice
+          </button>
+          <PdfViewer src={activeDoc.pdf} />
+        </>
+      ) : null;
+    }
+
     return (
       <LevelView
         section={section}
@@ -260,8 +307,6 @@ export default function PoliticasProcedimientos() {
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-
-          {/* ── Header ── */}
           <div className="pp-header">
             <h1>Políticas y Procedimientos</h1>
             <nav aria-label="secciones">
@@ -279,12 +324,13 @@ export default function PoliticasProcedimientos() {
                 ))}
               </ul>
             </nav>
+
             <div className="pp-header-right">
               <button
                 type="button"
                 className={`pp-btn-hamburger${sidebarOpen ? ' open' : ''}`}
                 aria-label={sidebarOpen ? 'Cerrar índice' : 'Abrir índice'}
-                onClick={() => setSidebarOpen((v) => !v)}
+                onClick={() => setSidebarOpen((value) => !value)}
               >
                 <span /><span /><span />
               </button>
@@ -293,24 +339,25 @@ export default function PoliticasProcedimientos() {
 
           <hr className="pp-separator" />
 
-          {/* ── Body ── */}
           <div className="card">
             <div className="card-body">
               <div className="pp-body">
                 <div className="pp-main">
                   {renderContent()}
                 </div>
+
                 {sidebarOpen && (
                   <Sidebar
                     activeTab={activeTab}
+                    activeDoc={activeDoc}
                     onNavigate={handleNavigate}
+                    onOpenDoc={setActiveDoc}
                     onClose={() => setSidebarOpen(false)}
                   />
                 )}
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

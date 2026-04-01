@@ -39,7 +39,7 @@
   font-size: 14px;
 }
 
-.pp-nav li + li::before {
+.pp-nav li+li::before {
   content: '|';
   color: #bbb;
   margin: 0 8px;
@@ -476,4 +476,86 @@
   height: 2px;
   background: currentColor;
   border-radius: 1px;
+}
+
+.pp-sidebar-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pp-sidebar-doc-card {
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pp-sidebar-doc-card.missing {
+  opacity: 0.55;
+}
+
+.pp-sidebar-doc-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #202020;
+  line-height: 1.35;
+}
+
+.pp-sidebar-doc-desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #666;
+}
+
+.pp-sidebar-doc-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pp-sidebar-doc-chip {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #D2006E;
+  background: #fff;
+  color: #D2006E;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pp-sidebar-doc-chip.alt {
+  border-color: #D2006E;
+  color: #D2006E;
+}
+
+.pp-sidebar-doc-chip:hover,
+.pp-sidebar-doc-chip.active {
+  background: #D2006E;
+  color: #fff;
+}
+
+@media (max-width: 991px) {
+  .pp-body {
+    flex-direction: column;
+  }
+
+  .pp-sidebar {
+    width: 100%;
+    position: static;
+    max-height: none;
+  }
 }

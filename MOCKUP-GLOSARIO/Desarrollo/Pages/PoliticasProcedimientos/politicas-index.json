@@ -59,7 +59,8 @@
           "id": "lineamiento-uso",
           "title": "Lineamiento de Uso de Modelos",
           "desc": "Establece las directrices para el uso adecuado de los modelos dentro de la organización, incluyendo condiciones de utilización, restricciones y controles.",
-          "missing": true
+          "word" : "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Uso De Modelos/Word.pdf",
+          "slides" : "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Uso De Modelos/Slides.pdf"
         },
         {
           "id": "estandar-doc-validacion",
