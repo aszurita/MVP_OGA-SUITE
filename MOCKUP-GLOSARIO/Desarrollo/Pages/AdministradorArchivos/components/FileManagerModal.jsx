@@ -9,13 +9,32 @@ async function requestJson(url, options = {}) {
     },
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get('content-type') ?? '';
+  const isJsonResponse = contentType.includes('application/json');
+  const rawText = await response.text();
+  let data = null;
+
+  if (rawText && isJsonResponse) {
+    try {
+      data = JSON.parse(rawText);
+    } catch {
+      throw new Error('La respuesta del servidor no es JSON valido.');
+    }
+  }
+
+  if (!isJsonResponse) {
+    if (rawText.trim().startsWith('<!DOCTYPE') || rawText.trim().startsWith('<html')) {
+      throw new Error('El API de documentos no esta disponible en este servidor. Ahora mismo solo se esta sirviendo el frontend.');
+    }
+
+    throw new Error('La respuesta del servidor no tiene formato JSON.');
+  }
 
   if (!response.ok) {
     throw new Error(data?.error ?? 'No se pudo completar la solicitud.');
   }
 
-  return data;
+  return data ?? {};
 }
 
 function formatBytes(bytes) {
@@ -177,14 +196,26 @@ export default function FileManagerModal({ isOpen, onClose }) {
     window.open(`/api/docs/file?path=${query}`, '_blank', 'noopener,noreferrer');
   }
 
+  function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  }
+
   if (!isOpen) return null;
 
   const breadcrumbs = ['docs', ...path];
   const currentDirName = breadcrumbs[breadcrumbs.length - 1];
 
   return (
-    <div className="pp-file-manager-overlay" role="dialog" aria-modal="true" aria-label="Administrador de archivos">
-      <div className="pp-file-manager-modal">
+    <div
+      className="pp-file-manager-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Administrador de archivos"
+      onClick={handleOverlayClick}
+    >
+      <div className="pp-file-manager-modal" onClick={(event) => event.stopPropagation()}>
         <div className="pp-file-manager-header">
           <div className='Header-title'>
             <h2>Administrador de docs</h2>

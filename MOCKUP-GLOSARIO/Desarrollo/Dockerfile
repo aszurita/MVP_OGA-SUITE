@@ -1,7 +1,8 @@
-FROM nginx:alpine
+FROM node:20-alpine
 
-COPY dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
+COPY dist ./dist
+COPY server.js ./server.js
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "server.js"]
