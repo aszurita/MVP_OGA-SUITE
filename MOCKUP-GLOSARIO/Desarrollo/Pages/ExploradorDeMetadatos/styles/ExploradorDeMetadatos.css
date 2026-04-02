@@ -58,13 +58,21 @@
 
 .em-toolbar-right {
   justify-content: flex-end;
-  gap: 20px;
+  gap: 12px;
 }
 
 .em-header-tools {
   display: inline-flex;
   align-items: center;
   gap: 12px;
+}
+
+.em-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  position: relative;
 }
 
 .em-switch-ghost,
@@ -84,7 +92,15 @@
   padding: 5px;
   border-radius: 999px;
   background: #dfe1e6;
+  position: relative;
+}
+
+.em-switch-ghost.is-left {
   justify-content: flex-start;
+}
+
+.em-switch-ghost.is-right {
+  justify-content: flex-end;
 }
 
 .em-switch-thumb {
@@ -117,7 +133,7 @@
   justify-content: space-between;
   gap: 6px;
   min-width: 82px;
-  height: 32px;
+  height: 46px;
   padding: 0 12px 0 18px;
   border: none;
   border-radius: 999px;
@@ -671,6 +687,10 @@
   .em-actions {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  .em-group-toggle {
+    align-items: center;
   }
 
   .em-subtoolbar {

@@ -80,10 +80,6 @@ function ViewModeDropdown({ value, onChange }) {
 function HeaderUtilityIcons() {
   return (
     <div className="em-header-tools" aria-hidden="true">
-      <button className="em-switch-ghost" type="button" title="Alternar vista">
-        <span className="em-switch-thumb" />
-      </button>
-
       <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-1.2a4.8 4.8 0 0 0-4.8-4.8H8.8A4.8 4.8 0 0 0 4 19.8V21" />
@@ -150,9 +146,26 @@ function ActionIcon({ type }) {
   return icons[type] || null;
 }
 
+function GroupTableToggle({ checked, onToggle }) {
+  return (
+    <div className="em-group-toggle em-tooltip-trigger" data-tooltip="Agrupar Nivel Tabla">
+      <button
+        className={`em-switch-ghost ${checked ? 'is-right' : 'is-left'}`}
+        type="button"
+        title="Agrupar Nivel Tabla"
+        aria-pressed={checked}
+        onClick={onToggle}
+      >
+        <span className="em-switch-thumb" />
+      </button>
+    </div>
+  );
+}
+
 export default function ExploradorDeMetadatos() {
   const [viewMode, setViewMode] = useState('tabla');
   const [viewSelector, setViewSelector] = useState('tabla');
+  const [lastNonTableSelector, setLastNonTableSelector] = useState('campo');
   const [searchInput, setSearchInput] = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
   const [acceptAll, setAcceptAll] = useState(false);
@@ -219,9 +232,21 @@ export default function ExploradorDeMetadatos() {
   }
 
   function handleViewChange(nextValue) {
+    if (nextValue !== 'tabla') {
+      setLastNonTableSelector(nextValue);
+    }
     setViewSelector(nextValue);
     setViewMode(nextValue === 'tabla' ? 'tabla' : 'campo');
     setPage(1);
+  }
+
+  function handleGroupToggle() {
+    if (viewSelector === 'tabla') {
+      handleViewChange(lastNonTableSelector || 'campo');
+      return;
+    }
+
+    handleViewChange('tabla');
   }
 
   function handlePageChange(nextPage) {
@@ -248,6 +273,7 @@ export default function ExploradorDeMetadatos() {
           </div>
 
           <div className="em-toolbar-right">
+            <GroupTableToggle checked={viewSelector === 'tabla'} onToggle={handleGroupToggle} />
             <HeaderUtilityIcons />
             <SegmentarDropdown
               servidores={filters.servidores || []}
