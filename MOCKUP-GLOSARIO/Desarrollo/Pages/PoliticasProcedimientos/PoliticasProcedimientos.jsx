@@ -1,97 +1,147 @@
-/**
- * PoliticasProcedimientos.jsx
- * Página de Políticas y Procedimientos — conversión React del ASPX original.
- *
- * Fuentes de PDF:
- *   - Políticas      → /docs/PoliticasProcedimientos/Politica de Gobierno...pdf  (archivo local)
- *   - Manifiesto     → /docs/PoliticasProcedimientos/MANIFIESTO DE USO...pdf     (archivo local)
- *   - Procesos       → http://vamos.bancoguayaquil.com/...  (SharePoint interno)
- *   - Procesos Apoyo → http://vamos.bancoguayaquil.com/...  (SharePoint interno)
- *
- * NOTA: Los PDFs locales deben estar en la carpeta `public/docs/PoliticasProcedimientos/`
- * para que Vite los sirva correctamente. Mueve o copia `Desarrollo/docs/` a `Desarrollo/public/docs/`.
- */
 import { useState } from 'react';
+import Sidebar from './Components/Sidebar';
+import PdfViewer from './Components/PdfViewer';
+import PoliticasView from './Components/PoliticasView';
+import LevelView from './Components/LevelView';
+import index from './politicas-index.json';
+import './styles/PoliticasProcedimientos.css';
 
-const TABS = [
-  {
-    id: 'politicas',
-    label: 'Políticas',
-    pdf: '/docs/PoliticasProcedimientos/Politica de Gobierno de Informacion y Analitica 072023.pdf#zoom=80',
-  },
-  {
-    id: 'manifiesto',
-    label: 'Manifiesto',
-    pdf: '/docs/PoliticasProcedimientos/MANIFIESTO DE USO DE DATOS BANCO GUAYAQUIL.pdf',
-  },
-  {
-    id: 'procesos',
-    label: 'Procesos',
-    pdf: '/docs/PoliticasProcedimientos/APO 7.1.1 Gestionar mapa de dominios.pdf',
-  },
-  {
-    id: 'procesos-apoyo',
-    label: 'Procesos de Apoyo',
-    pdf: '/docs/PoliticasProcedimientos/APO 7.1.2 - Administrar calidad y estrategia de datos de la organizacion.pdf',
-  },
+const SIMPLE_PDFS = {
+  politicas: '/docs/PoliticasProcedimientos/Politica de Gobierno de Informacion y Analitica 072023.pdf#zoom=80',
+  manifiesto: '/docs/PoliticasProcedimientos/MANIFIESTO DE USO DE DATOS BANCO GUAYAQUIL.pdf',
+  procesos: '/docs/PoliticasProcedimientos/APO 7.1.1 Gestionar mapa de dominios.pdf',
+  'procesos-apoyo': '/docs/PoliticasProcedimientos/APO 7.1.2 - Administrar calidad y estrategia de datos de la organizacion.pdf',
+};
+
+const INDICE_DEFAULT_PDFS = {
+  indice: index.indice,
+  'gob-modelos': '/docs/PoliticasDataHub/Politicas De Gobierno De Modelos/Word.pdf',
+  'nivel-2': '/docs/PoliticasDataHub/Estandares Y Lineamientos/Nivel 2.pdf',
+  'nivel-3': '/docs/PoliticasDataHub/Procedimientos Operativos/Nivel 3.pdf',
+  'nivel-4': '/docs/PoliticasDataHub/Anexos/Anexos.pdf',
+};
+
+const INDICE_CONTEXT = new Set(['indice', 'nivel-2', 'nivel-3', 'nivel-4', 'gob-modelos']);
+
+const NAV = [
+  { id: 'politicas', label: 'Politicas' },
+  { id: 'manifiesto', label: 'Manifiesto' },
+  { id: 'procesos', label: 'Procesos' },
+  { id: 'procesos-apoyo', label: 'Procesos de Apoyo' },
+  { id: 'gob-modelos', label: 'Gobierno de Modelos' },
+  { id: 'indice', label: 'Indice' },
 ];
 
 export default function PoliticasProcedimientos() {
   const [activeTab, setActiveTab] = useState('politicas');
+  const [activeDoc, setActiveDoc] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const tabActivo = TABS.find((t) => t.id === activeTab);
+  function navIsActive(id) {
+    if (id === 'indice') return INDICE_CONTEXT.has(activeTab);
+    return activeTab === id;
+  }
+
+  function handleNavigate(tab) {
+    setActiveTab(tab);
+    setActiveDoc(null);
+
+    if (INDICE_CONTEXT.has(tab)) {
+      setSidebarOpen(true);
+    }
+  }
+
+  function handleCloseSidebar() {
+    setSidebarOpen(false);
+
+    if (!activeDoc && INDICE_CONTEXT.has(activeTab) && activeTab !== 'indice') {
+      setActiveTab('indice');
+    }
+  }
+
+  function renderContent() {
+    if (SIMPLE_PDFS[activeTab]) {
+      return <PdfViewer src={SIMPLE_PDFS[activeTab]} />;
+    }
+
+    if (activeTab === 'gob-modelos') {
+      if (sidebarOpen) {
+        return <PdfViewer src={activeDoc?.pdf ?? INDICE_DEFAULT_PDFS[activeTab]} />;
+      }
+
+      const section = index.sections.find((s) => s.id === 'politicas');
+      return <PoliticasView section={section} />;
+    }
+
+    if (activeTab === 'indice') {
+      return <PdfViewer src={index.indice} />;
+    }
+
+    const section = index.sections.find((s) => s.id === activeTab);
+    if (!section) return null;
+
+    if (sidebarOpen) {
+      const src = activeDoc?.pdf ?? INDICE_DEFAULT_PDFS[activeTab];
+      return <PdfViewer src={src} />;
+    }
+
+    return <LevelView section={section} activeDoc={activeDoc} onOpen={setActiveDoc} />;
+  }
 
   return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-12">
-
-          {/* Título + breadcrumb en la misma línea (igual que el ASPX original) */}
-          <div className="d-flex align-items-end flex-wrap mb-1" style={{ gap: '16px' }}>
-            <h1 className="mb-0">Políticas y Procedimientos</h1>
-            <nav className="breadcrumb-container" aria-label="breadcrumb">
-              <ol className="breadcrumb pl-0 mb-0">
-                {TABS.map((tab) => (
-                  <li key={tab.id} className="breadcrumb-item">
-                    <a
-                      onClick={() => setActiveTab(tab.id)}
-                      style={{
-                        cursor: 'pointer',
-                        color: activeTab === tab.id ? '#D2006E' : undefined,
-                        fontWeight: activeTab === tab.id ? 600 : undefined,
-                        textDecoration: activeTab === tab.id ? 'underline' : 'none',
-                      }}
+          <div className="pp-header">
+            <h1>Politicas y Procedimientos</h1>
+            <nav aria-label="secciones">
+              <ul className="pp-nav">
+                {NAV.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      className={`pp-nav-btn${navIsActive(item.id) ? ' active' : ''}`}
+                      onClick={() => handleNavigate(item.id)}
                     >
-                      {tab.label}
-                    </a>
+                      {item.label}
+                    </button>
                   </li>
                 ))}
-              </ol>
+              </ul>
             </nav>
-          </div>
-          <div className="separator" style={{ marginBottom: 32 }} />
 
-          {/* Visor PDF — card con padding blanco igual que el ASPX original */}
-          <div className="card">
-            <div className="card-body">
-              <object
-                key={tabActivo.id}
-                data={tabActivo.pdf}
-                type="application/pdf"
-                width="100%"
-                height="800px"
-                style={{ display: 'block' }}
+            <div className="pp-header-right">
+              <button
+                type="button"
+                className={`pp-btn-hamburger${sidebarOpen ? ' open' : ''}`}
+                aria-label={sidebarOpen ? 'Cerrar Indice' : 'Abrir Indice'}
+                onClick={() => (sidebarOpen ? handleCloseSidebar() : setSidebarOpen(true))}
               >
-                <p className="p-3 text-muted">
-                  Tu navegador no puede mostrar el PDF directamente.{' '}
-                  <a href={tabActivo.pdf} target="_blank" rel="noopener noreferrer">
-                    Abre el PDF aquí
-                  </a>
-                </p>
-              </object>
+                <span /><span /><span />
+              </button>
             </div>
           </div>
 
+          <hr className="pp-separator" />
+
+          <div className="card">
+            <div className="card-body">
+              <div className="pp-body">
+                <div className="pp-main">{renderContent()}</div>
+
+                {sidebarOpen && (
+                  <Sidebar
+                    sections={index.sections}
+                    activeTab={activeTab}
+                    activeDoc={activeDoc}
+                    onNavigate={handleNavigate}
+                    onOpenDoc={setActiveDoc}
+                    onClose={handleCloseSidebar}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

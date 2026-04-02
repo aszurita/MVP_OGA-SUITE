@@ -1,0 +1,200 @@
+{
+  "indice": "/docs/PoliticasDataHub/Indice_documentos_Gobierno_de_Modelos.pdf",
+  "sections": [
+    {
+      "id": "politicas",
+      "navLabel": "Políticas",
+      "sectionLabel": "Políticas de Gobierno de Modelos",
+      "docs": [
+        {
+          "id": "politica-gob-modelos",
+          "title": "Política de Gobierno de Modelos",
+          "desc": "Marco corporativo para gestión, calidad y uso de datos como activo estratégico del Banco.",
+          "word": "/docs/PoliticasDataHub/Politicas De Gobierno De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Politicas De Gobierno De Modelos/Slides.pdf"
+        }
+      ]
+    },
+    {
+      "id": "nivel-2",
+      "navLabel": "Nivel 2",
+      "sectionLabel": "Estándares y lineamientos",
+      "docs": [
+        {
+          "id": "estandar-clasificacion",
+          "title": "Estándares de clasificación de modelos",
+          "desc": "Define los criterios, variables, escalas y reglas de decisión para clasificar los modelos en Tier 1, Tier 2 o Tier 3, con base en su materialidad, impacto, riesgo, complejidad y uso.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandares De Clasificacion De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandares De Clasificacion De Modelos/Slides.pdf"
+        },
+        {
+          "id": "manual-roles",
+          "title": "Manual de Roles y Responsabilidades",
+          "desc": "Establece las funciones, responsabilidades y niveles de participación de las áreas y actores involucrados en el ciclo de vida de los modelos.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Manual De Roles Y Responsabilidades/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Manual De Roles Y Responsabilidades/Slides.pdf"
+        },
+        {
+          "id": "estandar-ciclo-vida",
+          "title": "Estándar de Desarrollo y Ciclo de Vida de Modelos",
+          "desc": "Define los criterios técnicos, metodológicos y de control aplicables al diseño, desarrollo, prueba, aprobación, implementación, mantenimiento y retiro de modelos.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandar De Desarrollo Y Ciclo De Vida De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandar De Desarrollo Y Ciclo De Vida De Modelos/Slides.pdf"
+        },
+        {
+          "id": "manual-mlops",
+          "title": "Manual de Estándares de MLOps",
+          "desc": "Establece los lineamientos técnicos para la construcción, automatización, despliegue, versionamiento, monitoreo operativo y mantenimiento de pipelines y componentes de MLOps.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Manual De Estandares De Mlops/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Manual De Estandares De Mlops/Slides.pdf"
+        },
+        {
+          "id": "lineamiento-etica",
+          "title": "Lineamiento de Ética, Transparencia y Explicabilidad de Modelos",
+          "desc": "Define los principios y criterios para promover el uso responsable de modelos, considerando aspectos de ética, transparencia, interpretabilidad, explicabilidad y sesgos.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Etica, Transparencia Y Explicabilidad De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Etica, Transparencia Y Explicabilidad De Modelos/Slides.pdf"
+        },
+        {
+          "id": "lineamiento-uso",
+          "title": "Lineamiento de Uso de Modelos",
+          "desc": "Establece las directrices para el uso adecuado de los modelos dentro de la organización, incluyendo condiciones de utilización, restricciones y controles.",
+          "word" : "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Uso De Modelos/Word.pdf",
+          "slides" : "/docs/PoliticasDataHub/Estandares Y Lineamientos/Lineamiento De Uso De Modelos/Slides.pdf"
+        },
+        {
+          "id": "estandar-doc-validacion",
+          "title": "Estándar de Documentación de Validación de Modelos",
+          "desc": "Define los requisitos mínimos de estructura, contenido, evidencia y formalización de la documentación generada durante el proceso de validación de modelos.",
+          "word": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandar De Documentacion De Validacion De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Estandares Y Lineamientos/Estandar De Documentacion De Validacion De Modelos/Slides.pdf"
+        }
+      ]
+    },
+    {
+      "id": "nivel-3",
+      "navLabel": "Nivel 3",
+      "sectionLabel": "Procedimientos operativos",
+      "docs": [
+        {
+          "id": "proc-validacion",
+          "title": "Procedimiento para Validación de Modelos",
+          "desc": "Describe las actividades, responsables, criterios de entrada, ejecución, revisión, aprobación y cierre del proceso de validación de modelos.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento Para Validacion De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento Para Validacion De Modelos/Slides.pdf"
+        },
+        {
+          "id": "proc-comite",
+          "title": "Procedimiento de Comité de Gobierno de Modelos",
+          "desc": "Establece la forma en que se convoca, organiza, documenta y da seguimiento a las sesiones del Comité de Gobierno de Modelos.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Comite De Gobierno De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Comite De Gobierno De Modelos/Slides.pdf"
+        },
+        {
+          "id": "proc-produccion",
+          "title": "Procedimiento para Paso de Modelos a Producción",
+          "desc": "Define las actividades, validaciones, aprobaciones, controles y evidencias requeridas para promover un modelo a ambiente productivo.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento Para Paso De Modelos A Produccion/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento Para Paso De Modelos A Produccion/Slides.pdf"
+        },
+        {
+          "id": "proc-cambios",
+          "title": "Procedimiento de Gestión de Cambios de Modelos",
+          "desc": "Describe el proceso para solicitar, evaluar, aprobar, implementar y documentar cambios sobre modelos en operación, diferenciando cambios menores y mayores.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Gestion De Cambios De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Gestion De Cambios De Modelos/Slides.pdf"
+        },
+        {
+          "id": "proc-monitoreo",
+          "title": "Procedimiento de Monitoreo Continuo y Mantenimiento de Modelos",
+          "desc": "Establece las actividades para el seguimiento periódico del desempeño técnico, estabilidad, drift, calidad de datos y desempeño de negocio de modelos en producción.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Monitoreo Continuo Y Mantenimiento De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Monitoreo Continuo Y Mantenimiento De Modelos/Slides.pdf"
+        },
+        {
+          "id": "proc-retiro",
+          "title": "Procedimiento de Retiro de Modelos",
+          "desc": "Define las actividades necesarias para descontinuar, sustituir o dar de baja un modelo, incluyendo la evaluación de causas, aprobaciones y actualización del inventario.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Retiro De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Retiro De Modelos/Slides.pdf"
+        },
+        {
+          "id": "proc-registro",
+          "title": "Procedimiento de Registro de Modelos en el Inventario",
+          "desc": "Describe las actividades, responsables, criterios y controles para el alta, actualización y mantenimiento de la información de los modelos en el inventario institucional.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Registro De Modelos En El Inventario/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Registro De Modelos En El Inventario/Slides.pdf"
+        },
+        {
+          "id": "proc-excepciones",
+          "title": "Procedimiento de Gestión de Excepciones",
+          "desc": "Establece el proceso para identificar, documentar, evaluar, aprobar, monitorear y cerrar excepciones relacionadas con el cumplimiento de políticas y estándares de gobierno.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Gestion De Excepciones/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Gestion De Excepciones/Slides.pdf"
+        },
+        {
+          "id": "proc-reporteria",
+          "title": "Procedimiento de Reportería de Gobierno de Modelos",
+          "desc": "Define la elaboración, consolidación, revisión, aprobación y distribución de los reportes periódicos de gobierno de modelos dirigidos a instancias de supervisión.",
+          "word": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Reporteria De Gobierno De Modelos/Word.pdf",
+          "slides": "/docs/PoliticasDataHub/Procedimientos Operativos/Procedimiento De Reporteria De Gobierno De Modelos/Slides.pdf"
+        }
+      ]
+    },
+    {
+      "id": "nivel-4",
+      "navLabel": "Nivel 4",
+      "sectionLabel": "Anexos",
+      "docs": [
+        {
+          "id": "anexo-umbrales",
+          "title": "Anexo 1: Umbrales estándares para modelos",
+          "desc": "Documento técnico que establece las métricas obligatorias y sus umbrales mínimos de aceptación por tipo de modelo (clasificación, regresión, series de tiempo, etc.).",
+          "word": "/docs/PoliticasDataHub/Anexos/Anexo 1 - Umbrales Estandares Para Modelos/Word.pdf"
+        },
+        {
+          "id": "anexo-raci-mlops",
+          "title": "Anexo 2: Matriz RACI de MLOps",
+          "desc": "Define responsabilidades (Responsable, Aprobador, Consultado, Informado) para actividades de MLOps en el despliegue y operación de modelos.",
+          "word": "/docs/PoliticasDataHub/Anexos/Anexo 2 - Matriz RACI De Mlops/Word.pdf"
+        },
+        {
+          "id": "anexo-raci-devml",
+          "title": "Anexo 3: Matriz RACI de DevML-Batch",
+          "desc": "Define responsabilidades para el desarrollo y operación de modelos batch (procesamiento por lotes, no en tiempo real).",
+          "word": "/docs/PoliticasDataHub/Anexos/Anexo 3 - Matriz RACI De Devml-Batch/Word.pdf"
+        },
+        {
+          "id": "anexo-plantillas",
+          "title": "Anexo 4: Plantillas y Formularios",
+          "desc": "Carpeta que contiene todas las plantillas de trabajo obligatorias para el desarrollo, documentación y validación de modelos.",
+          "links": [
+            {
+              "label": "Carpeta con plantillas",
+              "href": "https://bancoguayaquil1.sharepoint.com/:f:/s/CoEGovernanceQuality/IgCwEAc-Suj8R4xBDTtJtbLrAUmf_fB-WsG96xgML4WYYac?e=rwLU1r",
+              "linkLabel": "Abrir carpeta"
+            }
+          ],
+          "subcards": [
+            {
+              "title": "Anexo 4.1: Plantillas para Documentación de Modelos",
+              "note": "Incluido en la carpeta de plantillas.",
+              "tag": "Recurso en carpeta"
+            },
+            {
+              "title": "Anexo 4.2: Estructura de Repositorios de Código",
+              "note": "Repositorio oficial de gobierno de modelos.",
+              "href": "https://dev.azure.com/bancoguayaquil/TribuDatayAnalitica/_git/ModelGovernance",
+              "linkLabel": "Abrir repositorio"
+            },
+            {
+              "title": "Anexo 4.3: Formulario de Clasificación de Modelos",
+              "note": "Incluido en la carpeta de plantillas.",
+              "tag": "Recurso en carpeta"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import DominioArtefactos from './Pages/DominioArtefactos/DominioArtefactos.jsx';
 import DominioEstructura from './Pages/DominioEstructura/DominioEstructura.jsx';
 import FichaTablas from './Pages/FichaTablas/FichaTablas.jsx';
 import CasosDeUso from './Pages/CasosDeUso/CasosDeUso.jsx';
+import ExploradorDeMetadatos from './Pages/ExploradorDeMetadatos/index.jsx';
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/dominio-estructura/:id" element={<DominioEstructura />} />
           <Route path="/ficha-tablas/:id" element={<FichaTablas />} />
           <Route path="/casos-de-uso/:id" element={<CasosDeUso />} />
+          <Route path="/explorador-metadatos" element={<ExploradorDeMetadatos />} />
         </Routes>
       </Layout>
     </BrowserRouter>
