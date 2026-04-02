@@ -36,6 +36,7 @@
   text-align: center;
   padding: 6px;
   position: relative;
+  z-index: 1;
   user-select: none;
   /* Emula el transform: scale(0) -> scale(1) de D3/GSAP */
   transition: transform 0.18s, box-shadow 0.18s;
@@ -44,31 +45,55 @@
 .dominio-carta:hover {
   transform: scale(1.04);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  z-index: 3000;
 }
 
 /* Tooltip custom (reemplaza el title nativo del browser) */
 .dominio-carta[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: calc(100% + 12px);
+  transform: translateY(-50%);
   background: #fff;
   color: #1e293b;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.75rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 12px;
+  padding: 15px 20px;
+  font-size: 0.78rem;
   font-weight: 600;
-  white-space: nowrap;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  line-height: 1.2;
+  white-space: pre-line;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.15s ease;
-  z-index: 100;
+  z-index: 2000;
 }
 
-.dominio-carta[data-tooltip]:hover::after {
+.dominio-carta[data-tooltip]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 6px);
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-right: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  transform: translateY(-50%) rotate(-45deg);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 2001;
+}
+
+.dominio-carta[data-tooltip]:hover::after,
+.dominio-carta[data-tooltip]:hover::before {
   opacity: 1;
 }
 
@@ -92,9 +117,11 @@
   0% {
     box-shadow: 0 0 0 0 rgba(22, 15, 65, 0.8);
   }
+
   70% {
     box-shadow: 0 0 0 10px rgba(22, 15, 65, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(22, 15, 65, 0);
   }
@@ -280,11 +307,26 @@
   gap: 8px;
 }
 
-.structure-card__icon { color: #D2006E; font-size: 1.1rem; }
-.structure-card--lider     { grid-area: lider;    }
-.structure-card--custodio  { grid-area: custodio; }
-.structure-card--seguridad { grid-area: seguridad;}
-.structure-card--admins    { grid-area: admins;   }
+.structure-card__icon {
+  color: #D2006E;
+  font-size: 1.1rem;
+}
+
+.structure-card--lider {
+  grid-area: lider;
+}
+
+.structure-card--custodio {
+  grid-area: custodio;
+}
+
+.structure-card--seguridad {
+  grid-area: seguridad;
+}
+
+.structure-card--admins {
+  grid-area: admins;
+}
 
 .structure-list {
   list-style: none;
@@ -301,7 +343,9 @@
   font-size: 0.82rem;
 }
 
-.structure-list li:last-child { border-bottom: 0; }
+.structure-list li:last-child {
+  border-bottom: 0;
+}
 
 .structure-pill {
   display: inline-flex;
@@ -316,9 +360,22 @@
   font-size: 0.78rem;
 }
 
-.structure-meta { flex: 1; min-width: 0; }
-.structure-meta strong { display: block; font-size: 0.7rem;  line-height: 1.1; }
-.structure-meta small  { display: block; color: #6c757d; font-size: 0.78rem; }
+.structure-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.structure-meta strong {
+  display: block;
+  font-size: 0.7rem;
+  line-height: 1.1;
+}
+
+.structure-meta small {
+  display: block;
+  color: #6c757d;
+  font-size: 0.78rem;
+}
 
 .structure-remove {
   border: 0;
@@ -349,9 +406,14 @@
   cursor: pointer;
 }
 
-.typeahead-menu .item:hover { background: #f3f6ff; }
+.typeahead-menu .item:hover {
+  background: #f3f6ff;
+}
 
-.domain-pagination__label { font-weight: 600; color: #475569; }
+.domain-pagination__label {
+  font-weight: 600;
+  color: #475569;
+}
 
 /* ────────────────────────────────────────────────────────── */
 

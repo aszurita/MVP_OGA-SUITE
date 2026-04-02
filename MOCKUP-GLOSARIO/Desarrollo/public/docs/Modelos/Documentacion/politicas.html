@@ -1,0 +1,435 @@
+<div class="blog-area full-blog default-padding">
+  <div class="container-fluid pp-page">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="pp-header">
+          <div class="pp-header-left">
+            <h1>Pol&iacute;ticas y Procedimientos</h1>
+            <nav class="pp-nav" aria-label="breadcrumb">
+              <ol class="breadcrumb" id="pp-breadcrumb">
+                <li>
+                  <a id="pol" href="javascript:void(0)">Pol&iacute;ticas</a>
+                </li>
+                <li>
+                  <a id="ind" href="javascript:void(0)">&Iacute;ndice</a>
+                </li>
+                <li class="pp-bc-extra" aria-hidden="true">
+                  <a id="lvl2" href="javascript:void(0)">Nivel 2</a>
+                </li>
+                <li class="pp-bc-extra" aria-hidden="true">
+                  <a id="lvl3" href="javascript:void(0)">Nivel 3</a>
+                </li>
+                <li class="pp-bc-extra" aria-hidden="true">
+                  <a id="lvl4" href="javascript:void(0)">Nivel 4</a>
+                </li>
+                <li id="pp-bc-doc" class="pp-bc-doc" style="display: none;">
+                  <span id="pp-bc-doc-title"></span>
+                </li>
+              </ol>
+            </nav>
+          </div>
+          <div class="pp-header-actions">
+            <button id="btn-toggle-indice-sidebar" class="pp-btn-sidebar pp-btn-hamburger" type="button"
+              aria-label="Ver anexos">
+              <span class="pp-hamburger" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
+            <div id="pp-doc-actions" class="pp-doc-actions" style="display: none;" aria-hidden="true">
+              <button type="button" class="pp-btn-doc pp-doc-action" data-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+              <button type="button" class="pp-btn-doc pp-btn-doc-outline pp-doc-action" data-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="pp-separator"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12" id="politicas-body">
+        <div class="card" id="politicas">
+          <div class="card-body">
+            <div id="pp-politicas-doc-view" class="pp-viewer pp-doc-view"
+              data-doc-title="Nivel 1: Pol&iacute;tica de Gobierno de Modelos"
+              data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Politica%20de%20Gobierno%20de%20Modelos.pdf"
+              data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Politica%20Gobierno%20de%20Modelos.pdf">
+              <div class="pp-doc-embed">
+                <iframe id="pp-politicas-pdf" title="Documento PDF"
+                  style="display: none; width: 100%; height: 800px;" loading="lazy"></iframe>
+                <iframe id="pp-politicas-ppt" title="Presentaci&oacute;n" style="display: none;"
+                  loading="lazy"></iframe>
+                <div id="pp-politicas-empty" class="pp-doc-empty" style="display: none;">
+                  No hay archivo disponible para esta vista.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" id="indice">
+          <div class="card-body">
+            <div class="pp-indice-layout">
+              <div class="pp-indice-main">
+                <div id="pp-indice-view" class="pp-viewer">
+                  <iframe title="Indice de documentos"
+                    src="assets/js/Politicas/docsP/Indice_documentos_Gobierno_de_Modelos.pdf#page=1&zoom=80"
+                    style="width: 100%; height: 800px;" loading="lazy"></iframe>
+                </div>
+                <div id="pp-doc-view" class="pp-viewer pp-doc-view" style="display: none;">
+                  <div class="pp-doc-embed">
+                    <iframe id="pp-doc-pdf" title="Documento PDF" style="display: none; width: 100%; height: 800px;"
+                      loading="lazy"></iframe>
+                    <iframe id="pp-doc-ppt" title="Presentaci&oacute;n" style="display: none;" loading="lazy"></iframe>
+                    <div id="pp-doc-empty" class="pp-doc-empty" style="display: none;">
+                      No hay archivo disponible para esta vista.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <aside id="pp-indice-sidebar" class="pp-sidebar" aria-hidden="true">
+                <div class="pp-sidebar-header">
+                  <h4>Índice de documentos</h4>
+                  <button id="btn-close-indice-sidebar" class="pp-sidebar-close" type="button"
+                    aria-label="Cerrar">&times;</button>
+                </div>
+                <div class="pp-sidebar-body">
+                  <div class="pp-acc-section open" data-level="1">
+                    <div class="pp-acc-level">Nivel 1</div>
+                    <button class="pp-acc-header" type="button" aria-expanded="true">
+                      <span class="pp-acc-icon" aria-hidden="true"></span>
+                      <span class="pp-acc-title">Pol&iacute;ticas</span>
+                    </button>
+                    <div class="pp-acc-panel">
+                      <div class="pp-card pp-doc-card" data-doc-section="politicas"
+                        data-doc-title="Nivel 1: Pol&iacute;tica de Gobierno de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Politica%20de%20Gobierno%20de%20Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Politica%20Gobierno%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Pol&iacute;tica de Gobierno de Modelos</div>
+                        <div class="pp-doc-sub">Marco corporativo para gesti&oacute;n, calidad y uso de datos como
+                          activo estrat&eacute;gico del Banco.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pp-acc-section" data-level="2">
+                    <div class="pp-acc-level">Nivel 2</div>
+                    <button class="pp-acc-header" type="button" aria-expanded="false">
+                      <span class="pp-acc-icon" aria-hidden="true"></span>
+                      <span class="pp-acc-title">Est&aacute;ndares y lineamientos</span>
+                    </button>
+                    <div class="pp-acc-panel">
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 2: Est&aacute;ndares de clasificaci&oacute;n de modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndar%20de%20Clasificaci%C3%B3n%20de%20Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Estandar%20de%20clasificaci%C3%B3n%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Est&aacute;ndares de clasificaci&oacute;n de modelos</div>
+                        <div class="pp-doc-sub">Define los criterios, variables, escalas y reglas de decisión para
+                          clasificar los modelos en Tier 1, Tier 2 o Tier 3, con base en su materialidad, impacto,
+                          riesgo, complejidad y uso. Incluye la metodología de evaluación, ponderación, asignación de
+                          score y criterios para casos especiales.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 2: Manual de Roles y Responsabilidades"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Manual%20de%20Roles%20y%20Responsabilidades%20.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Manual%20de%20Roles%20y%20Resposabilidades.pdf">
+                        <div class="pp-doc-title">Manual de Roles y Responsabilidades</div>
+                        <div class="pp-doc-sub">Establece las funciones, responsabilidades y niveles de participación de
+                          las áreas y
+                          actores involucrados en el ciclo de vida de los modelos, incluyendo desarrollo, validación,
+                          aprobación, implementación, monitoreo, mantenimiento, uso y retiro.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 2: Est&aacute;ndar de Desarrollo y Ciclo de Vida de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndar_%20desarrollo_ciclo_%20vida_modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndar_desarrollo_ciclo_vida_modelos%20ppt.pdf">
+                        <div class="pp-doc-title">Est&aacute;ndar de Desarrollo y Ciclo de Vida de Modelos</div>
+                        <div class="pp-doc-sub">Define los criterios t&eacute;cnicos, metodol&oacute;gicos y de control
+                          aplicables al dise&ntilde;o, desarrollo, prueba, aprobaci&oacute;n, implementaci&oacute;n,
+                          mantenimiento y retiro de modelos, incluyendo requerimientos de trazabilidad,
+                          reproducibilidad, calidad y gesti&oacute;n documental a lo largo del ciclo de vida.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 2: Manual de Est&aacute;ndares de MLOps"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Manual%20de%20Estandares%20de%20MLOPS.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndares%20de%20MLOps.pdf">
+                        <div class="pp-doc-title">Manual de Est&aacute;ndares de MLOps</div>
+                        <div class="pp-doc-sub">Establece los lineamientos t&eacute;cnicos para la construcci&oacute;n,
+                          automatizaci&oacute;n, despliegue, versionamiento, monitoreo operativo y mantenimiento de
+                          pipelines y componentes de MLOps, incluyendo ambientes, trazabilidad, integraci&oacute;n,
+                          observabilidad y controles para producci&oacute;n.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 2: Lineamiento de &Eacute;tica, Transparencia y Explicabilidad de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Lineamiento_%C3%89tica_Transp_Explicab.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Lineamiento_%C3%A9tica_transp_explicabilidad.pdf">
+                        <div class="pp-doc-title">Lineamiento de &Eacute;tica, Transparencia y Explicabilidad de Modelos
+                        </div>
+                        <div class="pp-doc-sub">Define los principios y criterios para promover el uso responsable de
+                          modelos, considerando aspectos de &eacute;tica, transparencia, interpretabilidad,
+                          explicabilidad, sesgos, uso adecuado de datos y cumplimiento de disposiciones aplicables en
+                          materia de privacidad y gobierno.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 2: Lineamiento de Uso de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Lineamiento_Uso_Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Lineamiento%20de%20Uso%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Lineamiento de Uso de Modelos</div>
+                        <div class="pp-doc-sub">Establece las directrices para el uso adecuado de los modelos dentro de
+                          la organizaci&oacute;n, incluyendo condiciones de utilizaci&oacute;n, restricciones,
+                          controles, responsabilidades del usuario, criterios de dependencia del modelo y lineamientos
+                          para su utilizaci&oacute;n en procesos de negocio y toma de decisiones.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 2: Est&aacute;ndar de Documentaci&oacute;n de Validaci&oacute;n de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndar_Doc_Valid_Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Est%C3%A1ndares%20de%20documentaci%C3%B3n%20de%20Validaci%C3%B3n%20de%20Modelos%20ppt.pdf">
+                        <div class="pp-doc-title">Est&aacute;ndar de Documentaci&oacute;n de Validaci&oacute;n de
+                          Modelos</div>
+                        <div class="pp-doc-sub">Define los requisitos m&iacute;nimos de estructura, contenido, evidencia
+                          y formalizaci&oacute;n de la documentaci&oacute;n generada durante el proceso de
+                          validaci&oacute;n de modelos, a fin de asegurar consistencia, trazabilidad, suficiencia
+                          t&eacute;cnica y soporte para la emisi&oacute;n del dictamen correspondiente.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pp-acc-section" data-level="3">
+                    <div class="pp-acc-level">Nivel 3</div>
+                    <button class="pp-acc-header" type="button" aria-expanded="false">
+                      <span class="pp-acc-icon" aria-hidden="true"></span>
+                      <span class="pp-acc-title">Procedimientos operativos</span>
+                    </button>
+                    <div class="pp-acc-panel">
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento para Validaci&oacute;n de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/PROCEDIMIENTO_VALIDACI%C3%93N_MODELOS.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20para%20validacion%20de%20modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento para Validaci&oacute;n de Modelos</div>
+                        <div class="pp-doc-sub">Describe las actividades, responsables, criterios de entrada,
+                          ejecuci&oacute;n, revisi&oacute;n, aprobaci&oacute;n y cierre del proceso de validaci&oacute;n
+                          de modelos, incluyendo la planificaci&oacute;n, la emisi&oacute;n del dictamen, el registro de
+                          hallazgos y el seguimiento a los planes de acci&oacute;n derivados.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Comit&eacute; de Gobierno de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/PROCEDIMIENTO_COM_GOB_MODELOS.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20de%20comite%20de%20gobierno%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento de Comit&eacute; de Gobierno de Modelos</div>
+                        <div class="pp-doc-sub">Establece la forma en que se convoca, organiza, documenta y da
+                          seguimiento a las sesiones del Comit&eacute; de Gobierno de Modelos, incluyendo los temas a
+                          tratar, responsables de presentaci&oacute;n, criterios de escalamiento, toma de decisiones y
+                          formalizaci&oacute;n de acuerdos.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento para Paso de Modelos a Producci&oacute;n"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20para%20paso%20de%20Modelos%20a%20Producci%C3%B3n.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20para%20paso%20a%20produccion%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento para Paso de Modelos a Producci&oacute;n</div>
+                        <div class="pp-doc-sub">Define las actividades, validaciones, aprobaciones, controles y
+                          evidencias requeridas para promover un modelo a ambiente productivo, asegurando el
+                          cumplimiento de criterios t&eacute;cnicos, funcionales, documentales y de gobierno antes de su
+                          liberaci&oacute;n.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Gesti&oacute;n de Cambios de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento_Gestion_Cambios_Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Gestion%20de%20cambios%20de%20Modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento de Gesti&oacute;n de Cambios de Modelos</div>
+                        <div class="pp-doc-sub">Describe el proceso para solicitar, evaluar, aprobar, implementar y
+                          documentar cambios sobre modelos en operaci&oacute;n, diferenciando cambios menores y mayores,
+                          as&iacute; como sus implicaciones en validaci&oacute;n, aprobaci&oacute;n, monitoreo y
+                          actualizaci&oacute;n documental.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Monitoreo Continuo y Mantenimiento de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20de%20Monitoreo%20Continuo%20y%20Mantenimiento%20de%20Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20de%20Monitoreo%20Continuo%20y%20Mantenimiento%20de%20Modelos%20(1).pdf">
+                        <div class="pp-doc-title">Procedimiento de Monitoreo Continuo y Mantenimiento de Modelos</div>
+                        <div class="pp-doc-sub">Establece las actividades para el seguimiento peri&oacute;dico del
+                          desempe&ntilde;o t&eacute;cnico, estabilidad, drift, calidad de datos, desempe&ntilde;o de
+                          negocio e incidencias asociadas a los modelos en producci&oacute;n, as&iacute; como las
+                          acciones de mantenimiento requeridas, incluyendo recalibraci&oacute;n, reentrenamiento, ajuste
+                          o retiro.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 3: Procedimiento de Retiro de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Proceso_Retiro_Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20de%20retiro%20de%20modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento de Retiro de Modelos</div>
+                        <div class="pp-doc-sub">Define las actividades necesarias para descontinuar, sustituir o dar de
+                          baja un modelo, incluyendo la evaluaci&oacute;n de las causas del retiro, aprobaciones
+                          requeridas, actualizaci&oacute;n del inventario, trazabilidad documental y comunicaci&oacute;n
+                          a las &aacute;reas involucradas.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Registro de Modelos en el Inventario"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Proc_Registro_Modelos.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento_registro_modelos.pdf">
+                        <div class="pp-doc-title">Procedimiento de Registro de Modelos en el Inventario</div>
+                        <div class="pp-doc-sub">Describe las actividades, responsables, criterios y controles para el
+                          alta, actualizaci&oacute;n y mantenimiento de la informaci&oacute;n de los modelos en el
+                          inventario institucional, asegurando integridad, consistencia, vigencia y trazabilidad de la
+                          informaci&oacute;n registrada.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Gesti&oacute;n de Excepciones"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento_Gesti%C3%B3n_Excepciones.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento%20de%20Gesti%C3%B3nde%20Exepciones.pdf">
+                        <div class="pp-doc-title">Procedimiento de Gesti&oacute;n de Excepciones</div>
+                        <div class="pp-doc-sub">Establece el proceso para identificar, documentar, evaluar, aprobar,
+                          monitorear y cerrar excepciones relacionadas con el cumplimiento de pol&iacute;ticas,
+                          est&aacute;ndares, lineamientos o procedimientos de gobierno de modelos, incluyendo controles
+                          compensatorios, vigencia y escalamiento.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 3: Procedimiento de Reporter&iacute;a de Gobierno de Modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento_reporteria.pdf"
+                        data-doc-ppt="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Procedimiento_reporteria%20(1).pdf">
+                        <div class="pp-doc-title">Procedimiento de Reporter&iacute;a de Gobierno de Modelos</div>
+                        <div class="pp-doc-sub">Define la elaboraci&oacute;n, consolidaci&oacute;n, revisi&oacute;n,
+                          aprobaci&oacute;n y distribuci&oacute;n de los reportes peri&oacute;dicos de gobierno de
+                          modelos dirigidos a instancias de supervisi&oacute;n y toma de decisi&oacute;n, incluyendo
+                          contenido m&iacute;nimo, periodicidad, responsables, destinatarios y mecanismos de
+                          seguimiento.</div>
+                        <div class="pp-card-actions">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                          <button type="button" class="pp-chip pp-chip-accent pp-doc-open" data-doc-mode="ppt"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver presentaci&oacute;n</span></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pp-acc-section" data-level="4">
+                    <div class="pp-acc-level">Nivel 4</div>
+                    <button class="pp-acc-header" type="button" aria-expanded="false">
+                      <span class="pp-acc-icon" aria-hidden="true"></span>
+                      <span class="pp-acc-title">Anexos</span>
+                    </button>
+                    <div class="pp-acc-panel">
+                      <div class="pp-card pp-doc-card"
+                        data-doc-title="Nivel 4: Anexo 1: Umbrales est&aacute;ndares para modelos"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/Umbrales%20est%C3%A1ndares%20para%20modelos.pdf"
+                        data-doc-ppt="">
+                        <div class="pp-doc-title">Anexo 1: Umbrales est&aacute;ndares para modelos</div>
+                        <div class="pp-doc-sub">Documento t&eacute;cnico que establece las m&eacute;tricas obligatorias y sus umbrales m&iacute;nimos de aceptaci&oacute;n por tipo de modelo (clasificaci&oacute;n, regresi&oacute;n, series de tiempo, etc.).</div>
+                        <div class="pp-card-actions center">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 4: Anexo 2: Matriz RACI de MLOps"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/RACI%20MLOps.pdf"
+                        data-doc-ppt="">
+                        <div class="pp-doc-title">Anexo 2: Matriz RACI de MLOps</div>
+                        <div class="pp-doc-sub">Define responsabilidades (Responsable, Aprobador, Consultado, Informado) para actividades de MLOps en el despliegue y operaci&oacute;n de modelos.</div>
+                        <div class="pp-card-actions center">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card" data-doc-title="Nivel 4: Anexo 3: Matriz RACI de DevML-Batch"
+                        data-doc-pdf="http://vamos.bancoguayaquil.com/sitios/informaciongerencial/DATAHUB/Desarrollo/assets/js/Politicas/docsP/RACI%20DevML-Batch.pdf"
+                        data-doc-ppt="">
+                        <div class="pp-doc-title">Anexo 3: Matriz RACI de DevML-Batch</div>
+                        <div class="pp-doc-sub">Define responsabilidades para el desarrollo y operaci&oacute;n de modelos batch (procesamiento por lotes, no en tiempo real).</div>
+                        <div class="pp-card-actions center">
+                          <button type="button" class="pp-chip pp-doc-open" data-doc-mode="pdf"><span class="pp-btn-icon" aria-hidden="true"></span><span class="pp-btn-label">Ver documento</span></button>
+                        </div>
+                      </div>
+                      <div class="pp-card pp-doc-card">
+                        <div class="pp-doc-title">Anexo 4: Plantillas y Formularios</div>
+                        <div class="pp-doc-sub">Carpeta que contiene todas las plantillas de trabajo obligatorias para el desarrollo, documentaci&oacute;n y validaci&oacute;n de modelos.</div>
+                        <div class="pp-link-list">
+                          <div class="pp-link-item">
+                            <span class="pp-link-label">Carpeta con plantillas</span>
+                            <a class="pp-link" href="https://bancoguayaquil1.sharepoint.com/:f:/s/CoEGovernanceQuality/IgCwEAc-Suj8R4xBDTtJtbLrAUmf_fB-WsG96xgML4WYYac?e=rwLU1r"
+                              target="_blank" rel="noopener">Abrir carpeta</a>
+                          </div>
+                        </div>
+                        <div class="pp-subcards">
+                          <div class="pp-subcard">
+                            <div class="pp-subcard-title">Anexo 4.1: Plantillas para Documentaci&oacute;n de Modelos</div>
+                            <div class="pp-subcard-note">Incluido en la carpeta de plantillas.</div>
+                            <span class="pp-tag">Recurso en carpeta</span>
+                          </div>
+                          <div class="pp-subcard">
+                            <div class="pp-subcard-title">Anexo 4.2: Estructura de Repositorios de C&oacute;digo</div>
+                            <div class="pp-subcard-note">Repositorio oficial de gobierno de modelos.</div>
+                            <a class="pp-link" href="https://dev.azure.com/bancoguayaquil/TribuDatayAnalitica/_git/ModelGovernance"
+                              target="_blank" rel="noopener">Abrir repositorio</a>
+                          </div>
+                          <div class="pp-subcard">
+                            <div class="pp-subcard-title">Anexo 4.3: Formulario de Clasificaci&oacute;n de Modelos</div>
+                            <div class="pp-subcard-note">Incluido en la carpeta de plantillas.</div>
+                            <span class="pp-tag">Recurso en carpeta</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
