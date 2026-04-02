@@ -25,6 +25,11 @@ const NAV_ITEMS = [
     label: 'Glosario Empresarial de Datos',
   },
   {
+    path: '/explorador-metadatos',
+    icon: 'iconsminds-data-search',
+    label: 'Explorador de Metadatos',
+  },
+  {
     path: null,
     icon: 'iconsminds-diploma-2',
     label: 'Mesa de Ayuda de Datos',
