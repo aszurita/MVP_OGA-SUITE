@@ -13,25 +13,153 @@ const PAGE_SIZE = 20;
 
 function useDebounce(value, delay = 400) {
   const [debounced, setDebounced] = useState(value);
+
   useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
   }, [value, delay]);
+
   return debounced;
 }
 
+function ViewModeDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const options = [
+    { value: 'tabla', label: 'Tabla' },
+    { value: 'campo', label: 'Campo' },
+    { value: 'atributo', label: 'Atributo' },
+  ];
+
+  const selected = options.find((option) => option.value === value) || options[0];
+
+  return (
+    <div className={`em-view-dropdown ${open ? 'is-open' : ''}`} ref={ref}>
+      <button className={`em-view-select ${open ? 'is-open' : ''}`} type="button" onClick={() => setOpen((current) => !current)}>
+        <span>{selected.label}</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="em-view-menu">
+          {options
+            .filter((option) => option.value !== value)
+            .map((option) => (
+              <button
+                key={option.value}
+                className="em-view-option"
+                type="button"
+                onClick={() => {
+                  onChange(option.value);
+                  setOpen(false);
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HeaderUtilityIcons() {
+  return (
+    <div className="em-header-tools" aria-hidden="true">
+      <button className="em-switch-ghost" type="button" title="Alternar vista">
+        <span className="em-switch-thumb" />
+      </button>
+
+      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-1.2a4.8 4.8 0 0 0-4.8-4.8H8.8A4.8 4.8 0 0 0 4 19.8V21" />
+          <circle cx="10" cy="7" r="3.3" />
+          <path d="M20 21v-1a4 4 0 0 0-3.2-3.92" />
+          <path d="M15.8 4.2a3.1 3.1 0 0 1 0 5.6" />
+        </svg>
+      </button>
+
+      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Agrupar estructura" title="Jerarquia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="3" width="6" height="6" rx="1.2" />
+          <rect x="3" y="15" width="6" height="6" rx="1.2" />
+          <rect x="15" y="15" width="6" height="6" rx="1.2" />
+          <path d="M12 9v3" />
+          <path d="M6 15v-3h12v3" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
+function ActionIcon({ type }) {
+  const icons = {
+    upload: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 17.5A4.5 4.5 0 0 1 7.8 8.6 5.5 5.5 0 0 1 18 10.5h.5a3.5 3.5 0 1 1 0 7H14" />
+        <path d="M12 14V7" />
+        <path d="m8.8 10.2 3.2-3.2 3.2 3.2" />
+      </svg>
+    ),
+    download: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 17.5A4.5 4.5 0 0 1 7.8 8.6 5.5 5.5 0 0 1 18 10.5h.5a3.5 3.5 0 1 1 0 7H14" />
+        <path d="M12 10v7" />
+        <path d="m8.8 13.8 3.2 3.2 3.2-3.2" />
+      </svg>
+    ),
+    idea: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 18h6" />
+        <path d="M10 21h4" />
+        <path d="M8.4 14.8A6.5 6.5 0 1 1 16 14.6c-.9.8-1.5 1.6-1.8 2.4h-4.4c-.2-.8-.7-1.5-1.4-2.2Z" />
+        <path d="M18.5 4.5 20 3" />
+        <path d="M5.5 4.5 4 3" />
+        <path d="M12 2V1" />
+      </svg>
+    ),
+    clear: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 7h10" />
+        <path d="M4 12h16" />
+        <path d="M4 17h7" />
+      </svg>
+    ),
+    refresh: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 5v6h-6" />
+        <path d="M20 11a8 8 0 1 0 2.1 5.4" />
+      </svg>
+    ),
+  };
+
+  return icons[type] || null;
+}
+
 export default function ExploradorDeMetadatos() {
-  // ── Filtros de usuario ───────────────────────────────
-  const [viewMode, setViewMode] = useState('tabla'); // 'tabla' | 'campo'
+  const [viewMode, setViewMode] = useState('tabla');
+  const [viewSelector, setViewSelector] = useState('tabla');
   const [searchInput, setSearchInput] = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
   const [acceptAll, setAcceptAll] = useState(false);
   const debouncedSearch = useDebounce(searchInput);
 
-  // ── Paginación ───────────────────────────────────────
   const [page, setPage] = useState(1);
 
-  // ── Datos ────────────────────────────────────────────
   const [filters, setFilters] = useState({ servidores: [] });
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
@@ -40,14 +168,15 @@ export default function ExploradorDeMetadatos() {
   const [error, setError] = useState(null);
   const [apiOk, setApiOk] = useState(true);
 
-  // ── Cargar filtros al montar ─────────────────────────
   useEffect(() => {
     getFilters()
-      .then((f) => { setFilters(f); setApiOk(true); })
+      .then((result) => {
+        setFilters(result);
+        setApiOk(true);
+      })
       .catch(() => setApiOk(false));
   }, []);
 
-  // ── Cargar datos ─────────────────────────────────────
   const fetchData = useCallback(() => {
     setLoading(true);
     setError(null);
@@ -62,10 +191,10 @@ export default function ExploradorDeMetadatos() {
     const fetcher = viewMode === 'tabla' ? getTableView : getFieldView;
 
     fetcher(params)
-      .then((res) => {
-        setItems(res.items || []);
-        setTotal(res.total || 0);
-        setTotalPages(res.pages || 1);
+      .then((result) => {
+        setItems(result.items || []);
+        setTotal(result.total || 0);
+        setTotalPages(result.pages || 1);
         setApiOk(true);
       })
       .catch((err) => {
@@ -73,13 +202,12 @@ export default function ExploradorDeMetadatos() {
         setApiOk(false);
       })
       .finally(() => setLoading(false));
-  }, [viewMode, activeServidor, debouncedSearch, page]);
+  }, [activeServidor, debouncedSearch, page, viewMode]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // ── Resetear página al cambiar filtros ───────────────
   useEffect(() => {
     setPage(1);
   }, [viewMode, activeServidor, debouncedSearch]);
@@ -90,128 +218,93 @@ export default function ExploradorDeMetadatos() {
     setPage(1);
   }
 
-  function handleViewChange(e) {
-    setViewMode(e.target.value);
+  function handleViewChange(nextValue) {
+    setViewSelector(nextValue);
+    setViewMode(nextValue === 'tabla' ? 'tabla' : 'campo');
     setPage(1);
   }
 
-  function handlePageChange(p) {
-    setPage(p);
+  function handlePageChange(nextPage) {
+    setPage(nextPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   return (
     <div id="explorador-metadatos" className="flex-grow-1 px-3 transition-content">
+      <div className="em-page-shell">
+        <div className="em-title-row">
+          <h1>Explorador de Metadatos</h1>
+        </div>
 
-      {/* ── Título ── */}
-      <div className="row">
-        <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <h1>Explorador de Metadatos</h1>
+        <div className="em-toolbar">
+          <div className="em-toolbar-left">
+            <ViewModeDropdown value={viewSelector} onChange={handleViewChange} />
+
+            <SearchBar
+              value={searchInput}
+              onChange={(value) => setSearchInput(value)}
+              onClear={() => setSearchInput('')}
+            />
           </div>
 
-          {/* ── Toolbar principal ── */}
-          <div className="em-toolbar">
-            {/* Izquierda: vista + buscador */}
-            <div className="em-toolbar-left">
-              {/* Selector de vista */}
-              <div className="em-view-select">
-                <select value={viewMode} onChange={handleViewChange}>
-                  <option value="tabla">Tabla</option>
-                  <option value="campo">Campo</option>
-                </select>
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ pointerEvents: 'none' }}>
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="#555" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-              </div>
+          <div className="em-toolbar-right">
+            <HeaderUtilityIcons />
+            <SegmentarDropdown
+              servidores={filters.servidores || []}
+              activeServidor={activeServidor}
+              onSelect={(servidor) => {
+                setActiveServidor(servidor);
+                setPage(1);
+              }}
+            />
+          </div>
+        </div>
 
-              {/* Buscador */}
-              <SearchBar
-                value={searchInput}
-                onChange={(v) => setSearchInput(v)}
-                onClear={() => setSearchInput('')}
+        <div className="em-separator" />
+
+        <div className="em-subtoolbar">
+          <div className="em-accept-all">
+            <label>
+              <span>Aceptar todas las recomendaciones</span>
+              <input
+                type="checkbox"
+                checked={acceptAll}
+                onChange={(event) => setAcceptAll(event.target.checked)}
               />
-
-              {/* Limpiar todo */}
-              {(searchInput || activeServidor) && (
-                <button
-                  className="btn-reveal"
-                  type="button"
-                  title="Limpiar filtros"
-                  onClick={handleClear}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m16 22-1-4" /><path d="M19 14a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v1a1 1 0 0 0 1 1" /><path d="M19 14H5l-1.973 6.767A1 1 0 0 0 4 22h16a1 1 0 0 0 .973-1.233z" /><path d="m8 22 1-4" />
-                  </svg>
-                  <span className="label">Limpiar Filtros</span>
-                </button>
-              )}
-            </div>
-
-            {/* Derecha: Segmentar */}
-            <div className="em-toolbar-right">
-              <SegmentarDropdown
-                servidores={filters.servidores || []}
-                activeServidor={activeServidor}
-                onSelect={(s) => { setActiveServidor(s); setPage(1); }}
-              />
-            </div>
+            </label>
           </div>
-
-          {/* ── Sub-toolbar ── */}
-          <div className="em-subtoolbar">
-            <div className="em-accept-all">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={acceptAll}
-                  onChange={(e) => setAcceptAll(e.target.checked)}
-                />
-                Aceptar todas las recomendaciones
-              </label>
-            </div>
-
-            <div className="em-actions">
-              <button className="em-icon-btn" title="Ordenar" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/>
-                </svg>
+          <div className="em-actions">
+            {(searchInput || activeServidor) && (
+              <button className="em-action-icon em-tooltip-trigger" data-tooltip="Limpiar filtros" title="Limpiar filtros" type="button" onClick={handleClear}>
+                <ActionIcon type="clear" />
               </button>
-              <button className="em-icon-btn" title="Filtrar" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                </svg>
-              </button>
-              <button className="em-icon-btn" title="Exportar" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-              </button>
-              <button className="em-icon-btn" title="Actualizar" type="button" onClick={fetchData}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-                </svg>
-              </button>
-            </div>
+            )}
+            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Importar archivo Excel" title="Subir" type="button">
+              <ActionIcon type="upload" />
+            </button>
+            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Descargar datos como Excel" title="Descargar" type="button">
+              <ActionIcon type="download" />
+            </button>
+            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Recomendacion automatica de definiciones" title="Sugerencias" type="button">
+              <ActionIcon type="idea" />
+            </button>
+            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Actualizar resultados" title="Actualizar" type="button" onClick={fetchData}>
+              <ActionIcon type="refresh" />
+            </button>
           </div>
-
-          <div className="em-separator" />
         </div>
       </div>
 
-      {/* ── Error de conexión ── */}
       {!apiOk && !loading && (
         <div className="em-alert-error mb-3">
-          <strong>No se pudo conectar con la API.</strong> Verifica que el servidor esté corriendo en{' '}
+          <strong>No se pudo conectar con la API.</strong> Verifica que el servidor este corriendo en{' '}
           <code>http://localhost:8000</code>.
-          {error && <> — <em>{error}</em></>}
+          {error && <> - <em>{error}</em></>}
         </div>
       )}
 
-      {/* ── Tabla ── */}
       <MetadataTable items={items} viewMode={viewMode} loading={loading} />
 
-      {/* ── Footer: resultados + paginación ── */}
       {!loading && apiOk && (
         <div className="em-footer mt-3">
           <div className="em-count">
