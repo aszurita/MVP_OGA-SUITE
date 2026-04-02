@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import FileManagerLauncher from '../Pages/AdministradorArchivos/components/FileManagerLauncher';
 
 export default function Navbar() {
   useEffect(() => {
@@ -56,7 +57,6 @@ export default function Navbar() {
 
       <div className="navbar-right">
         <div className="header-icons d-inline-block align-middle">
-
           {/* Nombre de usuario */}
           <div className="icon-container position-relative d-none d-sm-inline-flex">
             <p className="header-icon" id="navbar-user-name">Primero Angelo</p>
@@ -166,6 +166,7 @@ export default function Navbar() {
                 <a href="#" className="icon-menu-item quicklinks"><i className="simple-icon-share-alt"></i><span>LINAJE</span></a>
                 <a href="#" className="icon-menu-item quicklinks"><i className="simple-icon-briefcase"></i><span>Casos de Uso</span></a>
                 <a href="#" className="icon-menu-item quicklinks"><i className="simple-icon-chart"></i><span>Graficador</span></a>
+                <FileManagerLauncher variant="menu-item" />
               </div>
             </div>
           </div>

@@ -20,6 +20,7 @@
   margin-left: auto;
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 /* ─── Nav breadcrumb ─────────────────────────────────────── */
@@ -139,6 +140,7 @@
 .pp-btn-hamburger.open span {
   background: #D2006E;
 }
+
 
 /* ─── Section header (for level views) ──────────────────── */
 .pp-section-header {
@@ -582,6 +584,7 @@
   color: #fff;
 }
 
+
 @media (max-width: 991px) {
   .pp-body {
     flex-direction: column;
@@ -592,4 +595,5 @@
     position: static;
     max-height: none;
   }
+
 }
