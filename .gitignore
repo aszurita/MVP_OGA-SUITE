@@ -3,3 +3,4 @@ dist/
 .vite/
 venv/
 .venv/
+.oga_suite_env/
