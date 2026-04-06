@@ -546,6 +546,23 @@
   color: var(--em-pill-yellow-text);
 }
 
+/* Clasificaciones reales de la BD */
+.em-badge-oficial {
+  background: #e1f6e9;
+  color: #21764a;
+}
+
+.em-badge-trabajo {
+  background: #dfeeff;
+  color: #285ea7;
+}
+
+.em-badge-desuso {
+  background: #f0f0f0;
+  color: #6b7280;
+}
+
+/* Legados (por si vienen del dato antiguo) */
 .em-badge-publica {
   background: #dfeeff;
   color: #285ea7;
@@ -647,6 +664,113 @@
 .em-pagination button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ── Filas clickeables en vista tabla ────────────────────────────────────── */
+.em-row-clickable {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.em-row-clickable:hover td {
+  background: var(--em-magenta-soft);
+}
+
+.em-row-clickable:active td {
+  background: rgba(214, 0, 109, 0.15);
+}
+
+/* ── Chip de tabla activa (modo campo con tabla seleccionada) ─────────────── */
+.em-active-tabla-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 6px 14px 6px 12px;
+  border: 1px solid rgba(214, 0, 109, 0.3);
+  border-radius: 999px;
+  background: var(--em-magenta-soft);
+  font-size: 0.85rem;
+  color: var(--em-magenta);
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.em-active-tabla-path {
+  color: var(--em-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.em-active-tabla-name {
+  font-weight: 700;
+  color: var(--em-magenta);
+}
+
+.em-active-tabla-clear {
+  border: none;
+  background: none;
+  padding: 2px;
+  color: var(--em-magenta);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.em-active-tabla-clear:hover {
+  opacity: 1;
+}
+
+/* ── Hover tooltip en celda Tabla (Data Owner / Data Steward) ─────────────── */
+.em-cell-tabla-hover {
+  position: relative;
+}
+
+.em-tabla-hover-wrap {
+  position: relative;
+  display: inline-block;
+  cursor: default;
+}
+
+.em-tabla-tooltip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 200;
+  min-width: 220px;
+  padding: 10px 14px;
+  border: 1px solid #e7e8ee;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(18, 25, 38, 0.12);
+  white-space: nowrap;
+}
+
+.em-tabla-hover-wrap:hover .em-tabla-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.em-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.em-tooltip-label {
+  color: var(--em-muted);
+  font-weight: 600;
+  min-width: 90px;
+}
+
+.em-tooltip-value {
+  color: var(--em-text);
 }
 
 @keyframes emFadeIn {

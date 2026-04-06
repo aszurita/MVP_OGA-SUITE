@@ -40,7 +40,6 @@ function ViewModeDropdown({ value, onChange }) {
   const options = [
     { value: 'tabla', label: 'Tabla' },
     { value: 'campo', label: 'Campo' },
-    { value: 'atributo', label: 'Atributo' },
   ];
 
   const selected = options.find((option) => option.value === value) || options[0];
@@ -162,18 +161,42 @@ function GroupTableToggle({ checked, onToggle }) {
   );
 }
 
+/** Chip que muestra la tabla activa con botón para limpiar */
+function ActiveTablaChip({ tabla, servidor, base, esquema, onClear }) {
+  return (
+    <div className="em-active-tabla-chip">
+      <span className="em-active-tabla-path">
+        {servidor} / {base} / {esquema}
+      </span>
+      <span className="em-active-tabla-name">{tabla}</span>
+      <button
+        className="em-active-tabla-clear"
+        type="button"
+        title="Ver todos los campos"
+        onClick={onClear}
+      >
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 export default function ExploradorDeMetadatos() {
   const [viewMode, setViewMode] = useState('tabla');
-  const [viewSelector, setViewSelector] = useState('tabla');
-  const [lastNonTableSelector, setLastNonTableSelector] = useState('campo');
   const [searchInput, setSearchInput] = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
+  // Tabla seleccionada al hacer clic en una fila de vista-tabla (filtro exacto)
+  const [activeTabla, setActiveTabla] = useState(null); // { tabla, servidor, base, esquema }
+  // Búsqueda parcial de tabla (LIKE) — usada al hacer toggle tabla→campo para ver campos de todas las tablas visibles
+  const [tablaQ, setTablaQ] = useState(null);
   const [acceptAll, setAcceptAll] = useState(false);
   const debouncedSearch = useDebounce(searchInput);
 
   const [page, setPage] = useState(1);
 
-  const [filters, setFilters] = useState({ servidores: [] });
+  const [filters, setFilters] = useState({ servidores: [], plataformas: [], clasificaciones: [] });
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -194,12 +217,41 @@ export default function ExploradorDeMetadatos() {
     setLoading(true);
     setError(null);
 
-    const params = {
-      servidor: activeServidor || undefined,
-      q: debouncedSearch || undefined,
-      page,
-      page_size: PAGE_SIZE,
-    };
+    let params;
+
+    if (viewMode === 'tabla') {
+      // Vista tabla: filtro por servidor (segmentar) + búsqueda libre
+      params = {
+        servidor: activeServidor || undefined,
+        q: debouncedSearch || undefined,
+        page,
+        page_size: PAGE_SIZE,
+      };
+    } else {
+      // Vista campo:
+      // 1) Clic en fila → activeTabla (filtro exacto servidor+base+esquema+tabla)
+      // 2) Toggle desde tabla con búsqueda → tablaQ (LIKE en nombre de tabla)
+      // 3) Sin filtro → todos los campos
+      if (activeTabla) {
+        params = {
+          servidor: activeTabla.servidor || undefined,
+          base:     activeTabla.base     || undefined,
+          esquema:  activeTabla.esquema  || undefined,
+          tabla:    activeTabla.tabla    || undefined,
+          q: debouncedSearch || undefined,
+          page,
+          page_size: PAGE_SIZE,
+        };
+      } else {
+        params = {
+          servidor: activeServidor || undefined,
+          tabla_q:  tablaQ        || undefined,
+          q: debouncedSearch || undefined,
+          page,
+          page_size: PAGE_SIZE,
+        };
+      }
+    }
 
     const fetcher = viewMode === 'tabla' ? getTableView : getFieldView;
 
@@ -215,7 +267,7 @@ export default function ExploradorDeMetadatos() {
         setApiOk(false);
       })
       .finally(() => setLoading(false));
-  }, [activeServidor, debouncedSearch, page, viewMode]);
+  }, [activeServidor, activeTabla, debouncedSearch, page, viewMode]);
 
   useEffect(() => {
     fetchData();
@@ -223,36 +275,67 @@ export default function ExploradorDeMetadatos() {
 
   useEffect(() => {
     setPage(1);
-  }, [viewMode, activeServidor, debouncedSearch]);
+  }, [viewMode, activeServidor, activeTabla, tablaQ, debouncedSearch]);
 
   function handleClear() {
     setSearchInput('');
     setActiveServidor(null);
+    setActiveTabla(null);
+    setTablaQ(null);
+    setPage(1);
+  }
+
+  /** Clic en una fila de tabla → modo campo con filtro exacto de esa tabla */
+  function handleTableRowClick(row) {
+    setSearchInput('');  // limpiar búsqueda: contexto cambia a "ver campos de esta tabla"
+    setTablaQ(null);
+    setActiveTabla({
+      tabla:    row.tabla,
+      servidor: row.servidor,
+      base:     row.base,
+      esquema:  row.esquema,
+    });
+    setViewMode('campo');
+    setPage(1);
+  }
+
+  /** Limpiar tabla activa → volver a ver todos los campos (o los de tablaQ si aplica) */
+  function handleClearTabla() {
+    setActiveTabla(null);
     setPage(1);
   }
 
   function handleViewChange(nextValue) {
-    if (nextValue !== 'tabla') {
-      setLastNonTableSelector(nextValue);
+    if (nextValue === 'tabla') {
+      // Volver a tabla: restaurar búsqueda desde tablaQ si existía, limpiar filtros de campo
+      if (tablaQ) setSearchInput(tablaQ);
+      setActiveTabla(null);
+      setTablaQ(null);
     }
-    setViewSelector(nextValue);
-    setViewMode(nextValue === 'tabla' ? 'tabla' : 'campo');
+    setViewMode(nextValue);
     setPage(1);
   }
 
   function handleGroupToggle() {
-    if (viewSelector === 'tabla') {
-      handleViewChange(lastNonTableSelector || 'campo');
-      return;
+    if (viewMode === 'tabla') {
+      // Tabla → Campo: capturar el search actual como filtro LIKE de tabla
+      const currentSearch = searchInput.trim();
+      setTablaQ(currentSearch || null);
+      setSearchInput('');   // el search ahora puede usarse para buscar dentro de los campos
+      setActiveTabla(null);
+      setViewMode('campo');
+      setPage(1);
+    } else {
+      handleViewChange('tabla');
     }
-
-    handleViewChange('tabla');
   }
 
   function handlePageChange(nextPage) {
     setPage(nextPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  const hasActiveFilters = searchInput || activeServidor || activeTabla || tablaQ;
 
   return (
     <div id="explorador-metadatos" className="flex-grow-1 px-3 transition-content">
@@ -263,7 +346,7 @@ export default function ExploradorDeMetadatos() {
 
         <div className="em-toolbar">
           <div className="em-toolbar-left">
-            <ViewModeDropdown value={viewSelector} onChange={handleViewChange} />
+            <ViewModeDropdown value={viewMode} onChange={handleViewChange} />
 
             <SearchBar
               value={searchInput}
@@ -273,13 +356,14 @@ export default function ExploradorDeMetadatos() {
           </div>
 
           <div className="em-toolbar-right">
-            <GroupTableToggle checked={viewSelector === 'tabla'} onToggle={handleGroupToggle} />
+            <GroupTableToggle checked={viewMode === 'tabla'} onToggle={handleGroupToggle} />
             <HeaderUtilityIcons />
             <SegmentarDropdown
               servidores={filters.servidores || []}
               activeServidor={activeServidor}
               onSelect={(servidor) => {
                 setActiveServidor(servidor);
+                setActiveTabla(null);
                 setPage(1);
               }}
             />
@@ -300,7 +384,7 @@ export default function ExploradorDeMetadatos() {
             </label>
           </div>
           <div className="em-actions">
-            {(searchInput || activeServidor) && (
+            {hasActiveFilters && (
               <button className="em-action-icon em-tooltip-trigger" data-tooltip="Limpiar filtros" title="Limpiar filtros" type="button" onClick={handleClear}>
                 <ActionIcon type="clear" />
               </button>
@@ -319,23 +403,59 @@ export default function ExploradorDeMetadatos() {
             </button>
           </div>
         </div>
+
+        {/* Chip de tabla activa — clic en fila (filtro exacto) */}
+        {viewMode === 'campo' && activeTabla && (
+          <ActiveTablaChip
+            tabla={activeTabla.tabla}
+            servidor={activeTabla.servidor}
+            base={activeTabla.base}
+            esquema={activeTabla.esquema}
+            onClear={handleClearTabla}
+          />
+        )}
+
+        {/* Chip de búsqueda por tabla (LIKE) — toggle desde vista tabla con búsqueda activa */}
+        {viewMode === 'campo' && !activeTabla && tablaQ && (
+          <div className="em-active-tabla-chip">
+            <span className="em-active-tabla-path">Tablas que contienen</span>
+            <span className="em-active-tabla-name">{tablaQ}</span>
+            <button
+              className="em-active-tabla-clear"
+              type="button"
+              title="Ver todos los campos"
+              onClick={() => { setTablaQ(null); setPage(1); }}
+            >
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
+                <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
       {!apiOk && !loading && (
         <div className="em-alert-error mb-3">
-          <strong>No se pudo conectar con la API.</strong> Verifica que el servidor este corriendo en{' '}
+          <strong>No se pudo conectar con la API.</strong> Verifica que el servidor esté corriendo en{' '}
           <code>http://localhost:8000</code>.
-          {error && <> - <em>{error}</em></>}
+          {error && <> — <em>{error}</em></>}
         </div>
       )}
 
-      <MetadataTable items={items} viewMode={viewMode} loading={loading} />
+      <MetadataTable
+        items={items}
+        viewMode={viewMode}
+        loading={loading}
+        onTableRowClick={handleTableRowClick}
+      />
 
       {!loading && apiOk && (
         <div className="em-footer mt-3">
           <div className="em-count">
-            <strong>{total}</strong> {total === 1 ? 'resultado' : 'resultados'}
-            {activeServidor && <> en <strong>{activeServidor}</strong></>}
+            <strong>{total.toLocaleString()}</strong> {total === 1 ? 'resultado' : 'resultados'}
+            {activeTabla && <> de <strong>{activeTabla.tabla}</strong></>}
+            {!activeTabla && tablaQ && <> en tablas con <strong>{tablaQ}</strong></>}
+            {!activeTabla && !tablaQ && activeServidor && <> en <strong>{activeServidor}</strong></>}
           </div>
           <Pagination currentPage={page} totalPages={totalPages} onChange={handlePageChange} />
         </div>

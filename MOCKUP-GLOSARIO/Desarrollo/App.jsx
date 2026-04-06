@@ -9,7 +9,7 @@ import DominioArtefactos from './Pages/DominioArtefactos/DominioArtefactos.jsx';
 import DominioEstructura from './Pages/DominioEstructura/DominioEstructura.jsx';
 import FichaTablas from './Pages/FichaTablas/FichaTablas.jsx';
 import CasosDeUso from './Pages/CasosDeUso/CasosDeUso.jsx';
-import ExploradorDeMetadatos from './Pages/ExploradorDeMetadatos/index.jsx';
+import ExploradorDeMetadatos from './Pages/ExploradorDeMetadatos/ExploradorMetadatos.jsx';
 
 export default function App() {
   return (

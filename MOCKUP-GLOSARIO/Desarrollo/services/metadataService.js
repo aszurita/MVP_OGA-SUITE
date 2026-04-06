@@ -1,4 +1,4 @@
-// Configurable base URL — change to production endpoint when deploying
+// Base URL de la API OGA — cambiar a producción cuando corresponda
 const BASE_URL = 'http://localhost:8000';
 
 async function apiFetch(path, params = {}) {
@@ -11,22 +11,80 @@ async function apiFetch(path, params = {}) {
   return res.json();
 }
 
+/**
+ * Normaliza la respuesta paginada de la API:
+ * { total, page, size, pages, data } → { items, total, pages }
+ */
+function normalizePaginated(apiResponse) {
+  return {
+    items: apiResponse.data || [],
+    total: apiResponse.total || 0,
+    pages: apiResponse.pages || 1,
+    page:  apiResponse.page  || 1,
+    size:  apiResponse.size  || 0,
+  };
+}
+
+/** Verifica estado de la base de datos */
 export function checkHealth() {
-  return apiFetch('/health');
+  return apiFetch('/status');
 }
 
-export function getFilters() {
-  return apiFetch('/filters');
+/**
+ * Carga los filtros disponibles para la barra lateral.
+ * Devuelve { servidores, plataformas, clasificaciones }
+ */
+export async function getFilters() {
+  const [servidores, plataformas, clasificaciones] = await Promise.all([
+    apiFetch('/facetas/servidores'),
+    apiFetch('/facetas/plataformas'),
+    apiFetch('/facetas/clasificaciones'),
+  ]);
+  return { servidores, plataformas, clasificaciones };
 }
 
-export function getTableView({ plataforma, servidor, base, esquema, tabla, q, page = 1, page_size = 20 } = {}) {
-  return apiFetch('/metadata/tables', { plataforma, servidor, base, esquema, tabla, q, page, page_size });
+/**
+ * Vista nivel tabla — endpoint GET /tablas
+ * Filtros: plataforma, servidor, base, esquema, q, page, size
+ */
+export function getTableView({ plataforma, servidor, base, esquema, q, page = 1, page_size = 20 } = {}) {
+  return apiFetch('/tablas', { plataforma, servidor, base, esquema, q, page, size: page_size }).then(normalizePaginated);
 }
 
-export function getFieldView({ plataforma, servidor, base, esquema, tabla, campo, codigo, q, page = 1, page_size = 20 } = {}) {
-  return apiFetch('/metadata/fields', { plataforma, servidor, base, esquema, tabla, campo, codigo, q, page, page_size });
+/**
+ * Vista nivel campo — endpoint GET /campos
+ * Filtros: plataforma, servidor, base, esquema, tabla, tabla_q (LIKE), clasificacion, q, page, size
+ * tabla_q: búsqueda parcial en nombre de tabla (para "agrupar por campos" desde vista tabla)
+ */
+export function getFieldView({ plataforma, servidor, base, esquema, tabla, tabla_q, clasificacion, q, page = 1, page_size = 20 } = {}) {
+  return apiFetch('/campos', { plataforma, servidor, base, esquema, tabla, tabla_q, clasificacion, q, page, size: page_size }).then(normalizePaginated);
 }
 
-export function getRecordDetail(id) {
-  return apiFetch(`/metadata/record/${id}`);
+/**
+ * Detalle de un campo por llave_unica
+ * Ejemplo: DATABRICKS_DBO_DEV_GOVERNANCE_SRI_HISTORICO_RUC
+ */
+export function getCampoDetalle(llave_unica) {
+  return apiFetch(`/campos/${encodeURIComponent(llave_unica)}`);
+}
+
+/**
+ * Detalle de una tabla + data owner/steward
+ */
+export function getTablaDetalle(llave_tabla) {
+  return apiFetch(`/tablas/${encodeURIComponent(llave_tabla)}`);
+}
+
+/**
+ * Campos de una tabla específica
+ */
+export function getCamposDeTabla(llave_tabla, { page = 1, size = 500 } = {}) {
+  return apiFetch(`/tablas/${encodeURIComponent(llave_tabla)}/campos`, { page, size }).then(normalizePaginated);
+}
+
+/**
+ * Árbol jerárquico servidor → base → esquema → tablas
+ */
+export function getArbol(servidor = null) {
+  return apiFetch('/facetas/arbol', servidor ? { servidor } : {});
 }
