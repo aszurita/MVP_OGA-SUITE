@@ -8,7 +8,7 @@ export default function Layout({ children }) {
       <Navbar />
       <SideMenu />
       <main>
-        <div className="container-fluid">
+        <div className="container-allComponents">
           {children}
         </div>
       </main>

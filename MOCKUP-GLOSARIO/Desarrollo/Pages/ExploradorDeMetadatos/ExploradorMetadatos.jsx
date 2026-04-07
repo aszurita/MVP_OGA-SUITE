@@ -76,9 +76,16 @@ function ViewModeDropdown({ value, onChange }) {
   );
 }
 
-function HeaderUtilityIcons() {
+function HeaderUtilityIcons({ onVerBase }) {
   return (
     <div className="em-header-tools" aria-hidden="true">
+      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver todas las tablas de la base" title="Ver base" onClick={onVerBase}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
+
       <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-1.2a4.8 4.8 0 0 0-4.8-4.8H8.8A4.8 4.8 0 0 0 4 19.8V21" />
@@ -88,7 +95,7 @@ function HeaderUtilityIcons() {
         </svg>
       </button>
 
-      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Agrupar estructura" title="Jerarquia">
+      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver jerarquía de servidores/bases/tablas" title="Jerarquia">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="9" y="3" width="6" height="6" rx="1.2" />
           <rect x="3" y="15" width="6" height="6" rx="1.2" />
@@ -235,9 +242,9 @@ export default function ExploradorDeMetadatos() {
       if (activeTabla) {
         params = {
           servidor: activeTabla.servidor || undefined,
-          base:     activeTabla.base     || undefined,
-          esquema:  activeTabla.esquema  || undefined,
-          tabla:    activeTabla.tabla    || undefined,
+          base: activeTabla.base || undefined,
+          esquema: activeTabla.esquema || undefined,
+          tabla: activeTabla.tabla || undefined,
           q: debouncedSearch || undefined,
           page,
           page_size: PAGE_SIZE,
@@ -245,7 +252,7 @@ export default function ExploradorDeMetadatos() {
       } else {
         params = {
           servidor: activeServidor || undefined,
-          tabla_q:  tablaQ        || undefined,
+          tabla_q: tablaQ || undefined,
           q: debouncedSearch || undefined,
           page,
           page_size: PAGE_SIZE,
@@ -290,10 +297,10 @@ export default function ExploradorDeMetadatos() {
     setSearchInput('');  // limpiar búsqueda: contexto cambia a "ver campos de esta tabla"
     setTablaQ(null);
     setActiveTabla({
-      tabla:    row.tabla,
+      tabla: row.tabla,
       servidor: row.servidor,
-      base:     row.base,
-      esquema:  row.esquema,
+      base: row.base,
+      esquema: row.esquema,
     });
     setViewMode('campo');
     setPage(1);
@@ -338,7 +345,7 @@ export default function ExploradorDeMetadatos() {
   const hasActiveFilters = searchInput || activeServidor || activeTabla || tablaQ;
 
   return (
-    <div id="explorador-metadatos" className="flex-grow-1 px-3 transition-content">
+    <div id="explorador-metadatos" className="flex-grow-1 pl-3 transition-content">
       <div className="em-page-shell">
         <div className="em-title-row">
           <h1>Explorador de Metadatos</h1>
@@ -353,11 +360,27 @@ export default function ExploradorDeMetadatos() {
               onChange={(value) => setSearchInput(value)}
               onClear={() => setSearchInput('')}
             />
+
+            <button
+              className="em-clear-btn em-tooltip-trigger"
+              type="button"
+              title="Borrar filtros"
+              data-tooltip="Borrar filtros"
+              onClick={handleClear}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+              </svg>
+            </button>
           </div>
 
           <div className="em-toolbar-right">
             <GroupTableToggle checked={viewMode === 'tabla'} onToggle={handleGroupToggle} />
-            <HeaderUtilityIcons />
+            <HeaderUtilityIcons onVerBase={() => { setActiveServidor(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }} />
             <SegmentarDropdown
               servidores={filters.servidores || []}
               activeServidor={activeServidor}

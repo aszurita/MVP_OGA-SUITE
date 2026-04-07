@@ -6,3 +6,8 @@ venv/
 .venv/
 oga_suite_env/
 claude/
+
+BasesDatos/data/Z_INF_TECNICA_LARGA.txt
+BasesDatos/data/Z_TABLAS_OFICIALES.txt
+
+oga.db

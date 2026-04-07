@@ -149,7 +149,7 @@ export default function Glosario() {
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <div id="glosario_terminos" className="flex-grow-1 px-3 transition-content">
+    <div id="glosario_terminos" className="flex-grow-1 pl-3 transition-content">
       <Toast />
 
       {/* ── Fila 1: Título + Buscador ── */}

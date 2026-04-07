@@ -12668,3 +12668,9 @@ table.dataTable {
   left: auto;
   transform: translate(50%, -50%);
 }
+
+.container-allComponents{
+  width: 100%;
+  padding-right: 0px !important;
+  padding-left: 15px !important;
+}
