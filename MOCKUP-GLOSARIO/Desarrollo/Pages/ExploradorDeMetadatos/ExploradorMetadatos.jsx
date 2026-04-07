@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { getFilters, getTableView, getFieldView } from '../../services/metadataService.js';
+import DataOwnersModal from './components/DataOwnersModal.jsx';
 
 import SearchBar from './components/SearchBar.jsx';
 import MetadataTable from './components/MetadataTable.jsx';
@@ -76,7 +77,7 @@ function ViewModeDropdown({ value, onChange }) {
   );
 }
 
-function HeaderUtilityIcons({ onVerBase }) {
+function HeaderUtilityIcons({ onVerBase, onVerOwners }) {
   return (
     <div className="em-header-tools" aria-hidden="true">
       <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver todas las tablas de la base" title="Ver base" onClick={onVerBase}>
@@ -86,7 +87,7 @@ function HeaderUtilityIcons({ onVerBase }) {
         </svg>
       </button>
 
-      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios">
+      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios" onClick={onVerOwners}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M16 21v-1.2a4.8 4.8 0 0 0-4.8-4.8H8.8A4.8 4.8 0 0 0 4 19.8V21" />
           <circle cx="10" cy="7" r="3.3" />
@@ -199,6 +200,7 @@ export default function ExploradorDeMetadatos() {
   // Búsqueda parcial de tabla (LIKE) — usada al hacer toggle tabla→campo para ver campos de todas las tablas visibles
   const [tablaQ, setTablaQ] = useState(null);
   const [acceptAll, setAcceptAll] = useState(false);
+  const [ownersModalOpen, setOwnersModalOpen] = useState(false);
   const debouncedSearch = useDebounce(searchInput);
 
   const [page, setPage] = useState(1);
@@ -342,8 +344,6 @@ export default function ExploradorDeMetadatos() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  const hasActiveFilters = searchInput || activeServidor || activeTabla || tablaQ;
-
   return (
     <div id="explorador-metadatos" className="flex-grow-1 pl-3 transition-content">
       <div className="em-page-shell">
@@ -380,7 +380,10 @@ export default function ExploradorDeMetadatos() {
 
           <div className="em-toolbar-right">
             <GroupTableToggle checked={viewMode === 'tabla'} onToggle={handleGroupToggle} />
-            <HeaderUtilityIcons onVerBase={() => { setActiveServidor(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }} />
+            <HeaderUtilityIcons
+              onVerBase={() => { setActiveServidor(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }}
+              onVerOwners={() => setOwnersModalOpen(true)}
+            />
             <SegmentarDropdown
               servidores={filters.servidores || []}
               activeServidor={activeServidor}
@@ -407,22 +410,14 @@ export default function ExploradorDeMetadatos() {
             </label>
           </div>
           <div className="em-actions">
-            {hasActiveFilters && (
-              <button className="em-action-icon em-tooltip-trigger" data-tooltip="Limpiar filtros" title="Limpiar filtros" type="button" onClick={handleClear}>
-                <ActionIcon type="clear" />
-              </button>
-            )}
-            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Importar archivo Excel" title="Subir" type="button">
-              <ActionIcon type="upload" />
-            </button>
             <button className="em-action-icon em-tooltip-trigger" data-tooltip="Descargar datos como Excel" title="Descargar" type="button">
               <ActionIcon type="download" />
             </button>
+            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Importar archivo Excel" title="Subir" type="button">
+              <ActionIcon type="upload" />
+            </button>
             <button className="em-action-icon em-tooltip-trigger" data-tooltip="Recomendacion automatica de definiciones" title="Sugerencias" type="button">
               <ActionIcon type="idea" />
-            </button>
-            <button className="em-action-icon em-tooltip-trigger" data-tooltip="Actualizar resultados" title="Actualizar" type="button" onClick={fetchData}>
-              <ActionIcon type="refresh" />
             </button>
           </div>
         </div>
@@ -464,6 +459,8 @@ export default function ExploradorDeMetadatos() {
           {error && <> — <em>{error}</em></>}
         </div>
       )}
+
+      <DataOwnersModal isOpen={ownersModalOpen} onClose={() => setOwnersModalOpen(false)} />
 
       <MetadataTable
         items={items}

@@ -160,6 +160,8 @@ def get_tablas(
     plataforma:    Optional[str] = Query(None, description="txt_fuente_aprovisionamiento"),
     clasificacion: Optional[str] = Query(None, description="OFICIAL | TRABAJO | DESUSO | TEMPORAL"),
     q: Optional[str] = Query(None, description="Búsqueda libre en nombre de tabla o descripcion"),
+    owner_q: Optional[str] = Query(None, description="Buscar por nombre de persona"),
+    owner_type: Optional[str] = Query(None, description="'owner' o 'steward'"),
     page: int = Query(1,  ge=1),
     size: int = Query(50, ge=1, le=2000),
 ):
@@ -188,6 +190,13 @@ def get_tablas(
         term = f"%{q.upper()}%"
         where.append("(UPPER(tabla) LIKE ? OR UPPER(descripcion) LIKE ?)")
         params.extend([term, term])
+    if owner_q:
+        term = f"%{owner_q.upper()}%"
+        if owner_type == 'steward':
+            where.append("UPPER(nombre_data_steward) LIKE ?")
+        else:
+            where.append("UPPER(nombre_data_owner) LIKE ?")
+        params.append(term)
 
     clause = ("WHERE " + " AND ".join(where)) if where else ""
     sql = f"SELECT * FROM v_tablas_campos {clause} ORDER BY servidor, base, esquema, tabla"
@@ -253,6 +262,28 @@ def get_clasificaciones():
             "SELECT DISTINCT clasificacion FROM tablas WHERE clasificacion != '' AND clasificacion != ' ' ORDER BY clasificacion"
         ).fetchall()
     return [r["clasificacion"] for r in rows]
+
+
+@app.get("/facetas/owners", tags=["Facetas"], summary="Lista de Data Owners únicos")
+def get_owners():
+    with get_con() as con:
+        rows = con.execute(
+            "SELECT DISTINCT nombre_data_owner FROM tablas "
+            "WHERE TRIM(nombre_data_owner) != '' AND TRIM(nombre_data_owner) != ' ' "
+            "ORDER BY nombre_data_owner"
+        ).fetchall()
+    return [r["nombre_data_owner"] for r in rows]
+
+
+@app.get("/facetas/stewards", tags=["Facetas"], summary="Lista de Data Stewards únicos")
+def get_stewards():
+    with get_con() as con:
+        rows = con.execute(
+            "SELECT DISTINCT nombre_data_steward FROM tablas "
+            "WHERE TRIM(nombre_data_steward) != '' AND TRIM(nombre_data_steward) != ' ' "
+            "ORDER BY nombre_data_steward"
+        ).fetchall()
+    return [r["nombre_data_steward"] for r in rows]
 
 
 @app.get("/facetas/arbol", tags=["Facetas"],

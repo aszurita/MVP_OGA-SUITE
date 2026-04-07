@@ -1,53 +1,65 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+
+/* ── Hook redimensionado de columnas ── */
+function useResizableColumns(defaults) {
+  const [widths, setWidths] = useState(() => [...defaults]);
+  const drag = useRef(null);
+
+  // Resetear cuando cambia el número/set de columnas (ej. tabla ↔ campo)
+  useEffect(() => {
+    setWidths([...defaults]);
+  }, [defaults.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function startResize(e, i) {
+    e.preventDefault();
+    e.stopPropagation();
+    const th = e.currentTarget.parentElement;
+    const startX = e.clientX;
+    const startW = th.getBoundingClientRect().width;
+    drag.current = { i, startX, startW };
+
+    function onMove(ev) {
+      const d = drag.current;
+      if (!d) return;
+      const newW = Math.max(50, d.startW + (ev.clientX - d.startX));
+      setWidths(prev => { const n = [...prev]; n[d.i] = newW; return n; });
+    }
+    function onUp() {
+      drag.current = null;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }
+
+  return { widths, startResize };
+}
 
 function SortIcon({ col, sortCol, sortDir }) {
   const isActive = sortCol === col;
-
   return (
     <span className="sort-icon" style={{ lineHeight: 1 }}>
       <svg width="8" height="12" viewBox="0 0 8 12" fill="none">
-        <path d="M4 0L7 4H1L4 0Z" fill={isActive && sortDir === 'asc' ? '#D6006D' : '#CFCFD6'} />
-        <path d="M4 12L1 8H7L4 12Z" fill={isActive && sortDir === 'desc' ? '#D6006D' : '#CFCFD6'} />
+        <path d="M4 0L7 4H1L4 0Z" fill={isActive && sortDir === 'asc' ? '#fff' : 'rgba(255,255,255,0.45)'} />
+        <path d="M4 12L1 8H7L4 12Z" fill={isActive && sortDir === 'desc' ? '#fff' : 'rgba(255,255,255,0.45)'} />
       </svg>
     </span>
   );
 }
 
-/** Badge de clasificación — valores reales de la BD: OFICIAL, TRABAJO, DESUSO, TEMPORAL */
 function ClasificacionBadge({ value }) {
-  const map = {
-    OFICIAL:    'em-badge-oficial',
-    TRABAJO:    'em-badge-trabajo',
-    DESUSO:     'em-badge-desuso',
-    TEMPORAL:   'em-badge-temporal',
-  };
-
-  const key = (value || '').toUpperCase();
-  const className = map[key] || 'em-badge-temporal';
-  return <span className={`em-badge ${className}`}>{value || '-'}</span>;
+  if (!value || !value.trim()) return null;
+  return <span className="em-badge em-badge-clasificacion">{value}</span>;
 }
 
 function AvanceCell({ value = '0' }) {
   const progress = Number.parseInt(value, 10) || 0;
-  const label = value && value !== '0' ? `${value}%` : `${progress}%`;
-
-  return (
-    <div className="em-avance">
-      <div className="em-avance-bar">
-        <div className="em-avance-bar-fill" style={{ width: `${progress}%` }} />
-      </div>
-      <span>{label}</span>
-    </div>
-  );
+  return <span>{progress}%</span>;
 }
 
-/**
- * Tooltip de hover para la celda Tabla en vista nivel-tabla.
- * Muestra Data Owner y Data Steward al pasar el cursor.
- */
 function TablaCell({ tabla, dataOwner, dataSteward }) {
   const hasHover = dataOwner || dataSteward;
-
   return (
     <td className="em-cell-emphasis em-cell-tabla-hover">
       <span className="em-tabla-hover-wrap">
@@ -75,30 +87,30 @@ function TablaCell({ tabla, dataOwner, dataSteward }) {
 
 // ── Columnas vista nivel tabla ────────────────────────────────────────────────
 const TABLE_COLS = [
-  { key: 'plataforma',   label: 'Plataforma' },
-  { key: 'servidor',     label: 'Servidor' },
-  { key: 'base',         label: 'Base' },
-  { key: 'esquema',      label: 'Esquema' },
-  { key: 'tabla',        label: 'Tabla' },
-  { key: 'descripcion',  label: 'Descripción' },
-  { key: 'clasificacion',label: 'Clasificación' },
-  { key: 'avance',       label: 'Avance' },
+  { key: 'plataforma',    label: 'Plataforma',    defaultW: 130 },
+  { key: 'servidor',      label: 'Servidor',      defaultW: 130 },
+  { key: 'base',          label: 'Base',          defaultW: 180 },
+  { key: 'esquema',       label: 'Esquema',       defaultW: 100 },
+  { key: 'tabla',         label: 'Tabla',         defaultW: 200 },
+  { key: 'descripcion',   label: 'Descripción',   defaultW: 300 },
+  { key: 'clasificacion', label: 'Clasificación', defaultW: 110 },
+  { key: 'avance',        label: 'Avance',        defaultW: 110 },
 ];
 
 // ── Columnas vista nivel campo ────────────────────────────────────────────────
 const FIELD_COLS = [
-  { key: 'campo',        label: 'Campo' },
-  { key: 'codigo',       label: 'Código' },
-  { key: 'atributo',     label: 'Atributo' },
-  { key: 'definicion',   label: 'Definición' },
-  { key: 'plataforma',   label: 'Plataforma' },
-  { key: 'servidor',     label: 'Servidor' },
-  { key: 'base',         label: 'Base' },
-  { key: 'esquema',      label: 'Esquema' },
-  { key: 'tabla',        label: 'Tabla' },
-  { key: 'tipo',         label: 'Tipo' },
-  { key: 'largo',        label: 'Largo' },
-  { key: 'permite_null', label: 'Permite Null' },
+  { key: 'campo',        label: 'Campo',        defaultW: 130 },
+  { key: 'codigo',       label: 'Código',       defaultW: 100 },
+  { key: 'atributo',     label: 'Atributo',     defaultW: 100 },
+  { key: 'definicion',   label: 'Definición',   defaultW: 200 },
+  { key: 'plataforma',   label: 'Plataforma',   defaultW: 110 },
+  { key: 'servidor',     label: 'Servidor',     defaultW: 110 },
+  { key: 'base',         label: 'Base',         defaultW: 110 },
+  { key: 'esquema',      label: 'Esquema',      defaultW: 100 },
+  { key: 'tabla',        label: 'Tabla',        defaultW: 160 },
+  { key: 'tipo',         label: 'Tipo',         defaultW: 90  },
+  { key: 'largo',        label: 'Largo',        defaultW: 70  },
+  { key: 'permite_null', label: 'Permite Null', defaultW: 100 },
 ];
 
 function TableViewBody({ items, onRowClick }) {
@@ -115,12 +127,8 @@ function TableViewBody({ items, onRowClick }) {
           <td>{row.servidor || '-'}</td>
           <td>{row.base || '-'}</td>
           <td>{row.esquema || '-'}</td>
-          <TablaCell
-            tabla={row.tabla}
-            dataOwner={row.nombre_data_owner}
-            dataSteward={row.nombre_data_steward}
-          />
-          <td className="em-cell-detail" title={row.descripcion}>{row.descripcion || '-'}</td>
+          <TablaCell tabla={row.tabla} dataOwner={row.nombre_data_owner} dataSteward={row.nombre_data_steward} />
+          <td title={row.descripcion}>{row.descripcion || '-'}</td>
           <td><ClasificacionBadge value={row.clasificacion} /></td>
           <td><AvanceCell value={row.avance} /></td>
         </tr>
@@ -136,8 +144,8 @@ function FieldViewBody({ items }) {
         <tr key={row.id || `${row.llave_unica || row.campo || 'campo'}-${index}`}>
           <td className="em-cell-emphasis">{row.campo || '-'}</td>
           <td>{row.codigo || ''}</td>
-          <td className="em-cell-detail" title={row.atributo}>{row.atributo || ''}</td>
-          <td className="em-cell-detail" title={row.definicion}>{row.definicion || ''}</td>
+          <td title={row.atributo}>{row.atributo || ''}</td>
+          <td title={row.definicion}>{row.definicion || ''}</td>
           <td>{row.plataforma || '-'}</td>
           <td>{row.servidor || '-'}</td>
           <td>{row.base || '-'}</td>
@@ -156,25 +164,25 @@ export default function MetadataTable({ items = [], viewMode = 'tabla', loading 
   const [sortCol, setSortCol] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
 
+  const cols = viewMode === 'tabla' ? TABLE_COLS : FIELD_COLS;
+  const defaultWidths = cols.map(c => c.defaultW);
+  const { widths: colWidths, startResize } = useResizableColumns(defaultWidths);
+
   function handleSort(key) {
     if (sortCol === key) {
-      setSortDir((current) => (current === 'asc' ? 'desc' : 'asc'));
-      return;
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortCol(key);
+      setSortDir('asc');
     }
-
-    setSortCol(key);
-    setSortDir('asc');
   }
 
-  const cols = viewMode === 'tabla' ? TABLE_COLS : FIELD_COLS;
   const sorted = [...items].sort((a, b) => {
     if (!sortCol) return 0;
-
-    const left = (a[sortCol] || '').toString().toLowerCase();
-    const right = (b[sortCol] || '').toString().toLowerCase();
-
-    if (left < right) return sortDir === 'asc' ? -1 : 1;
-    if (left > right) return sortDir === 'asc' ? 1 : -1;
+    const l = (a[sortCol] || '').toString().toLowerCase();
+    const r = (b[sortCol] || '').toString().toLowerCase();
+    if (l < r) return sortDir === 'asc' ? -1 : 1;
+    if (l > r) return sortDir === 'asc' ? 1 : -1;
     return 0;
   });
 
@@ -197,12 +205,23 @@ export default function MetadataTable({ items = [], viewMode = 'tabla', loading 
     );
   }
 
+  const totalW = colWidths.reduce((s, w) => s + (w || 0), 0);
+
   return (
-    <div className={`em-table-wrap ${viewMode === 'campo' ? 'em-table-wrap-campo' : 'em-table-wrap-tabla'}`}>
-      <table className={`em-table ${viewMode === 'campo' ? 'em-table-campo' : 'em-table-tabla'}`}>
+    <div
+      className={`em-table-wrap ${viewMode === 'campo' ? 'em-table-wrap-campo' : 'em-table-wrap-tabla'}`}
+      style={{ overflowX: 'auto', maxWidth: '100%' }}
+    >
+      <table
+        className={`em-table ${viewMode === 'campo' ? 'em-table-campo' : 'em-table-tabla'}`}
+        style={{ tableLayout: 'fixed', width: totalW, minWidth: totalW }}
+      >
+        <colgroup>
+          {colWidths.map((w, i) => <col key={i} style={{ width: w }} />)}
+        </colgroup>
         <thead>
           <tr>
-            {cols.map((col) => (
+            {cols.map((col, i) => (
               <th
                 key={col.key}
                 className={`sortable${sortCol === col.key ? ` sort-${sortDir}` : ''}`}
@@ -210,11 +229,19 @@ export default function MetadataTable({ items = [], viewMode = 'tabla', loading 
               >
                 {col.label}
                 <SortIcon col={col.key} sortCol={sortCol} sortDir={sortDir} />
+                <span
+                  className="col-resize-handle"
+                  onMouseDown={(e) => startResize(e, i)}
+                  onClick={(e) => e.stopPropagation()}
+                />
               </th>
             ))}
           </tr>
         </thead>
-        {viewMode === 'tabla' ? <TableViewBody items={sorted} onRowClick={onTableRowClick} /> : <FieldViewBody items={sorted} />}
+        {viewMode === 'tabla'
+          ? <TableViewBody items={sorted} onRowClick={onTableRowClick} />
+          : <FieldViewBody items={sorted} />
+        }
       </table>
     </div>
   );

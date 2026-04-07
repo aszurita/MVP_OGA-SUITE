@@ -47,8 +47,15 @@ export async function getFilters() {
  * Vista nivel tabla — endpoint GET /tablas
  * Filtros: plataforma, servidor, base, esquema, q, page, size
  */
-export function getTableView({ plataforma, servidor, base, esquema, q, page = 1, page_size = 20 } = {}) {
-  return apiFetch('/tablas', { plataforma, servidor, base, esquema, q, page, size: page_size }).then(normalizePaginated);
+export function getTableView({ plataforma, servidor, base, esquema, q, owner_q, owner_type, page = 1, page_size = 20 } = {}) {
+  return apiFetch('/tablas', { plataforma, servidor, base, esquema, q, owner_q, owner_type, page, size: page_size }).then(normalizePaginated);
+}
+
+export function getOwnerFacets() {
+  return Promise.all([
+    apiFetch('/facetas/owners'),
+    apiFetch('/facetas/stewards'),
+  ]).then(([owners, stewards]) => ({ owners, stewards }));
 }
 
 /**
