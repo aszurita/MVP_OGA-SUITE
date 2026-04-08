@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { getFilters, getTableView, getFieldView } from '../../services/metadataService.js';
 import DataOwnersModal from './components/DataOwnersModal.jsx';
+import HierarchyPanel from './components/HierarchyPanel.jsx';
 
 import SearchBar from './components/SearchBar.jsx';
 import MetadataTable from './components/MetadataTable.jsx';
@@ -77,7 +78,7 @@ function ViewModeDropdown({ value, onChange }) {
   );
 }
 
-function HeaderUtilityIcons({ onVerBase, onVerOwners }) {
+function HeaderUtilityIcons({ onVerBase, onVerOwners, onVerJerarquia, jerarquiaOpen }) {
   return (
     <div className="em-header-tools" aria-hidden="true">
       <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver todas las tablas de la base" title="Ver base" onClick={onVerBase}>
@@ -96,7 +97,13 @@ function HeaderUtilityIcons({ onVerBase, onVerOwners }) {
         </svg>
       </button>
 
-      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver jerarquía de servidores/bases/tablas" title="Jerarquia">
+      <button
+        className={`em-header-icon-btn em-tooltip-trigger${jerarquiaOpen ? ' is-active' : ''}`}
+        type="button"
+        data-tooltip="Ver jerarquía de servidores/bases/tablas"
+        title="Jerarquia"
+        onClick={onVerJerarquia}
+      >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <rect x="9" y="3" width="6" height="6" rx="1.2" />
           <rect x="3" y="15" width="6" height="6" rx="1.2" />
@@ -195,12 +202,15 @@ export default function ExploradorDeMetadatos() {
   const [viewMode, setViewMode] = useState('tabla');
   const [searchInput, setSearchInput] = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
+  const [activeBase, setActiveBase]     = useState(null);
+  const [activeEsquema, setActiveEsquema] = useState(null);
   // Tabla seleccionada al hacer clic en una fila de vista-tabla (filtro exacto)
   const [activeTabla, setActiveTabla] = useState(null); // { tabla, servidor, base, esquema }
   // Búsqueda parcial de tabla (LIKE) — usada al hacer toggle tabla→campo para ver campos de todas las tablas visibles
   const [tablaQ, setTablaQ] = useState(null);
   const [acceptAll, setAcceptAll] = useState(false);
   const [ownersModalOpen, setOwnersModalOpen] = useState(false);
+  const [hierarchyOpen, setHierarchyOpen] = useState(false);
   const debouncedSearch = useDebounce(searchInput);
 
   const [page, setPage] = useState(1);
@@ -229,9 +239,11 @@ export default function ExploradorDeMetadatos() {
     let params;
 
     if (viewMode === 'tabla') {
-      // Vista tabla: filtro por servidor (segmentar) + búsqueda libre
+      // Vista tabla: filtro por servidor/base/esquema (jerarquía o segmentar) + búsqueda libre
       params = {
         servidor: activeServidor || undefined,
+        base:     activeBase     || undefined,
+        esquema:  activeEsquema  || undefined,
         q: debouncedSearch || undefined,
         page,
         page_size: PAGE_SIZE,
@@ -276,7 +288,7 @@ export default function ExploradorDeMetadatos() {
         setApiOk(false);
       })
       .finally(() => setLoading(false));
-  }, [activeServidor, activeTabla, debouncedSearch, page, viewMode]);
+  }, [activeServidor, activeBase, activeEsquema, activeTabla, debouncedSearch, page, viewMode]);
 
   useEffect(() => {
     fetchData();
@@ -284,11 +296,13 @@ export default function ExploradorDeMetadatos() {
 
   useEffect(() => {
     setPage(1);
-  }, [viewMode, activeServidor, activeTabla, tablaQ, debouncedSearch]);
+  }, [viewMode, activeServidor, activeBase, activeEsquema, activeTabla, tablaQ, debouncedSearch]);
 
   function handleClear() {
     setSearchInput('');
     setActiveServidor(null);
+    setActiveBase(null);
+    setActiveEsquema(null);
     setActiveTabla(null);
     setTablaQ(null);
     setPage(1);
@@ -381,14 +395,18 @@ export default function ExploradorDeMetadatos() {
           <div className="em-toolbar-right">
             <GroupTableToggle checked={viewMode === 'tabla'} onToggle={handleGroupToggle} />
             <HeaderUtilityIcons
-              onVerBase={() => { setActiveServidor(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }}
+              onVerBase={() => { setActiveServidor(null); setActiveBase(null); setActiveEsquema(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }}
               onVerOwners={() => setOwnersModalOpen(true)}
+              onVerJerarquia={() => setHierarchyOpen((v) => !v)}
+              jerarquiaOpen={hierarchyOpen}
             />
             <SegmentarDropdown
               servidores={filters.servidores || []}
               activeServidor={activeServidor}
               onSelect={(servidor) => {
                 setActiveServidor(servidor);
+                setActiveBase(null);
+                setActiveEsquema(null);
                 setActiveTabla(null);
                 setPage(1);
               }}
@@ -462,24 +480,63 @@ export default function ExploradorDeMetadatos() {
 
       <DataOwnersModal isOpen={ownersModalOpen} onClose={() => setOwnersModalOpen(false)} />
 
-      <MetadataTable
-        items={items}
-        viewMode={viewMode}
-        loading={loading}
-        onTableRowClick={handleTableRowClick}
-      />
+      <div className={`em-content-row${hierarchyOpen ? ' has-tree' : ''}`}>
+        {hierarchyOpen && (
+          <HierarchyPanel
+            q={debouncedSearch}
+            activeServidor={activeServidor}
+            activeBase={activeBase}
+            activeEsquema={activeEsquema}
+            onSelectServidor={(servidor) => {
+              const same = activeServidor === servidor && !activeBase;
+              setActiveServidor(same ? null : servidor);
+              setActiveBase(null);
+              setActiveEsquema(null);
+              setActiveTabla(null);
+              setPage(1);
+            }}
+            onSelectBase={({ servidor, base }) => {
+              const same = activeServidor === servidor && activeBase === base && !activeEsquema;
+              setActiveServidor(servidor);
+              setActiveBase(same ? null : base);
+              setActiveEsquema(null);
+              setActiveTabla(null);
+              setPage(1);
+            }}
+            onSelectEsquema={({ servidor, base, esquema }) => {
+              const same = activeServidor === servidor && activeBase === base && activeEsquema === esquema;
+              setActiveServidor(servidor);
+              setActiveBase(base);
+              setActiveEsquema(same ? null : esquema);
+              setActiveTabla(null);
+              setPage(1);
+            }}
+            onSelectTabla={(row) => handleTableRowClick(row)}
+            onClose={() => setHierarchyOpen(false)}
+          />
+        )}
 
-      {!loading && apiOk && (
-        <div className="em-footer mt-3">
-          <div className="em-count">
-            <strong>{total.toLocaleString()}</strong> {total === 1 ? 'resultado' : 'resultados'}
-            {activeTabla && <> de <strong>{activeTabla.tabla}</strong></>}
-            {!activeTabla && tablaQ && <> en tablas con <strong>{tablaQ}</strong></>}
-            {!activeTabla && !tablaQ && activeServidor && <> en <strong>{activeServidor}</strong></>}
-          </div>
-          <Pagination currentPage={page} totalPages={totalPages} onChange={handlePageChange} />
+        <div className="em-content-area">
+          <MetadataTable
+            items={items}
+            viewMode={viewMode}
+            loading={loading}
+            onTableRowClick={handleTableRowClick}
+          />
+
+          {!loading && apiOk && (
+            <div className="em-footer mt-3">
+              <div className="em-count">
+                <strong>{total.toLocaleString()}</strong> {total === 1 ? 'resultado' : 'resultados'}
+                {activeTabla && <> de <strong>{activeTabla.tabla}</strong></>}
+                {!activeTabla && tablaQ && <> en tablas con <strong>{tablaQ}</strong></>}
+                {!activeTabla && !tablaQ && activeServidor && <> en <strong>{activeServidor}</strong></>}
+              </div>
+              <Pagination currentPage={page} totalPages={totalPages} onChange={handlePageChange} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

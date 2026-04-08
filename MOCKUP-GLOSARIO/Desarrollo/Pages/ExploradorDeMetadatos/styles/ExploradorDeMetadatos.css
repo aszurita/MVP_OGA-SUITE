@@ -19,6 +19,140 @@
   background: #fff;
 }
 
+/* ── Layout con árbol lateral ── */
+.em-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  min-width: 0;
+}
+
+.em-content-area {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════
+   PANEL JERARQUÍA (árbol servidor → base → esquema → tabla)
+   ══════════════════════════════════════════════════════ */
+.em-tree-panel {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--em-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(18, 25, 38, 0.07);
+  margin-right: 14px;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.em-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--em-border);
+  flex-shrink: 0;
+}
+
+.em-tree-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--em-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.em-tree-close {
+  border: none;
+  background: none;
+  color: var(--em-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.em-tree-close:hover {
+  color: var(--em-magenta);
+}
+
+.em-tree-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  padding: 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #d0d3db transparent;
+}
+
+.em-tree-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.em-tree-body::-webkit-scrollbar-thumb {
+  background: #d0d3db;
+  border-radius: 4px;
+}
+
+.em-tree-node,
+.em-tree-leaf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--em-text);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.em-tree-node:hover,
+.em-tree-leaf:hover {
+  background: var(--em-magenta-soft);
+  color: var(--em-magenta);
+}
+
+.em-tree-node.is-active,
+.em-tree-leaf.is-active {
+  background: var(--em-magenta-soft);
+  color: var(--em-magenta);
+  font-weight: 600;
+}
+
+.em-tree-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.em-tree-loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.em-tree-empty {
+  padding: 20px 14px;
+  font-size: 0.8rem;
+  color: var(--em-muted);
+  text-align: center;
+}
+
+/* Icono jerarquía activo */
+.em-header-icon-btn.is-active {
+  color: var(--em-magenta);
+}
+
 .em-page-shell {
   padding-top: 6px;
 }
@@ -444,7 +578,6 @@
   display: none; /* Chrome/Safari */
 }
 
-.em-table-wrap-tabla {}
 
 .em-table {
   border-collapse: separate;
@@ -718,33 +851,18 @@
   opacity: 1;
 }
 
-/* ── Hover tooltip en celda Tabla (Data Owner / Data Steward) ─────────────── */
-.em-cell-tabla-hover {
-  position: relative;
-}
-
-.em-tabla-hover-wrap {
-  position: relative;
-  display: inline-block;
-  cursor: default;
-}
-
-.em-tabla-tooltip {
-  display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 200;
+/* ── Hover tooltip en celda Tabla — portal (position: fixed en body) ────── */
+.em-tabla-tooltip-portal {
+  position: fixed;
+  z-index: 2000;
   min-width: 220px;
   padding: 10px 14px;
   border: 1px solid #e7e8ee;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 12px 30px rgba(18, 25, 38, 0.12);
+  box-shadow: 0 12px 30px rgba(18, 25, 38, 0.18);
   white-space: nowrap;
-}
-
-.em-tabla-hover-wrap:hover .em-tabla-tooltip {
+  pointer-events: none;
   display: flex;
   flex-direction: column;
   gap: 6px;

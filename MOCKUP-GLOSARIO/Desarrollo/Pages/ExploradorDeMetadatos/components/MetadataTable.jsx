@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 
 /* ── Hook redimensionado de columnas ── */
 function useResizableColumns(defaults) {
@@ -60,27 +61,46 @@ function AvanceCell({ value = '0' }) {
 
 function TablaCell({ tabla, dataOwner, dataSteward }) {
   const hasHover = dataOwner || dataSteward;
+  const [pos, setPos] = useState(null);
+  const wrapRef = useRef(null);
+
+  function handleMouseEnter() {
+    if (!wrapRef.current) return;
+    const r = wrapRef.current.getBoundingClientRect();
+    setPos({ x: r.left, y: r.bottom + 6 });
+  }
+
+  function handleMouseLeave() {
+    setPos(null);
+  }
+
   return (
-    <td className="em-cell-emphasis em-cell-tabla-hover">
-      <span className="em-tabla-hover-wrap">
+    <td className="em-cell-emphasis">
+      <span
+        ref={wrapRef}
+        onMouseEnter={hasHover ? handleMouseEnter : undefined}
+        onMouseLeave={hasHover ? handleMouseLeave : undefined}
+        style={{ cursor: hasHover ? 'default' : undefined }}
+      >
         {tabla || '-'}
-        {hasHover && (
-          <span className="em-tabla-tooltip">
-            {dataOwner && (
-              <span className="em-tooltip-row">
-                <span className="em-tooltip-label">Data Owner</span>
-                <span className="em-tooltip-value">{dataOwner}</span>
-              </span>
-            )}
-            {dataSteward && (
-              <span className="em-tooltip-row">
-                <span className="em-tooltip-label">Data Steward</span>
-                <span className="em-tooltip-value">{dataSteward}</span>
-              </span>
-            )}
-          </span>
-        )}
       </span>
+      {pos && hasHover && ReactDOM.createPortal(
+        <div className="em-tabla-tooltip-portal" style={{ left: pos.x, top: pos.y }}>
+          {dataOwner && (
+            <span className="em-tooltip-row">
+              <span className="em-tooltip-label">Data Owner</span>
+              <span className="em-tooltip-value">{dataOwner}</span>
+            </span>
+          )}
+          {dataSteward && (
+            <span className="em-tooltip-row">
+              <span className="em-tooltip-label">Data Steward</span>
+              <span className="em-tooltip-value">{dataSteward}</span>
+            </span>
+          )}
+        </div>,
+        document.body
+      )}
     </td>
   );
 }
