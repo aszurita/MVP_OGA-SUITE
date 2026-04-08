@@ -2880,7 +2880,7 @@ main .container-fluid {
   main {
     margin-left: 390px;
     margin-right: 50px;
-    margin-top: 130px;
+    margin-top: 120px;
     margin-bottom: 30px;
   }
 }
@@ -12669,7 +12669,7 @@ table.dataTable {
   transform: translate(50%, -50%);
 }
 
-.container-allComponents{
+.container-allComponents {
   width: 100%;
   padding-right: 0px !important;
   padding-left: 15px !important;

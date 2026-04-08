@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { getFilters, getTableView, getFieldView } from '../../services/metadataService.js';
 import DataOwnersModal from './components/DataOwnersModal.jsx';
+import DocumentarCampoModal from './components/DocumentarCampoModal.jsx';
 import HierarchyPanel from './components/HierarchyPanel.jsx';
 
 import SearchBar from './components/SearchBar.jsx';
@@ -202,7 +203,7 @@ export default function ExploradorDeMetadatos() {
   const [viewMode, setViewMode] = useState('tabla');
   const [searchInput, setSearchInput] = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
-  const [activeBase, setActiveBase]     = useState(null);
+  const [activeBase, setActiveBase] = useState(null);
   const [activeEsquema, setActiveEsquema] = useState(null);
   // Tabla seleccionada al hacer clic en una fila de vista-tabla (filtro exacto)
   const [activeTabla, setActiveTabla] = useState(null); // { tabla, servidor, base, esquema }
@@ -211,6 +212,7 @@ export default function ExploradorDeMetadatos() {
   const [acceptAll, setAcceptAll] = useState(false);
   const [ownersModalOpen, setOwnersModalOpen] = useState(false);
   const [hierarchyOpen, setHierarchyOpen] = useState(false);
+  const [editingField, setEditingField] = useState(null);
   const debouncedSearch = useDebounce(searchInput);
 
   const [page, setPage] = useState(1);
@@ -242,8 +244,8 @@ export default function ExploradorDeMetadatos() {
       // Vista tabla: filtro por servidor/base/esquema (jerarquía o segmentar) + búsqueda libre
       params = {
         servidor: activeServidor || undefined,
-        base:     activeBase     || undefined,
-        esquema:  activeEsquema  || undefined,
+        base: activeBase || undefined,
+        esquema: activeEsquema || undefined,
         q: debouncedSearch || undefined,
         page,
         page_size: PAGE_SIZE,
@@ -361,7 +363,7 @@ export default function ExploradorDeMetadatos() {
   return (
     <div id="explorador-metadatos" className="flex-grow-1 pl-3 transition-content">
       <div className="em-page-shell">
-        <div className="em-title-row">
+        <div className="">
           <h1>Explorador de Metadatos</h1>
         </div>
 
@@ -416,7 +418,7 @@ export default function ExploradorDeMetadatos() {
 
         <div className="em-separator" />
 
-        <div className="em-subtoolbar">
+        <div className="em-subtoolbar mt-4 mb-3">
           <div className="em-accept-all">
             <label>
               <span>Aceptar todas las recomendaciones</span>
@@ -480,6 +482,12 @@ export default function ExploradorDeMetadatos() {
 
       <DataOwnersModal isOpen={ownersModalOpen} onClose={() => setOwnersModalOpen(false)} />
 
+      <DocumentarCampoModal
+        isOpen={editingField !== null}
+        campo={editingField}
+        onClose={() => setEditingField(null)}
+      />
+
       <div className={`em-content-row${hierarchyOpen ? ' has-tree' : ''}`}>
         {hierarchyOpen && (
           <HierarchyPanel
@@ -522,6 +530,7 @@ export default function ExploradorDeMetadatos() {
             viewMode={viewMode}
             loading={loading}
             onTableRowClick={handleTableRowClick}
+            onEditField={setEditingField}
           />
 
           {!loading && apiOk && (

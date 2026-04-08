@@ -107,14 +107,14 @@ function TablaCell({ tabla, dataOwner, dataSteward }) {
 
 // ── Columnas vista nivel tabla ────────────────────────────────────────────────
 const TABLE_COLS = [
-  { key: 'plataforma',    label: 'Plataforma',    defaultW: 130 },
-  { key: 'servidor',      label: 'Servidor',      defaultW: 130 },
-  { key: 'base',          label: 'Base',          defaultW: 180 },
-  { key: 'esquema',       label: 'Esquema',       defaultW: 100 },
-  { key: 'tabla',         label: 'Tabla',         defaultW: 200 },
-  { key: 'descripcion',   label: 'Descripción',   defaultW: 300 },
-  { key: 'clasificacion', label: 'Clasificación', defaultW: 110 },
-  { key: 'avance',        label: 'Avance',        defaultW: 110 },
+  { key: 'plataforma',    label: 'Plataforma',    defaultW: 120 },
+  { key: 'servidor',      label: 'Servidor',      defaultW: 140 },
+  { key: 'base',          label: 'Base',          defaultW: 130 },
+  { key: 'esquema',       label: 'Esquema',       defaultW: 130 },
+  { key: 'tabla',         label: 'Tabla',         defaultW: 180 },
+  { key: 'descripcion',   label: 'Descripción',   defaultW: 140 },
+  { key: 'clasificacion', label: 'Clasificación', defaultW: 140 },
+  { key: 'avance',        label: 'Avance',        defaultW: 120 },
 ];
 
 // ── Columnas vista nivel campo ────────────────────────────────────────────────
@@ -157,12 +157,27 @@ function TableViewBody({ items, onRowClick }) {
   );
 }
 
-function FieldViewBody({ items }) {
+function FieldViewBody({ items, onEditField }) {
   return (
     <tbody>
       {items.map((row, index) => (
         <tr key={row.id || `${row.llave_unica || row.campo || 'campo'}-${index}`}>
-          <td className="em-cell-emphasis">{row.campo || '-'}</td>
+          <td className="em-cell-emphasis">
+            <span className="em-field-pencil-wrap">
+              <button
+                type="button"
+                className="do-pencil-btn em-field-pencil-btn"
+                title={`Documentar campo ${row.campo}`}
+                onClick={(e) => { e.stopPropagation(); onEditField && onEditField(row); }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z" />
+                </svg>
+              </button>
+              {row.campo || '-'}
+            </span>
+          </td>
           <td>{row.codigo || ''}</td>
           <td title={row.atributo}>{row.atributo || ''}</td>
           <td title={row.definicion}>{row.definicion || ''}</td>
@@ -180,7 +195,7 @@ function FieldViewBody({ items }) {
   );
 }
 
-export default function MetadataTable({ items = [], viewMode = 'tabla', loading = false, onTableRowClick }) {
+export default function MetadataTable({ items = [], viewMode = 'tabla', loading = false, onTableRowClick, onEditField }) {
   const [sortCol, setSortCol] = useState(null);
   const [sortDir, setSortDir] = useState('asc');
 
@@ -260,7 +275,7 @@ export default function MetadataTable({ items = [], viewMode = 'tabla', loading 
         </thead>
         {viewMode === 'tabla'
           ? <TableViewBody items={sorted} onRowClick={onTableRowClick} />
-          : <FieldViewBody items={sorted} />
+          : <FieldViewBody items={sorted} onEditField={onEditField} />
         }
       </table>
     </div>
