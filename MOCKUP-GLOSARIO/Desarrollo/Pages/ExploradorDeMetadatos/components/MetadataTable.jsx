@@ -59,33 +59,130 @@ function AvanceCell({ value = '0' }) {
   return <span>{progress}%</span>;
 }
 
-function TablaCell({ tabla, dataOwner, dataSteward }) {
+/* ── Menú contextual del lápiz de Tabla ── */
+function TablaContextMenu({ x, y, onAction, onClose }) {
+  const [profilingHover, setProfilingHover] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handler(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) onClose();
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [onClose]);
+
+  const plainItems = [
+    { action: 'descripcion', label: 'Descripción tabla'      },
+    { action: 'owner',       label: 'Data Owner'             },
+    { action: 'steward',     label: 'Data Steward'           },
+    { action: 'dimensiones', label: 'Dimensiones de Calidad' },
+    { action: 'clasificacion', label: 'Clasificación'        },
+  ];
+
+  return ReactDOM.createPortal(
+    /* onClick + onMouseDown detienen la burbuja por el árbol React
+       (los portales burbujean por el árbol React aunque estén en document.body) */
+    <div
+      className="do-ctx-menu"
+      ref={menuRef}
+      style={{ position: 'fixed', left: x, top: y, zIndex: 9999 }}
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      {plainItems.map((item) => (
+        <div
+          key={item.action}
+          role="button"
+          tabIndex={0}
+          className="do-ctx-item"
+          onClick={() => { onAction(item.action); onClose(); }}
+          onKeyDown={(e) => e.key === 'Enter' && (onAction(item.action), onClose())}
+        >
+          {item.label}
+        </div>
+      ))}
+
+      {/* Profiling con submenú */}
+      <div
+        className={`do-ctx-item do-ctx-has-sub${profilingHover ? ' is-hovered' : ''}`}
+        onMouseEnter={() => setProfilingHover(true)}
+        onMouseLeave={() => setProfilingHover(false)}
+      >
+        <span>Profiling</span>
+        {profilingHover && (
+          <div className="do-ctx-submenu">
+            <button type="button" onClick={() => { onAction('generar-profiling'); onClose(); }}>
+              Generar Profiling
+            </button>
+            <button type="button" onClick={() => { onAction('ver-profiling'); onClose(); }}>
+              Ver Profiling
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div
+        role="button"
+        tabIndex={0}
+        className="do-ctx-item"
+        onClick={() => { onAction('linaje'); onClose(); }}
+        onKeyDown={(e) => e.key === 'Enter' && (onAction('linaje'), onClose())}
+      >
+        Ver linaje
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function TablaCell({ tabla, dataOwner, dataSteward, row, onPencilClick }) {
   const hasHover = dataOwner || dataSteward;
-  const [pos, setPos] = useState(null);
-  const wrapRef = useRef(null);
+  const [tooltipPos, setTooltipPos] = useState(null);
+  const wrapRef   = useRef(null);
+  const pencilRef = useRef(null);
 
   function handleMouseEnter() {
     if (!wrapRef.current) return;
     const r = wrapRef.current.getBoundingClientRect();
-    setPos({ x: r.left, y: r.bottom + 6 });
+    setTooltipPos({ x: r.left, y: r.bottom + 6 });
   }
+  function handleMouseLeave() { setTooltipPos(null); }
 
-  function handleMouseLeave() {
-    setPos(null);
+  function handlePencilClick(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    onPencilClick && onPencilClick(row, pencilRef.current.getBoundingClientRect());
   }
 
   return (
     <td className="em-cell-emphasis">
-      <span
-        ref={wrapRef}
-        onMouseEnter={hasHover ? handleMouseEnter : undefined}
-        onMouseLeave={hasHover ? handleMouseLeave : undefined}
-        style={{ cursor: hasHover ? 'default' : undefined }}
-      >
-        {tabla || '-'}
+      <span className="em-field-pencil-wrap">
+        <button
+          ref={pencilRef}
+          type="button"
+          className="do-pencil-btn em-field-pencil-btn"
+          title={`Opciones de tabla ${tabla}`}
+          onClick={handlePencilClick}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="13" height="13">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z" />
+          </svg>
+        </button>
+        <span
+          ref={wrapRef}
+          onMouseEnter={hasHover ? handleMouseEnter : undefined}
+          onMouseLeave={hasHover ? handleMouseLeave : undefined}
+          style={{ cursor: hasHover ? 'default' : undefined }}
+        >
+          {tabla || '-'}
+        </span>
       </span>
-      {pos && hasHover && ReactDOM.createPortal(
-        <div className="em-tabla-tooltip-portal" style={{ left: pos.x, top: pos.y }}>
+
+      {tooltipPos && hasHover && ReactDOM.createPortal(
+        <div className="em-tabla-tooltip-portal" style={{ left: tooltipPos.x, top: tooltipPos.y }}>
           {dataOwner && (
             <span className="em-tooltip-row">
               <span className="em-tooltip-label">Data Owner</span>
@@ -133,7 +230,7 @@ const FIELD_COLS = [
   { key: 'permite_null', label: 'Permite Null', defaultW: 100 },
 ];
 
-function TableViewBody({ items, onRowClick }) {
+function TableViewBody({ items, onRowClick, onPencilClick }) {
   return (
     <tbody>
       {items.map((row, index) => (
@@ -147,7 +244,13 @@ function TableViewBody({ items, onRowClick }) {
           <td>{row.servidor || '-'}</td>
           <td>{row.base || '-'}</td>
           <td>{row.esquema || '-'}</td>
-          <TablaCell tabla={row.tabla} dataOwner={row.nombre_data_owner} dataSteward={row.nombre_data_steward} />
+          <TablaCell
+            tabla={row.tabla}
+            dataOwner={row.nombre_data_owner}
+            dataSteward={row.nombre_data_steward}
+            row={row}
+            onPencilClick={onPencilClick}
+          />
           <td title={row.descripcion}>{row.descripcion || '-'}</td>
           <td><ClasificacionBadge value={row.clasificacion} /></td>
           <td><AvanceCell value={row.avance} /></td>
@@ -195,9 +298,24 @@ function FieldViewBody({ items, onEditField }) {
   );
 }
 
-export default function MetadataTable({ items = [], viewMode = 'tabla', loading = false, onTableRowClick, onEditField }) {
-  const [sortCol, setSortCol] = useState(null);
-  const [sortDir, setSortDir] = useState('asc');
+// Altura estimada del menú (7 ítems × ~34px + 8px padding)
+const MENU_H = 260;
+
+export default function MetadataTable({ items = [], viewMode = 'tabla', loading = false, onTableRowClick, onEditField, onTablaAction }) {
+  const [sortCol,   setSortCol]   = useState(null);
+  const [sortDir,   setSortDir]   = useState('asc');
+  // Un solo menú activo a la vez — estado centralizado
+  const [tablaMenu, setTablaMenu] = useState(null); // { row, x, y }
+
+  function handlePencilClick(row, triggerRect) {
+    // Si ya estaba abierto para esta fila, lo cierra (toggle)
+    if (tablaMenu?.row === row) { setTablaMenu(null); return; }
+    const spaceBelow = window.innerHeight - triggerRect.bottom;
+    const y = spaceBelow >= MENU_H
+      ? triggerRect.bottom + 4                   // cabe abajo
+      : triggerRect.top - MENU_H - 4;            // abre hacia arriba
+    setTablaMenu({ row, x: triggerRect.left, y });
+  }
 
   const cols = viewMode === 'tabla' ? TABLE_COLS : FIELD_COLS;
   const defaultWidths = cols.map(c => c.defaultW);
@@ -274,10 +392,20 @@ export default function MetadataTable({ items = [], viewMode = 'tabla', loading 
           </tr>
         </thead>
         {viewMode === 'tabla'
-          ? <TableViewBody items={sorted} onRowClick={onTableRowClick} />
+          ? <TableViewBody items={sorted} onRowClick={onTableRowClick} onPencilClick={handlePencilClick} />
           : <FieldViewBody items={sorted} onEditField={onEditField} />
         }
       </table>
+
+      {/* Menú único — se monta una sola vez para toda la tabla */}
+      {tablaMenu && (
+        <TablaContextMenu
+          x={tablaMenu.x}
+          y={tablaMenu.y}
+          onAction={(action) => { onTablaAction && onTablaAction(action, tablaMenu.row); setTablaMenu(null); }}
+          onClose={() => setTablaMenu(null)}
+        />
+      )}
     </div>
   );
 }

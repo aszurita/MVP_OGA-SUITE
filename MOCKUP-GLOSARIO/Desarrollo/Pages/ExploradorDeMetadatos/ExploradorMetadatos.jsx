@@ -3,6 +3,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { getFilters, getTableView, getFieldView } from '../../services/metadataService.js';
 import DataOwnersModal from './components/DataOwnersModal.jsx';
 import DocumentarCampoModal from './components/DocumentarCampoModal.jsx';
+import {
+  DescripcionTablaModal,
+  DataOwnerStewardModal,
+  DimensionesCalidadModal,
+  ClasificacionTablaModal,
+} from './components/EditarTablaModals.jsx';
 import HierarchyPanel from './components/HierarchyPanel.jsx';
 
 import SearchBar from './components/SearchBar.jsx';
@@ -213,6 +219,7 @@ export default function ExploradorDeMetadatos() {
   const [ownersModalOpen, setOwnersModalOpen] = useState(false);
   const [hierarchyOpen, setHierarchyOpen] = useState(false);
   const [editingField, setEditingField] = useState(null);
+  const [tablaAction, setTablaAction] = useState(null); // { action, row }
   const debouncedSearch = useDebounce(searchInput);
 
   const [page, setPage] = useState(1);
@@ -488,6 +495,28 @@ export default function ExploradorDeMetadatos() {
         onClose={() => setEditingField(null)}
       />
 
+      <DescripcionTablaModal
+        isOpen={tablaAction?.action === 'descripcion'}
+        row={tablaAction?.row}
+        onClose={() => setTablaAction(null)}
+      />
+      <DataOwnerStewardModal
+        isOpen={tablaAction?.action === 'owner' || tablaAction?.action === 'steward'}
+        row={tablaAction?.row}
+        type={tablaAction?.action === 'owner' ? 'owner' : 'steward'}
+        onClose={() => setTablaAction(null)}
+      />
+      <DimensionesCalidadModal
+        isOpen={tablaAction?.action === 'dimensiones'}
+        row={tablaAction?.row}
+        onClose={() => setTablaAction(null)}
+      />
+      <ClasificacionTablaModal
+        isOpen={tablaAction?.action === 'clasificacion'}
+        row={tablaAction?.row}
+        onClose={() => setTablaAction(null)}
+      />
+
       <div className={`em-content-row${hierarchyOpen ? ' has-tree' : ''}`}>
         {hierarchyOpen && (
           <HierarchyPanel
@@ -531,6 +560,7 @@ export default function ExploradorDeMetadatos() {
             loading={loading}
             onTableRowClick={handleTableRowClick}
             onEditField={setEditingField}
+            onTablaAction={(action, row) => setTablaAction({ action, row })}
           />
 
           {!loading && apiOk && (

@@ -315,7 +315,8 @@ td {
 .em-view-select svg {
   flex-shrink: 0;
 }
-.em-view-select:hover{
+
+.em-view-select:hover {
   background: black;
   color: white;
 }
@@ -1972,4 +1973,288 @@ td {
   padding: 10px 14px;
   font-size: 0.85rem;
   color: var(--em-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL DIMENSIONES DE CALIDAD (dq-)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.dq-overlay {
+  padding-top: 60px;
+}
+
+.dq-modal {
+  max-width: 860px;
+  width: 96%;
+}
+
+.dq-modal-body {
+  padding: 0;
+}
+
+.dq-layout {
+  display: flex;
+  min-height: 380px;
+}
+
+/* Panel izquierdo */
+.dq-left {
+  width: 200px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--em-border);
+  padding: 1.25rem 1rem;
+}
+
+.dq-detail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-size: 0.82rem;
+  color: var(--em-text);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 5px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dq-detail-btn:hover {
+  background: var(--em-magenta-soft);
+  color: var(--em-magenta);
+}
+
+/* Panel derecho */
+.dq-right {
+  flex: 1;
+  padding: 1.25rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.dq-context-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.dq-context-label {
+  font-size: 0.82rem;
+  color: var(--em-muted);
+}
+
+.dq-guardar-todo-btn {
+  background: var(--em-magenta);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dq-guardar-todo-btn:hover {
+  background: #b8005c;
+}
+
+.dq-context-meta {
+  background: #f8f9fb;
+  border: 1px solid var(--em-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dq-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--em-text);
+}
+
+.dq-meta-row strong {
+  font-weight: 600;
+}
+
+.dq-doc-pct {
+  margin-left: auto;
+}
+
+.dq-table-wrap {
+  overflow-x: auto;
+  flex: 1;
+}
+
+.dq-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.dq-table th {
+  background: var(--em-magenta);
+  color: #fff;
+  padding: 7px 10px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.dq-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--em-border);
+  color: var(--em-text);
+}
+
+.dq-table-empty {
+  text-align: center;
+  padding: 2rem !important;
+  color: var(--em-muted);
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MODAL CLASIFICACIÓN DE TABLAS (clsf-)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.clsf-modal {
+  max-width: 520px;
+}
+
+.clsf-modal-body {
+  padding: 1.25rem 1.5rem 1.25rem;
+  background: #f8f9fb;
+}
+
+.clsf-etiquetar {
+  font-size: 0.9rem;
+  color: var(--em-text);
+  margin-bottom: 1.25rem;
+}
+
+.clsf-etiquetar strong {
+  font-weight: 700;
+}
+
+.clsf-card {
+  background: #fff;
+  border: 1px solid #e4e6eb;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 2px 8px rgba(18, 25, 38, 0.07);
+  margin-bottom: 1rem;
+}
+
+.clsf-field-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.1rem;
+}
+
+.clsf-field-row:last-child {
+  margin-bottom: 0;
+}
+
+.clsf-field-label {
+  font-size: 0.875rem;
+  color: var(--em-muted);
+  min-width: 160px;
+  flex-shrink: 0;
+}
+
+.clsf-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.clsf-solicitar-btn {
+  background: var(--em-magenta);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 26px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.clsf-solicitar-btn:hover {
+  background: #b8005c;
+}
+
+/* Dropdown custom */
+.clsf-dropdown-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.clsf-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.88rem;
+  color: var(--em-text);
+  cursor: pointer;
+  min-height: 38px;
+  transition: border-color 0.15s;
+}
+
+.clsf-dropdown-trigger:hover,
+.clsf-dropdown-trigger.is-open {
+  border-color: var(--em-magenta);
+}
+
+.clsf-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  background: #fff;
+  border: 1.5px solid var(--em-magenta);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(18, 25, 38, 0.12);
+  overflow: hidden;
+}
+
+.clsf-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--em-text);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.clsf-dropdown-item:hover {
+  background: var(--em-magenta-soft);
+  color: var(--em-magenta);
+}
+
+.clsf-dropdown-item.is-selected {
+  background: var(--em-magenta);
+  color: #fff;
+}
+
+.clsf-dropdown-item.is-selected:hover {
+  background: #b8005c;
 }
