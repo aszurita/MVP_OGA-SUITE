@@ -276,8 +276,8 @@ export default function ExploradorDeMetadatos() {
 
       {!apiOk && !loading && (
         <div className="em-alert-error mb-3">
-          <strong>No se pudo conectar con la API.</strong> Verifica que el servidor esté corriendo en{' '}
-          <code>http://localhost:8000</code>.
+          <strong>No se pudo conectar con la API.</strong> Verifica acceso a{' '}
+          <code>gobinfoana01-2:8510</code>.
           {error && <> — <em>{error}</em></>}
         </div>
       )}
