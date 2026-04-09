@@ -1512,7 +1512,7 @@ td {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
+  width: 30px;
   height: 22px;
   border: none;
   background: none;
@@ -1679,7 +1679,6 @@ td {
 .em-field-pencil-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   font-weight: 600;
 }
 

@@ -1,243 +1,57 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { getFilters, getTableView, getFieldView } from '../../services/metadataService.js';
-import DataOwnersModal from './components/DataOwnersModal.jsx';
-import DocumentarCampoModal from './components/DocumentarCampoModal.jsx';
-import {
-  DescripcionTablaModal,
-  DataOwnerStewardModal,
-  DimensionesCalidadModal,
-  ClasificacionTablaModal,
-} from './components/EditarTablaModals.jsx';
-import HierarchyPanel from './components/HierarchyPanel.jsx';
+import { useDebounce } from './hooks/useDebounce.js';
 
-import SearchBar from './components/SearchBar.jsx';
-import MetadataTable from './components/MetadataTable.jsx';
-import SegmentarDropdown from './components/SegmentarDropdown.jsx';
-import Pagination from './components/Pagination.jsx';
+import DataOwnersModal        from './components/DataOwnersModal.jsx';
+import DocumentarCampoModal   from './components/DocumentarCampoModal.jsx';
+import DescripcionTablaModal  from './components/DescripcionTablaModal.jsx';
+import DataOwnerStewardModal  from './components/DataOwnerStewardModal.jsx';
+import DimensionesCalidadModal from './components/DimensionesCalidadModal.jsx';
+import ClasificacionTablaModal from './components/ClasificacionTablaModal.jsx';
+import HierarchyPanel         from './components/HierarchyPanel.jsx';
+import SearchBar              from './components/SearchBar.jsx';
+import MetadataTable          from './components/MetadataTable.jsx';
+import SegmentarDropdown      from './components/SegmentarDropdown.jsx';
+import Pagination             from './components/Pagination.jsx';
+import ViewModeDropdown       from './components/ViewModeDropdown.jsx';
+import HeaderUtilityIcons     from './components/HeaderUtilityIcons.jsx';
+import ActionIcon             from './components/ActionIcon.jsx';
+import GroupTableToggle       from './components/GroupTableToggle.jsx';
+import ActiveTablaChip        from './components/ActiveTablaChip.jsx';
 
 import './styles/ExploradorDeMetadatos.css';
 
 const PAGE_SIZE = 20;
 
-function useDebounce(value, delay = 400) {
-  const [debounced, setDebounced] = useState(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-
-  return debounced;
-}
-
-function ViewModeDropdown({ value, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const options = [
-    { value: 'tabla', label: 'Tabla' },
-    { value: 'campo', label: 'Campo' },
-  ];
-
-  const selected = options.find((option) => option.value === value) || options[0];
-
-  return (
-    <div className={`em-view-dropdown ${open ? 'is-open' : ''}`} ref={ref}>
-      <button className={`em-view-select ${open ? 'is-open' : ''}`} type="button" onClick={() => setOpen((current) => !current)}>
-        <span>{selected.label}</span>
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </button>
-
-      {open && (
-        <div className="em-view-menu">
-          {options
-            .filter((option) => option.value !== value)
-            .map((option) => (
-              <button
-                key={option.value}
-                className="em-view-option"
-                type="button"
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                }}
-              >
-                {option.label}
-              </button>
-            ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function HeaderUtilityIcons({ onVerBase, onVerOwners, onVerJerarquia, jerarquiaOpen }) {
-  return (
-    <div className="em-header-tools" aria-hidden="true">
-      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver todas las tablas de la base" title="Ver base" onClick={onVerBase}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      </button>
-
-      <button className="em-header-icon-btn em-tooltip-trigger" type="button" data-tooltip="Ver Data Owners" title="Usuarios" onClick={onVerOwners}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M16 21v-1.2a4.8 4.8 0 0 0-4.8-4.8H8.8A4.8 4.8 0 0 0 4 19.8V21" />
-          <circle cx="10" cy="7" r="3.3" />
-          <path d="M20 21v-1a4 4 0 0 0-3.2-3.92" />
-          <path d="M15.8 4.2a3.1 3.1 0 0 1 0 5.6" />
-        </svg>
-      </button>
-
-      <button
-        className={`em-header-icon-btn em-tooltip-trigger${jerarquiaOpen ? ' is-active' : ''}`}
-        type="button"
-        data-tooltip="Ver jerarquía de servidores/bases/tablas"
-        title="Jerarquia"
-        onClick={onVerJerarquia}
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="9" y="3" width="6" height="6" rx="1.2" />
-          <rect x="3" y="15" width="6" height="6" rx="1.2" />
-          <rect x="15" y="15" width="6" height="6" rx="1.2" />
-          <path d="M12 9v3" />
-          <path d="M6 15v-3h12v3" />
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-function ActionIcon({ type }) {
-  const icons = {
-    upload: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 17.5A4.5 4.5 0 0 1 7.8 8.6 5.5 5.5 0 0 1 18 10.5h.5a3.5 3.5 0 1 1 0 7H14" />
-        <path d="M12 14V7" />
-        <path d="m8.8 10.2 3.2-3.2 3.2 3.2" />
-      </svg>
-    ),
-    download: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 17.5A4.5 4.5 0 0 1 7.8 8.6 5.5 5.5 0 0 1 18 10.5h.5a3.5 3.5 0 1 1 0 7H14" />
-        <path d="M12 10v7" />
-        <path d="m8.8 13.8 3.2 3.2 3.2-3.2" />
-      </svg>
-    ),
-    idea: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 18h6" />
-        <path d="M10 21h4" />
-        <path d="M8.4 14.8A6.5 6.5 0 1 1 16 14.6c-.9.8-1.5 1.6-1.8 2.4h-4.4c-.2-.8-.7-1.5-1.4-2.2Z" />
-        <path d="M18.5 4.5 20 3" />
-        <path d="M5.5 4.5 4 3" />
-        <path d="M12 2V1" />
-      </svg>
-    ),
-    clear: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 7h10" />
-        <path d="M4 12h16" />
-        <path d="M4 17h7" />
-      </svg>
-    ),
-    refresh: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 5v6h-6" />
-        <path d="M20 11a8 8 0 1 0 2.1 5.4" />
-      </svg>
-    ),
-  };
-
-  return icons[type] || null;
-}
-
-function GroupTableToggle({ checked, onToggle }) {
-  return (
-    <div className="em-group-toggle em-tooltip-trigger" data-tooltip="Agrupar Nivel Tabla">
-      <button
-        className={`em-switch-ghost ${checked ? 'is-right' : 'is-left'}`}
-        type="button"
-        title="Agrupar Nivel Tabla"
-        aria-pressed={checked}
-        onClick={onToggle}
-      >
-        <span className="em-switch-thumb" />
-      </button>
-    </div>
-  );
-}
-
-/** Chip que muestra la tabla activa con botón para limpiar */
-function ActiveTablaChip({ tabla, servidor, base, esquema, onClear }) {
-  return (
-    <div className="em-active-tabla-chip">
-      <span className="em-active-tabla-path">
-        {servidor} / {base} / {esquema}
-      </span>
-      <span className="em-active-tabla-name">{tabla}</span>
-      <button
-        className="em-active-tabla-clear"
-        type="button"
-        title="Ver todos los campos"
-        onClick={onClear}
-      >
-        <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
-          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-      </button>
-    </div>
-  );
-}
-
 export default function ExploradorDeMetadatos() {
-  const [viewMode, setViewMode] = useState('tabla');
-  const [searchInput, setSearchInput] = useState('');
+  const [viewMode,       setViewMode]       = useState('tabla');
+  const [searchInput,    setSearchInput]    = useState('');
   const [activeServidor, setActiveServidor] = useState(null);
-  const [activeBase, setActiveBase] = useState(null);
-  const [activeEsquema, setActiveEsquema] = useState(null);
-  // Tabla seleccionada al hacer clic en una fila de vista-tabla (filtro exacto)
-  const [activeTabla, setActiveTabla] = useState(null); // { tabla, servidor, base, esquema }
-  // Búsqueda parcial de tabla (LIKE) — usada al hacer toggle tabla→campo para ver campos de todas las tablas visibles
-  const [tablaQ, setTablaQ] = useState(null);
-  const [acceptAll, setAcceptAll] = useState(false);
+  const [activeBase,     setActiveBase]     = useState(null);
+  const [activeEsquema,  setActiveEsquema]  = useState(null);
+  const [activeTabla,    setActiveTabla]    = useState(null);
+  const [tablaQ,         setTablaQ]         = useState(null);
+  const [acceptAll,      setAcceptAll]      = useState(false);
   const [ownersModalOpen, setOwnersModalOpen] = useState(false);
-  const [hierarchyOpen, setHierarchyOpen] = useState(false);
-  const [editingField, setEditingField] = useState(null);
-  const [tablaAction, setTablaAction] = useState(null); // { action, row }
+  const [hierarchyOpen,  setHierarchyOpen]  = useState(false);
+  const [editingField,   setEditingField]   = useState(null);
+  const [tablaAction,    setTablaAction]    = useState(null);
+
   const debouncedSearch = useDebounce(searchInput);
 
-  const [page, setPage] = useState(1);
-
-  const [filters, setFilters] = useState({ servidores: [], plataformas: [], clasificaciones: [] });
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
+  const [page,       setPage]       = useState(1);
+  const [filters,    setFilters]    = useState({ servidores: [], plataformas: [], clasificaciones: [] });
+  const [items,      setItems]      = useState([]);
+  const [total,      setTotal]      = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [apiOk, setApiOk] = useState(true);
+  const [loading,    setLoading]    = useState(false);
+  const [error,      setError]      = useState(null);
+  const [apiOk,      setApiOk]      = useState(true);
 
   useEffect(() => {
     getFilters()
-      .then((result) => {
-        setFilters(result);
-        setApiOk(true);
-      })
+      .then((result) => { setFilters(result); setApiOk(true); })
       .catch(() => setApiOk(false));
   }, []);
 
@@ -248,39 +62,32 @@ export default function ExploradorDeMetadatos() {
     let params;
 
     if (viewMode === 'tabla') {
-      // Vista tabla: filtro por servidor/base/esquema (jerarquía o segmentar) + búsqueda libre
       params = {
         servidor: activeServidor || undefined,
-        base: activeBase || undefined,
-        esquema: activeEsquema || undefined,
-        q: debouncedSearch || undefined,
+        base:     activeBase     || undefined,
+        esquema:  activeEsquema  || undefined,
+        q:        debouncedSearch || undefined,
+        page,
+        page_size: PAGE_SIZE,
+      };
+    } else if (activeTabla) {
+      params = {
+        servidor: activeTabla.servidor || undefined,
+        base:     activeTabla.base     || undefined,
+        esquema:  activeTabla.esquema  || undefined,
+        tabla:    activeTabla.tabla    || undefined,
+        q:        debouncedSearch      || undefined,
         page,
         page_size: PAGE_SIZE,
       };
     } else {
-      // Vista campo:
-      // 1) Clic en fila → activeTabla (filtro exacto servidor+base+esquema+tabla)
-      // 2) Toggle desde tabla con búsqueda → tablaQ (LIKE en nombre de tabla)
-      // 3) Sin filtro → todos los campos
-      if (activeTabla) {
-        params = {
-          servidor: activeTabla.servidor || undefined,
-          base: activeTabla.base || undefined,
-          esquema: activeTabla.esquema || undefined,
-          tabla: activeTabla.tabla || undefined,
-          q: debouncedSearch || undefined,
-          page,
-          page_size: PAGE_SIZE,
-        };
-      } else {
-        params = {
-          servidor: activeServidor || undefined,
-          tabla_q: tablaQ || undefined,
-          q: debouncedSearch || undefined,
-          page,
-          page_size: PAGE_SIZE,
-        };
-      }
+      params = {
+        servidor: activeServidor || undefined,
+        tabla_q:  tablaQ        || undefined,
+        q:        debouncedSearch || undefined,
+        page,
+        page_size: PAGE_SIZE,
+      };
     }
 
     const fetcher = viewMode === 'tabla' ? getTableView : getFieldView;
@@ -292,16 +99,11 @@ export default function ExploradorDeMetadatos() {
         setTotalPages(result.pages || 1);
         setApiOk(true);
       })
-      .catch((err) => {
-        setError(err.message);
-        setApiOk(false);
-      })
+      .catch((err) => { setError(err.message); setApiOk(false); })
       .finally(() => setLoading(false));
-  }, [activeServidor, activeBase, activeEsquema, activeTabla, debouncedSearch, page, viewMode]);
+  }, [activeServidor, activeBase, activeEsquema, activeTabla, debouncedSearch, page, viewMode, tablaQ]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   useEffect(() => {
     setPage(1);
@@ -317,21 +119,14 @@ export default function ExploradorDeMetadatos() {
     setPage(1);
   }
 
-  /** Clic en una fila de tabla → modo campo con filtro exacto de esa tabla */
   function handleTableRowClick(row) {
-    setSearchInput('');  // limpiar búsqueda: contexto cambia a "ver campos de esta tabla"
+    setSearchInput('');
     setTablaQ(null);
-    setActiveTabla({
-      tabla: row.tabla,
-      servidor: row.servidor,
-      base: row.base,
-      esquema: row.esquema,
-    });
+    setActiveTabla({ tabla: row.tabla, servidor: row.servidor, base: row.base, esquema: row.esquema });
     setViewMode('campo');
     setPage(1);
   }
 
-  /** Limpiar tabla activa → volver a ver todos los campos (o los de tablaQ si aplica) */
   function handleClearTabla() {
     setActiveTabla(null);
     setPage(1);
@@ -339,7 +134,6 @@ export default function ExploradorDeMetadatos() {
 
   function handleViewChange(nextValue) {
     if (nextValue === 'tabla') {
-      // Volver a tabla: restaurar búsqueda desde tablaQ si existía, limpiar filtros de campo
       if (tablaQ) setSearchInput(tablaQ);
       setActiveTabla(null);
       setTablaQ(null);
@@ -350,10 +144,9 @@ export default function ExploradorDeMetadatos() {
 
   function handleGroupToggle() {
     if (viewMode === 'tabla') {
-      // Tabla → Campo: capturar el search actual como filtro LIKE de tabla
       const currentSearch = searchInput.trim();
       setTablaQ(currentSearch || null);
-      setSearchInput('');   // el search ahora puede usarse para buscar dentro de los campos
+      setSearchInput('');
       setActiveTabla(null);
       setViewMode('campo');
       setPage(1);
@@ -404,7 +197,11 @@ export default function ExploradorDeMetadatos() {
           <div className="em-toolbar-right">
             <GroupTableToggle checked={viewMode === 'tabla'} onToggle={handleGroupToggle} />
             <HeaderUtilityIcons
-              onVerBase={() => { setActiveServidor(null); setActiveBase(null); setActiveEsquema(null); setActiveTabla(null); setTablaQ(null); setSearchInput(''); setViewMode('tabla'); setPage(1); }}
+              onVerBase={() => {
+                setActiveServidor(null); setActiveBase(null); setActiveEsquema(null);
+                setActiveTabla(null); setTablaQ(null); setSearchInput('');
+                setViewMode('tabla'); setPage(1);
+              }}
               onVerOwners={() => setOwnersModalOpen(true)}
               onVerJerarquia={() => setHierarchyOpen((v) => !v)}
               jerarquiaOpen={hierarchyOpen}
@@ -432,7 +229,7 @@ export default function ExploradorDeMetadatos() {
               <input
                 type="checkbox"
                 checked={acceptAll}
-                onChange={(event) => setAcceptAll(event.target.checked)}
+                onChange={(e) => setAcceptAll(e.target.checked)}
               />
             </label>
           </div>
@@ -449,7 +246,6 @@ export default function ExploradorDeMetadatos() {
           </div>
         </div>
 
-        {/* Chip de tabla activa — clic en fila (filtro exacto) */}
         {viewMode === 'campo' && activeTabla && (
           <ActiveTablaChip
             tabla={activeTabla.tabla}
@@ -460,7 +256,6 @@ export default function ExploradorDeMetadatos() {
           />
         )}
 
-        {/* Chip de búsqueda por tabla (LIKE) — toggle desde vista tabla con búsqueda activa */}
         {viewMode === 'campo' && !activeTabla && tablaQ && (
           <div className="em-active-tabla-chip">
             <span className="em-active-tabla-path">Tablas que contienen</span>
@@ -527,26 +322,20 @@ export default function ExploradorDeMetadatos() {
             onSelectServidor={(servidor) => {
               const same = activeServidor === servidor && !activeBase;
               setActiveServidor(same ? null : servidor);
-              setActiveBase(null);
-              setActiveEsquema(null);
-              setActiveTabla(null);
-              setPage(1);
+              setActiveBase(null); setActiveEsquema(null); setActiveTabla(null); setPage(1);
             }}
             onSelectBase={({ servidor, base }) => {
               const same = activeServidor === servidor && activeBase === base && !activeEsquema;
               setActiveServidor(servidor);
               setActiveBase(same ? null : base);
-              setActiveEsquema(null);
-              setActiveTabla(null);
-              setPage(1);
+              setActiveEsquema(null); setActiveTabla(null); setPage(1);
             }}
             onSelectEsquema={({ servidor, base, esquema }) => {
               const same = activeServidor === servidor && activeBase === base && activeEsquema === esquema;
               setActiveServidor(servidor);
               setActiveBase(base);
               setActiveEsquema(same ? null : esquema);
-              setActiveTabla(null);
-              setPage(1);
+              setActiveTabla(null); setPage(1);
             }}
             onSelectTabla={(row) => handleTableRowClick(row)}
             onClose={() => setHierarchyOpen(false)}
