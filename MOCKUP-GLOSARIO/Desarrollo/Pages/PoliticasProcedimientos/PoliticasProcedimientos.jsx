@@ -8,7 +8,7 @@ import './styles/PoliticasProcedimientos.css';
 
 const SIMPLE_PDFS = {
   politicas: '/docs/PoliticasProcedimientos/Politica de Gobierno de Informacion y Analitica 072023.pdf#zoom=80',
-  manifiesto: '/docs/PoliticasProcedimientos/MANIFIESTO DE USO DE DATOS BANCO GUAYAQUIL.pdf',
+  manifiesto: '/docs/PoliticasProcedimientos/001_manifesto_uso_de_datos.pdf',
   procesos: '/docs/PoliticasProcedimientos/APO 7.1.1 Gestionar mapa de dominios.pdf',
   'procesos-apoyo': '/docs/PoliticasProcedimientos/APO 7.1.2 - Administrar calidad y estrategia de datos de la organizacion.pdf',
 };
@@ -24,12 +24,11 @@ const INDICE_DEFAULT_PDFS = {
 const INDICE_CONTEXT = new Set(['indice', 'nivel-2', 'nivel-3', 'nivel-4', 'gob-modelos']);
 
 const NAV = [
-  { id: 'politicas', label: 'Politicas' },
+  { id: 'politicas', label: 'Gobierno de Datos' },
   { id: 'manifiesto', label: 'Manifiesto' },
   { id: 'procesos', label: 'Procesos' },
   { id: 'procesos-apoyo', label: 'Procesos de Apoyo' },
-  { id: 'gob-modelos', label: 'Gobierno de Modelos' },
-  { id: 'indice', label: 'Indice' },
+  { id: 'indice', label: 'Gobierno de Modelos' },
 ];
 
 export default function PoliticasProcedimientos() {

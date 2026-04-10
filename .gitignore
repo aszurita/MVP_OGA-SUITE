@@ -1,7 +1,6 @@
 node_modules/
 dist/
 .vite/
-.claude
 venv/
 .venv/
 oga_suite_env/
@@ -11,3 +10,5 @@ BasesDatos/data/Z_INF_TECNICA_LARGA.txt
 BasesDatos/data/Z_TABLAS_OFICIALES.txt
 
 oga.db
+
+GovernanceQuality/

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import os; os.remove\\('oga.db'\\) if os.path.exists\\('oga.db'\\) else None; print\\('oga.db eliminado'\\)\")",
+      "Bash(python load_db.py)",
+      "Bash(python -c ':*)"
+    ]
+  }
+}
